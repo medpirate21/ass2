@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Medoracle Academia">
+  <div class="container">
+    
+    <div class="content">
+      <div class="card">
+        <h2>Welcome Medicos</h2>
+        <p>Discover a world of knowledge and innovation at Medoracle Academia.</p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .container {
+    text-align: center;
+    color: white;
+    padding: 2rem 0;
+  }
+
+  h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(to right, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .subtitle {
+    font-size: 1.5rem;
+    margin-top: 0.5rem;
+    opacity: 0.9;
+  }
+
+  .content {
+    margin-top: 4rem;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card h2 {
+    margin-top: 0;
+    font-size: 2rem;
+  }
+
+  .card p {
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+</style>

@@ -1,0 +1,346 @@
+---
+const icons = {
+  sun: `<svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="4"/>
+  <path d="M12 2v2"/>
+  <path d="M12 20v2"/>
+  <path d="M2 12h2"/>
+  <path d="M20 12h2"/>
+  <path d="M5.64 5.64l1.42 1.42"/>
+  <path d="M16.94 16.94l1.42 1.42"/>
+  <path d="M5.64 18.36l1.42-1.42"/>
+  <path d="M16.94 7.06l1.42-1.42"/>
+</svg>`
+,
+  moon: `<svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+  search: `<svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>`
+};
+---
+
+<header class="header">
+  <div class="header-content">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <div class="toggle-wrapper">
+        <div class="toggle-icons">
+          <span class="icon-sun">
+            <Fragment set:html={icons.sun} />
+          </span>
+          <span class="icon-moon">
+            <Fragment set:html={icons.moon} />
+          </span>
+        </div>
+      </div>
+    </button>
+
+    <div class="search-container">
+      <button class="search-toggle" id="search-toggle" aria-label="Search">
+        <Fragment set:html={icons.search} />
+      </button>
+      <div class="search-box" id="search-box">
+        <Fragment set:html={icons.search} />
+        <input type="text" placeholder="Type to search..." class="search-input" />
+        <div class="search-dropdown"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    background: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.75rem 1.5rem;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .theme-toggle {
+    color: var(--text-color);
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 12px;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .toggle-wrapper {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    overflow: hidden;
+  }
+
+  .toggle-icons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .icon-sun, .icon-moon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
+    color: var(--text-color);
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  html.dark .toggle-icons {
+    transform: translateY(-50%);
+  }
+
+  .theme-toggle:hover .icon {
+    transform: rotate(15deg);
+  }
+
+  .search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-toggle {
+    display: none;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .search-box:hover,
+  .search-box:focus-within {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .search-box input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    width: 200px;
+    transition: width 0.3s ease;
+  }
+
+  .search-box input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .search-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-height: 60vh;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+  }
+
+  .search-result {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .search-result:hover {
+    background: rgba(var(--purple-primary), 0.1);
+  }
+
+  .no-results {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .header {
+      padding: 0.75rem;
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+    }
+
+    .toggle-wrapper {
+      width: 20px;
+      height: 20px;
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .search-toggle {
+      display: none; /* Hide toggle, show search box directly */
+    }
+
+    .search-box {
+      display: flex; /* Always show search box */
+      padding: 0.4rem 0.6rem;
+      gap: 0.5rem;
+    }
+
+    .search-box .icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .search-box input {
+      width: 140px;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<script>
+  declare global {
+    interface Window {
+      toggleTheme: () => string;
+      themeManager: {
+        currentTheme: string | null;
+        getTheme: () => string;
+        setTheme: (theme: string) => void;
+        initialize: () => void;
+        toggle: () => string;
+      };
+    }
+  }
+
+  function setupThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+      themeToggle.onclick = () => {
+        window.toggleTheme();
+      };
+    }
+  }
+
+  setupThemeToggle();
+  document.addEventListener('astro:page-load', setupThemeToggle);
+
+  // Add search functionality
+  document.addEventListener('astro:page-load', () => {
+    const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+    const searchDropdown = document.querySelector('.search-dropdown') as HTMLElement;
+    
+    if (searchInput && searchDropdown) {
+      searchInput.addEventListener('input', () => {
+        const term = searchInput.value.toLowerCase().trim();
+        if (term.length < 2) {
+          searchDropdown.style.display = 'none';
+          return;
+        }
+
+        const buttons = document.querySelectorAll('.btn');
+        const matches = Array.from(buttons).filter(btn => 
+          btn.textContent?.toLowerCase().includes(term)
+        );
+
+        if (matches.length) {
+          searchDropdown.style.display = 'block';
+          searchDropdown.innerHTML = matches.map(btn => `
+            <button class="search-result" data-btn-id="${btn.getAttribute('data-id')}">
+              ${btn.textContent}
+            </button>
+          `).join('');
+
+          searchDropdown.querySelectorAll('.search-result').forEach(result => {
+            result.addEventListener('click', () => {
+              const btnId = result.getAttribute('data-btn-id');
+              const targetBtn = document.querySelector(`[data-id="${btnId}"]`);
+              
+              if (targetBtn) {
+                const section = targetBtn.closest('.section-wrapper');
+                if (section) section.classList.add('active');
+                
+                targetBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetBtn.classList.add('highlight');
+                setTimeout(() => targetBtn.classList.remove('highlight'), 2000);
+                
+                searchInput.value = '';
+                searchDropdown.style.display = 'none';
+              }
+            });
+          });
+        } else {
+          searchDropdown.innerHTML = '<div class="no-results">No matches found</div>';
+          searchDropdown.style.display = 'block';
+        }
+      });
+
+      // Close dropdown on outside click
+      document.addEventListener('click', (e) => {
+        if (!searchDropdown.contains(e.target as Node) && e.target !== searchInput) {
+          searchDropdown.style.display = 'none';
+        }
+      });
+
+      // Close on escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          searchDropdown.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>

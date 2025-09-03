@@ -1,0 +1,127 @@
+<div class="header-search">
+  <input 
+    type="text" 
+    placeholder="Search content..." 
+    class="search-input"
+  />
+  <div class="search-dropdown"></div>
+</div>
+
+<style>
+  .header-search {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 0.9rem;
+  }
+
+  .search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    display: none;
+    z-index: 1000;
+  }
+</style>
+
+<script>
+  class PageSearch {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      const input = document.querySelector('.search-input') as HTMLInputElement;
+      const dropdown = document.querySelector('.search-dropdown') as HTMLElement;
+      
+      if (!input || !dropdown) return;
+
+      input.addEventListener('input', () => {
+        const term = input.value.toLowerCase().trim();
+        if (term.length < 2) {
+          dropdown.style.display = 'none';
+          return;
+        }
+
+        // Search through page content
+        const buttons = document.querySelectorAll('.btn');
+        const matches = Array.from(buttons).filter(btn => 
+          btn.textContent?.toLowerCase().includes(term)
+        );
+
+        if (matches.length) {
+          dropdown.style.display = 'block';
+          dropdown.innerHTML = matches.map(btn => `
+            <button class="search-result" data-id="${btn.getAttribute('data-id')}">
+              ${btn.textContent}
+            </button>
+          `).join('');
+
+          // Handle result clicks
+          dropdown.querySelectorAll('.search-result').forEach(result => {
+            result.addEventListener('click', () => {
+              const id = result.getAttribute('data-id');
+              const target = document.querySelector(`[data-id="${id}"]`);
+              
+              if (target) {
+                // Open containing section if needed
+                const section = target.closest('.section-wrapper');
+                if (section) section.classList.add('active');
+                
+                // Scroll to target
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Highlight target
+                target.classList.add('highlight');
+                setTimeout(() => target.classList.remove('highlight'), 2000);
+                
+                // Clear search
+                input.value = '';
+                dropdown.style.display = 'none';
+              }
+            });
+          });
+        } else {
+          dropdown.innerHTML = '<div class="no-results">No matches found</div>';
+          dropdown.style.display = 'block';
+        }
+      });
+
+      // Close dropdown on outside click
+      document.addEventListener('click', (e) => {
+        if (!dropdown.contains(e.target as Node) && e.target !== input) {
+          dropdown.style.display = 'none';
+        }
+      });
+
+      // Close on escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          input.value = '';
+          dropdown.style.display = 'none';
+        }
+      });
+    }
+  }
+
+  // Initialize search when page loads
+  document.addEventListener('astro:page-load', () => {
+    new PageSearch();
+  });
+</script>

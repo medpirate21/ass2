@@ -1,0 +1,33 @@
+<script>
+  class DropdownManager {
+    constructor() {
+      document.addEventListener('astro:page-load', () => {
+        this.initializeDropdowns();
+      });
+    }
+
+    initializeDropdowns() {
+      const sectionButtons = document.querySelectorAll('.section-button');
+      
+      sectionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const wrapper = button.closest('.section-wrapper');
+          const wasActive = wrapper?.classList.contains('active');
+
+          document.querySelectorAll('.section-wrapper').forEach(w => {
+            w.classList.remove('active');
+          });
+
+          if (!wasActive && wrapper) {
+            wrapper.classList.add('active');
+            wrapper.querySelectorAll('.btn').forEach((btn, index) => {
+              (btn as HTMLElement).style.transitionDelay = `${index * 0.02}s`;
+            });
+          }
+        });
+      });
+    }
+  }
+
+  new DropdownManager();
+</script>

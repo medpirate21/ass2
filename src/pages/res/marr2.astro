@@ -1,0 +1,543 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import DropdownManager from '../../components/DropdownManager.astro';
+---
+
+<Layout title="Marrow Lectures">
+  <div class="content-wrapper">
+    <h1 class="main-title">Marrow Notes</h1>
+    
+    <nav class="sections-list">
+      <div class="section-wrapper">
+        <button class="section-button" data-section="biochemistry">
+          <span class="number">01</span>
+          <span class="text">Ed8 - Main & RR</span>
+          <svg class="chevron" width="20" height="20" viewBox="0 0 24 24">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="section-content" id="biochemistry">
+          <div class="button-list">
+            <button class="btn" data-id="95595AgADdA">📄 1. Anatomy Marrow Ed8.pdf</button>
+            <button class="btn" data-id="95596AgADCQ">📄 2. Biochemed8 .pdf</button>
+            <button class="btn" data-id="95597AgADOB">📄 3. Physiology Marrow E8.pdf</button>
+            <button class="btn" data-id="95598AgADKx">📄 4. CM Marrow E8.pdf</button>
+            <button class="btn" data-id="95599AgADLB">📄 5. ENT Marrow E8.pdf</button>
+            <button class="btn" data-id="95600AgADLR">📄 6. Ophthalmology Marrow E8.pdf</button>
+            <button class="btn" data-id="95601AgAD3B">📄 7. F.M (1).pdf</button>
+            <button class="btn" data-id="95602AgADWg">📄 8. meded8 .pdf</button>
+            <button class="btn" data-id="95603AgADIx">📄 9. Med-2 .pdf</button>
+            <button class="btn" data-id="95604AgADsQ">📄 10. Med-3 (1).pdf</button>
+            <button class="btn" data-id="95605AgADxQ">📄 11. Surgery Vol.1 .pdf</button>
+            <button class="btn" data-id="95606AgADxg">📄 12. Surgery-2 .pdf</button>
+            <button class="btn" data-id="95607AgADxw">📄 13. OBG-2 .pdf</button>
+            <button class="btn" data-id="95608AgADyA">📄 14. OBG-1 .pdf</button>
+            <button class="btn" data-id="95609AgADCw">📄 15. Peded8 Join for more - .pdf</button>
+            <button class="btn" data-id="95610AgADBw">📄 16. Anesed8 .pdf</button>
+            <button class="btn" data-id="95611AgADKR">📄 17. Orthopedics Marrow E8.pdf</button>
+            <button class="btn" data-id="95612AgAD7h">📄 18. Dermatology Marrow E8.pdf</button>
+            <button class="btn" data-id="95613AgAD7x">📄 19. Psychiatry Marrow E8.pdf</button>
+            <button class="btn" data-id="95614AgAD8B">📄 20. Radiology ed.08.pdf</button>
+            <div class="section-heading">RR</div>
+            <button class="btn" data-id="95615AgADPh">📄 21. Anaesthesia Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95616AgADQB">📄 22. Biochemistry Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95617AgADPx">📄 23. Anatomy Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95618AgADQR">📄 24. Community Medicine Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95619AgADRB">📄 25. Dermatology Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95620AgADRh">📄 26. ENT Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95621AgADRx">📄 27. Forensic Medicine Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95622AgADSB">📄 28. Integrated Medicine Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95623AgADSx">📄 29. Medicine Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95624AgADTB">📄 30. Microbiology Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95625AgADTR">📄 31. OBG Revision Edition 8 - Nowatermark.pdf</button>
+            <button class="btn" data-id="95626AgADTh">📄 32. Ophthalmology Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95627AgADTx">📄 33. Orthopaedics Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95628AgADUB">📄 34. Paediatrics Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95629AgADUh">📄 35. Pharmacology Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95630AgADUR">📄 36. Pathology Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95631AgADUx">📄 37. Physiology Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95632AgADVB">📄 38. Psychiatry Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95633AgADVh">📄 39. Radiology Revision Edition 8 - No watermark.pdf</button>
+            <button class="btn" data-id="95634AgADWB">📄 40. Surgery Revision Edition 8 - No watermark.pdf</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-wrapper">
+        <button class="section-button" data-section="pathology">
+          <span class="number">02</span>
+          <span class="text">Ed6 - Main & RR</span>
+          <svg class="chevron" width="20" height="20" viewBox="0 0 24 24">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="section-content" id="pathology">
+          <div class="button-list">
+            <button class="btn" data-id="95635AgADZj">📄 41. Anat Ed6 -.pdf</button>
+            <button class="btn" data-id="95636AgADZD">📄 42. physio marrow ed6 -.pdf</button>
+            <button class="btn" data-id="95637AgADXD">📄 43. marrow biochem ed6-.pdf</button>
+            <button class="btn" data-id="95638AgADYD">📄 44. micro e6-.pdf</button>
+            <button class="btn" data-id="95639AgADVz">📄 45. pharma ed6 -.pdf</button>
+            <button class="btn" data-id="95640AgADYz">📄 46. patho ed6 -.pdf</button>
+            <button class="btn" data-id="95641AgADWD">📄 47. psm ed6 -.pdf</button>
+            <button class="btn" data-id="95642AgADWz">📄 48. fmt ed6 - (1).pdf</button>
+            <button class="btn" data-id="95643AgADVT">📄 49. optha ed6 -.pdf</button>
+            <button class="btn" data-id="95644AgADUT">📄 50. Ent ed6 -.pdf</button>
+            <button class="btn" data-id="95645AgADVj">📄 51. paedia ed6 .pdf</button>
+            <button class="btn" data-id="95646AgADWj">📄 52. Derma ed6 .pdf</button>
+            <button class="btn" data-id="95647AgADZT">📄 53. surgery ed6 -.pdf</button>
+            <button class="btn" data-id="95648AgADUj">📄 54. gynae ed6 -.pdf</button>
+            <button class="btn" data-id="95649AgADjw">📄 55. Radiology E6 .pdf</button>
+            <button class="btn" data-id="95650AgADkA">📄 56. Anesthesia E6 .pdf</button>
+            <button class="btn" data-id="95651AgADkQ">📄 57. Psychiatry E6 .pdf</button>
+            <button class="btn" data-id="95652AgADYj">📄 58. ortho Ed6 -.pdf</button>
+            <button class="btn" data-id="95653AgADXQ">📄 59. Medicine Volume 1 Ed 6.pdf</button>
+            <button class="btn" data-id="95654AgADXg">📄 60. Medicine Volume 2 Ed 6.pdf</button>
+            <button class="btn" data-id="95655AgADXw">📄 61. Medicine Volume 3 Ed 6.pdf</button>
+            <div class="section-heading">RR</div>
+            <button class="btn" data-id="95656AgADcQ">📄 62. Psychiatry Revision E65_231027_045341.pdf</button>
+            <button class="btn" data-id="95657AgADcg">📄 63. Pathology Revision E6.5.pdf</button>
+            <button class="btn" data-id="95658AgADfA">📄 64. ENT Revision E6.5.pdf</button>
+            <button class="btn" data-id="95659AgADfQ">📄 65. Ophthalmology Revision E6.5.pdf</button>
+            <button class="btn" data-id="95660AgADfg">📄 66. Biochemistry Revision E6.5.pdf</button>
+            <button class="btn" data-id="95661AgADfw">📄 67. Dermatology Revision E6.5.pdf</button>
+            <button class="btn" data-id="95662AgADgA">📄 68. Community Medicine Revision E6.5.pdf</button>
+            <button class="btn" data-id="95663AgADgQ">📄 69. Physiology Revision E6.5.pdf</button>
+            <button class="btn" data-id="95664AgADcw">📄 70. Microbiology Revision E6.5.pdf</button>
+            <button class="btn" data-id="95665AgADdA">📄 71. Surgery Revision E6.5.pdf</button>
+            <button class="btn" data-id="95666AgADdQ">📄 72. OBG Revision E6.5.pdf</button>
+            <button class="btn" data-id="95667AgADdg">📄 73. Medicine Revision E6.5.pdf</button>
+            <button class="btn" data-id="95668AgADdw">📄 74. Orthopaedics revision E6.5.pdf</button>
+            <button class="btn" data-id="95669AgADeA">📄 75. Radiology Revision E6.5.pdf</button>
+            <button class="btn" data-id="95670AgADeQ">📄 76. Anatomy Revision E6.5.pdf</button>
+            <button class="btn" data-id="95671AgADeg">📄 77. Pediatrics Revision E6.5.pdf</button>
+            <button class="btn" data-id="95672AgADew">📄 78. Pharmacology Revision E6.5.pdf</button>
+            <button class="btn" data-id="95673AgADgg">📄 79. Forensic Medicine Revision E6.5.pdf</button>
+            <button class="btn" data-id="95674AgADkg">📄 80. Anesthesia Revision E6.5.pdf</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-wrapper">
+        <button class="section-button" data-section="psm">
+          <span class="number">03</span>
+          <span class="text">Marrow Pearls & IBQ</span>
+          <svg class="chevron" width="20" height="20" viewBox="0 0 24 24">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="section-content" id="psm">
+          <div class="button-list">
+            <button class="btn" data-id="95675AgAD0w">📄 81. Anatomy pearl marrow .pdf</button>
+            <button class="btn" data-id="95676AgAD1A">📄 82. Physio pearls marrow .pdf</button>
+            <button class="btn" data-id="95677AgAD1Q">📄 83. Marrow anesthesia Pearls.pdf</button>
+            <button class="btn" data-id="95678AgAD1g">📄 84. Marrow Psm pearls.pdf</button>
+            <button class="btn" data-id="95679AgAD1w">📄 85. Ortho marrow pearl .pdf</button>
+            <button class="btn" data-id="95680AgAD2A">📄 86. Optha marrow pearl .pdf</button>
+            <button class="btn" data-id="95681AgAD2Q">📄 87. Biochem marrow pearl .pdf</button>
+            <button class="btn" data-id="95682AgAD2g">📄 88. Derma pearl marrow .pdf</button>
+            <button class="btn" data-id="95683AgAD2w">📄 89. ECG Marrow pearl .pdf</button>
+            <button class="btn" data-id="95684AgAD3A">📄 90. Psy pearl marrow .pdf</button>
+            <button class="btn" data-id="95685AgAD3Q">📄 91. radio pearl only neet pg notes 2020 .pdf</button>
+            <button class="btn" data-id="95686AgAD3g">📄 92. Marrow Micro Pearls.pdf</button>
+            <button class="btn" data-id="95687AgAD3w">📄 93. Patho Pearls nd Treasure.pdf</button>
+            <button class="btn" data-id="95688AgADZh">📄 94. Marrow Medicine pearls .pdf</button>
+            <button class="btn" data-id="95689AgADZx">📄 95. Anatomy Pearls .pdf</button>
+            <button class="btn" data-id="95690AgADaB">📄 96. Biochemistry Pearls .pdf</button>
+            <button class="btn" data-id="95691AgADaR">📄 97. Physiology pearls .pdf</button>
+            <button class="btn" data-id="95692AgADah">📄 98. Surgery Pearls .pdf</button>
+            <button class="btn" data-id="95693AgADax">📄 99. Dermatology Pearls .pdf</button>
+            <button class="btn" data-id="95694AgADbB">📄 100. Orthopaedics Pearls .pdf</button>
+            <button class="btn" data-id="95695AgADbR">📄 101. Marrow anesthesia Pearls.pdf</button>
+            <div class="section-heading">IBQ - Image based Question</div>
+            <button class="btn" data-id="95696AgADMR">📄 102. marrow image based discussion ortho.pdf</button>
+            <button class="btn" data-id="95697AgADcB">📄 103. Cadaveric ibq Histology Dr Ashwani Kumar.pdf</button>
+            <button class="btn" data-id="95698AgADcR">📄 104. Marrow IBQ Dermatology Charms_Professor.pdf</button>
+            <button class="btn" data-id="95699AgADqB">📄 105. Marrow IBQ Pathology .pdf</button>
+            <button class="btn" data-id="95700AgADkh">📄 106. Marrow IBQ Microbiology Charms_Professor .pdf</button>
+            <button class="btn" data-id="95701AgADkx">📄 107. Marrow IBQ Pharmacology Charms_Professor.pdf</button>
+            <button class="btn" data-id="95702AgADlR">📄 108. sx notes video lecture marrow - Booklet.pdf</button>
+            <button class="btn" data-id="95703AgADlh">📄 109. Radio.pdf</button>
+            <button class="btn" data-id="95704AgADcR">📄 110. Marrow IBQ Dermatology Charms_Professor.pdf</button>
+            <button class="btn" data-id="95705AgADch">📄 111. Marrow IBQ ENT .pdf</button>
+            <button class="btn" data-id="95706AgADdB">📄 112. Marrow IBQ Ophthalmology .pdf</button>
+            <button class="btn" data-id="95707AgADcx">📄 113. Marrow IBQ OBG .pdf</button>
+            <button class="btn" data-id="95708AgADxR">📄 114. Marrow IBQ Orthopedics .pdf</button>
+            <button class="btn" data-id="95709AgAD0R">📄 115. Marrow IBQ Anaesthesia Charms_Professor.pdf</button>
+          </div>
+        </div>
+      </div>
+      <div class="section-wrapper">
+        <button class="section-button" data-section="psm">
+          <span class="number">04</span>
+          <span class="text">Question Banks New & old</span>
+          <svg class="chevron" width="20" height="20" viewBox="0 0 24 24">
+            <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="section-content" id="psm">
+          <div class="button-list">
+            <div class="section-heading">Edition 8</div>
+            <button class="btn" data-id="95757AgADgh">📄 163. Surgery_ed8.pdf</button>
+            <button class="btn" data-id="95758AgADgx">📄 164. Radiology_ed8.pdf</button>
+            <button class="btn" data-id="95759AgADhB">📄 165. Psychiatry_ed8.pdf</button>
+            <button class="btn" data-id="95760AgADhB">📄 166. Psychiatry_ed8.pdf</button>
+            <button class="btn" data-id="95761AgADrh">📄 167. PSM_ed8.pdf</button>
+            <button class="btn" data-id="95762AgADrx">📄 168. Physiology_ed8.pdf</button>
+            <button class="btn" data-id="95763AgADsB">📄 169. Pharmacology_ed8.pdf</button>
+            <button class="btn" data-id="95764AgADsR">📄 170. Pediatrics_ed8.pdf</button>
+            <button class="btn" data-id="95765AgADsh">📄 171. Pathology_ed8.pdf</button>
+            <button class="btn" data-id="95766AgADtB">📄 172. Orthopaedics_ed8.pdf</button>
+            <button class="btn" data-id="95767AgADtR">📄 173. Ophthalmology_ed8.pdf</button>
+            <button class="btn" data-id="95768AgADth">📄 174. OBGYN_ed8.pdf</button>
+            <button class="btn" data-id="95769AgADtx">📄 175. Microbiology_ed8.pdf</button>
+            <button class="btn" data-id="95770AgADuB">📄 176. Medicine_ed8.pdf</button>
+            <button class="btn" data-id="95771AgADuR">📄 177. Forensic Medicine_ed8.pdf</button>
+            <button class="btn" data-id="95772AgADux">📄 178. ENT_ed8.pdf</button>
+            <button class="btn" data-id="95773AgADvB">📄 179. Biochemistry_ed8.pdf</button>
+            <button class="btn" data-id="95774AgADvR">📄 180. Dermatology_ed8.pdf</button>
+            <button class="btn" data-id="95775AgADvh">📄 181. Anatomy_ed8.pdf</button>
+            <button class="btn" data-id="95776AgADvx">📄 182. Anaesthesia_ed8.pdf</button>
+            <button class="btn" data-id="95777AgADhx">📄 183. Pyqs_ed8.pdf</button>
+            <div class="section-heading">Old QBs</div>
+            <button class="btn" data-id="95728AgADrg">📄 134. Forensic (1).pdf</button>
+            <button class="btn" data-id="95729AgADrw">📄 135. Microbio (1).pdf</button>
+            <button class="btn" data-id="95730AgADsQ">📄 136. OBGY (1).pdf</button>
+            <button class="btn" data-id="95731AgADsg">📄 137. OPHTHAL (1).pdf</button>
+            <button class="btn" data-id="95732AgADsw">📄 138. Pathology (1).pdf</button>
+            <button class="btn" data-id="95733AgADtA">📄 139. Pharma (1).pdf</button>
+            <button class="btn" data-id="95734AgADtQ">📄 140. PSM (1).pdf</button>
+            <button class="btn" data-id="95735AgADtw">📄 141. BIOCHEM Part-1.pdf</button>
+            <button class="btn" data-id="95736AgADuA">📄 142. BIOCHEM PART-2.pdf</button>
+            <button class="btn" data-id="95737AgADuw">📄 143. ENTT.pdf</button>
+            <button class="btn" data-id="95738AgADRg">📄 144. Marrow Pedia Qbank 2024 Ed 6.0.pdf</button>
+            <button class="btn" data-id="95739AgADRw">📄 145. Orthopeadics Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95740AgADSA">📄 146. Pathology Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95741AgADSQ">📄 147. Pharmacology Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95742AgADSw">📄 148. Physiology Marrow Qbank (1).pdf</button>
+            <button class="btn" data-id="95743AgADTA">📄 149. PSM Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95744AgADUA">📄 150. Psychiatry Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95745AgADUg">📄 151. radio marrow qbank.pdf</button>
+            <button class="btn" data-id="95746AgADVA">📄 152. Surgery Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95747AgADOA">📄 153. Anaesthesia Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95748AgADOg">📄 154. Anatomy Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95749AgADPA">📄 155. Biochemistry Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95750AgADPg">📄 156. Dermatology Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95751AgADPw">📄 157. ENT Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95752AgADQA">📄 158. FMT Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95753AgADQg">📄 159. Medicine Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95754AgADQw">📄 160. Microbiology Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95755AgADRQ">📄 161. OBG Marrow Qbank.pdf</button>
+            <button class="btn" data-id="95756AgADRg">📄 162. Opthalmology Marrow Qbank.pdf</button>
+            
+          </div>
+        </div>
+      </div>  
+    </nav>
+  </div>
+  
+  <DropdownManager />
+</Layout>
+
+<style>
+  .content-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .main-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+  }
+
+  .sections-list {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .section-wrapper {
+    position: relative;
+    border-radius: 12px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-button {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .section-content {
+    position: relative;
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    background: var(--card-bg);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    overflow: hidden;
+  }
+
+  .section-wrapper.active .section-content {
+    height: auto;
+    opacity: 1;
+    visibility: visible;
+    padding-bottom: 1rem;
+  }
+
+  .button-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .btn {
+    text-align: left;
+    padding: 1rem 1.25rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  .section-wrapper.active .btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .chevron {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .section-wrapper.active .chevron {
+    transform: rotate(180deg);
+  }
+
+</style>
+
+<script src="/src/config.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded - marr2.astro');
+    setupDropdowns();
+  });
+
+  document.addEventListener('astro:page-load', function() {
+    console.log('Astro page loaded - marr2.astro');
+    setTimeout(setupDropdowns, 100);
+  });
+
+  function setupDropdowns() {
+    console.log('Setting up dropdowns - marr2.astro');
+    const sectionButtons = document.querySelectorAll('.section-button');
+    console.log('Found buttons:', sectionButtons.length);
+    
+    sectionButtons.forEach((button, index) => {
+      // Remove existing listeners by cloning
+      const newButton = button.cloneNode(true);
+      button.parentNode?.replaceChild(newButton, button);
+      
+      newButton.addEventListener('click', function(e) {
+        console.log('Dropdown clicked - marr2.astro');
+        e.preventDefault();
+        
+        const wrapper = this.closest('.section-wrapper');
+        const wasActive = wrapper?.classList.contains('active');
+
+        document.querySelectorAll('.section-wrapper').forEach(w => {
+          w.classList.remove('active');
+        });
+
+        if (!wasActive && wrapper) {
+          wrapper.classList.add('active');
+          wrapper.querySelectorAll('.btn').forEach((btn, index) => {
+            (btn as HTMLElement).style.transitionDelay = `${index * 0.02}s`;
+          });
+        }
+      });
+    });
+  }
+
+  // Immediate setup if DOM ready
+  if (document.readyState === 'complete') {
+    setupDropdowns();
+  }
+
+  // Function to check video quota
+  async function checkVideoQuota(userid: string): Promise<number> {
+      try {
+        const response = await fetch((window as any).APP_CONFIG.QUOTA_CHECK(userid), {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+
+        const quotaData = await response.json();
+        return quotaData.videos_remaining || 0;
+      } catch (error) {
+        console.error('Error checking video quota:', error);
+        return 0; // Default to 0 if error
+      }
+    }
+
+    // Function to check note quota
+    async function checkNoteQuota(userid: string): Promise<number> {
+      try {
+        const response = await fetch((window as any).APP_CONFIG.QUOTA_CHECK(userid), {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+
+        const quotaData = await response.json();
+        return quotaData.notes_remaining || 0;
+      } catch (error) {
+        console.error('Error checking note quota:', error);
+        return 0; // Default to 0 if error
+      }
+    }
+
+    // Single delegated event listener for all data-id buttons
+    document.addEventListener('click', async (e) => {
+      if (e.target && (e.target as Element).closest) {
+        const button = (e.target as Element).closest('button[data-id]') as HTMLButtonElement;
+        if (button) {
+          e.preventDefault();
+          const dataId = button.getAttribute('data-id');
+          const title = button.textContent?.trim();
+          
+          console.log('Data-id button clicked:', dataId, title);
+          
+          if (dataId && title) {
+            // Get user data from localStorage
+            const storedUser = localStorage.getItem('medoracle_user');
+            if (!storedUser) {
+              // User not logged in, redirect to login
+              window.location.href = '/login';
+              return;
+            }
+
+            try {
+              const userData = JSON.parse(storedUser);
+              const userid = userData.id;
+
+              // Only check video quota - don't decrement yet
+              const videosRemaining = await checkVideoQuota(userid);
+              
+              if (videosRemaining <= 0) {
+                // No quota remaining, redirect to limit reached page
+                window.location.href = '/limit-reached';
+                return;
+              }
+
+              // Navigate to video page without decrementing quota
+              const encodedId = btoa(dataId);
+              const encodedTitle = encodeURIComponent(title);
+              const encodedUserId = btoa(userid);
+              window.location.href = `/video?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}`;
+              
+            } catch (error) {
+              console.error('Error processing video request:', error);
+              // On error, still allow access but log the issue
+              const encodedId = btoa(dataId);
+              const encodedTitle = encodeURIComponent(title);
+              window.location.href = `/video?id=${encodedId}&title=${encodedTitle}`;
+            }
+          }
+        }
+      }
+    });
+
+    // Single delegated event listener for all data-nid buttons
+    document.addEventListener('click', async (e) => {
+      if (e.target && (e.target as Element).closest) {
+        const button = (e.target as Element).closest('button[data-nid]') as HTMLButtonElement;
+        if (button) {
+          e.preventDefault();
+          const dataNid = button.getAttribute('data-nid');
+          const title = button.textContent?.trim();
+          
+          console.log('Data-nid button clicked:', dataNid, title);
+          
+          if (dataNid && title) {
+            // Get user data from localStorage
+            const storedUser = localStorage.getItem('medoracle_user');
+            if (!storedUser) {
+              // User not logged in, redirect to login
+              window.location.href = '/login';
+              return;
+            }
+
+            try {
+              const userData = JSON.parse(storedUser);
+              const userid = userData.id;
+
+              // Only check note quota - don't decrement yet
+              const notesRemaining = await checkNoteQuota(userid);
+              
+              if (notesRemaining <= 0) {
+                // No quota remaining, redirect to limit reached page
+                window.location.href = '/limit-reached';
+                return;
+              }
+
+              // Navigate to note page without decrementing quota
+              const encodedId = btoa(dataNid);
+              const encodedTitle = encodeURIComponent(title);
+              const encodedUserId = btoa(userid);
+              window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}`;
+              
+            } catch (error) {
+              console.error('Error processing note request:', error);
+              // On error, still allow access but log the issue
+              const encodedId = btoa(dataNid);
+              const encodedTitle = encodeURIComponent(title);
+              window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}`;
+            }
+          }
+        }
+      }
+    });
+</script>

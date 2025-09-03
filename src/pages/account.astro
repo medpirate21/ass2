@@ -1,0 +1,1183 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Account - Medoracle Academia">
+  <div class="account-container">
+    <!-- Login Required State -->
+    <div id="login-required" class="login-required hidden">
+      <div class="login-card">
+        <h1>Account Access Required</h1>
+        <p>Please log in to view your account details</p>
+        <a href="/login" class="login-link">Go to Login</a>
+      </div>
+    </div>
+
+    <!-- Account Details State -->
+    <div id="account-details" class="account-details hidden">
+      <div class="account-card">
+        <div class="account-header">
+          <div class="avatar">
+            <span id="user-initial">M</span>
+          </div>
+          <div class="user-info">
+            <h1 id="display-name">Loading...</h1>
+            <p id="user-id-display">ID: Loading...</p>
+          </div>
+          <button id="logout-btn" class="logout-btn">Logout</button>
+        </div>
+
+        <div class="account-body">
+          <div class="info-section">
+            <h2>Account Information</h2>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Username</label>
+                <span id="username-value">Loading...</span>
+              </div>
+              <div class="info-item">
+                <label>User ID</label>
+                <span id="userid-value">Loading...</span>
+              </div>
+              <div class="info-item">
+                <label>Plan</label>
+                <span id="plan-value" class="plan-badge">Loading...</span>
+              </div>
+              <div class="info-item">
+                <label>Status</label>
+                <span id="status-value" class="status-badge">Loading...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="quota-section">
+            <h2>Daily Usage Quota</h2>
+            <div id="quota-loading" class="quota-loading">
+              <div class="loading-spinner-small"></div>
+              <span>Loading quota information...</span>
+            </div>
+            <div id="quota-content" class="quota-content hidden">
+              <div class="quota-grid">
+                <div class="quota-item">
+                  <div class="quota-icon">🎥</div>
+                  <div class="quota-details">
+                    <span class="quota-label">Videos</span>
+                    <span class="quota-value" id="videos-remaining">0</span>
+                    <span class="quota-total">/ <span id="videos-total">0</span></span>
+                  </div>
+                </div>
+                <div class="quota-item">
+                  <div class="quota-icon">📝</div>
+                  <div class="quota-details">
+                    <span class="quota-label">Notes</span>
+                    <span class="quota-value" id="notes-remaining">0</span>
+                    <span class="quota-total">/ <span id="notes-total">0</span></span>
+                  </div>
+                </div>
+                <div class="quota-item">
+                  <div class="quota-icon">❓</div>
+                  <div class="quota-details">
+                    <span class="quota-label">MCQs</span>
+                    <span class="quota-value" id="mcqs-remaining">0</span>
+                    <span class="quota-total">/ <span id="mcqs-total">0</span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="quota-footer">
+                <p class="quota-date">Last updated: <span id="quota-last-updated">Loading...</span></p>
+                <p class="quota-reset">Quota resets daily at midnight</p>
+              </div>
+            </div>
+            <div id="quota-error" class="quota-error hidden">
+              <p>Failed to load quota information</p>
+              <button class="retry-btn" id="retry-quota-btn">Retry</button>
+            </div>
+          </div>
+
+          <div class="actions-section">
+            <h2>Account Actions</h2>
+            <div class="action-buttons">
+              <button class="action-btn secondary" id="refresh-btn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Refresh Account
+              </button>
+              <button class="action-btn danger" id="clear-data-btn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                Clear Local Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Renew Quota Section -->
+    <div class="renew-quota-section">
+      <button id="renew-quota-btn" class="renew-quota-btn">
+        <svg class="renew-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+          <path d="M21 3v5h-5"/>
+          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+          <path d="M3 21v-5h5"/>
+        </svg>
+        Renew Quota
+      </button>
+    </div>
+
+    <!-- Premium Plans Section -->
+    <div class="premium-plans-section">
+      <h2 class="plans-title">Premium Plans</h2>
+      <div class="plans-grid">
+        
+        <!-- Diamond Plan -->
+        <div class="plan-card diamond">
+          <div class="plan-header">
+            <h3 class="plan-name">Diamond Plan</h3>
+            <div class="plan-price">₹400/month</div>
+          </div>
+          <div class="plan-features">
+            <div class="feature">
+              <span class="feature-icon">🎥</span>
+              <span>750 Videos</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">📝</span>
+              <span>400 Notes</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">❓</span>
+              <span>Unlimited MCQs</span>
+            </div>
+            <div class="feature premium-feature">
+              <span class="feature-icon">⚡</span>
+              <span>No Daily Limits</span>
+            </div>
+          </div>
+          <button class="buy-now-btn diamond-btn">Buy Now</button>
+        </div>
+
+        <!-- Gold Plan -->
+        <div class="plan-card gold popular">
+          <div class="popular-badge">POPULAR</div>
+          <div class="plan-header">
+            <h3 class="plan-name">Gold Plan</h3>
+            <div class="plan-price">₹75/week</div>
+          </div>
+          <div class="plan-features">
+            <div class="feature">
+              <span class="feature-icon">🎥</span>
+              <span>600 Videos</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">📝</span>
+              <span>450 Notes</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">❓</span>
+              <span>Unlimited MCQs</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">📅</span>
+              <span>Daily: 20 Videos, 15 Notes</span>
+            </div>
+          </div>
+          <button class="buy-now-btn gold-btn">Buy Now</button>
+        </div>
+
+        <!-- Silver Plan -->
+        <div class="plan-card silver">
+          <div class="plan-header">
+            <h3 class="plan-name">Silver Plan</h3>
+            <div class="plan-price">₹50/week</div>
+          </div>
+          <div class="plan-features">
+            <div class="feature">
+              <span class="feature-icon">🎥</span>
+              <span>450 Videos</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">📝</span>
+              <span>300 Notes</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">❓</span>
+              <span>Unlimited MCQs</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">📅</span>
+              <span>Daily: 15 Videos, 10 Notes</span>
+            </div>
+          </div>
+          <button class="buy-now-btn silver-btn">Buy Now</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading account information...</p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .account-container {
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: calc(100vh - 120px);
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* Login Required State */
+  .login-required {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+  }
+
+  .login-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 400px;
+  }
+
+  .login-card h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .login-card p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+  }
+
+  .login-link {
+    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    color: white;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+  }
+
+  .login-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 59, 196, 0.3);
+  }
+
+  /* Account Details */
+  .account-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .account-header {
+    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .user-info {
+    flex: 1;
+  }
+
+  .user-info h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .user-info p {
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .logout-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .account-body {
+    padding: 2rem;
+  }
+
+  .info-section, .quota-section, .actions-section {
+    margin-bottom: 2rem;
+  }
+
+  .info-section h2, .quota-section h2, .actions-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .info-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .info-item label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .info-item span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .plan-badge {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem !important;
+    text-transform: capitalize;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .plan-badge.premium {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+  }
+
+  .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem !important;
+    text-transform: capitalize;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .status-badge.active {
+    background: rgba(39, 174, 96, 0.2);
+    color: #2ecc71;
+    border: 1px solid rgba(39, 174, 96, 0.3);
+  }
+
+  .status-badge.inactive {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 0.95rem;
+  }
+
+  .action-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+  }
+
+  .action-btn.danger {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+  }
+
+  .action-btn.danger:hover {
+    background: rgba(231, 76, 60, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .action-btn .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Quota Section */
+  .quota-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .loading-spinner-small {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-top: 2px solid var(--purple-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .quota-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .quota-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .quota-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .quota-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+  }
+
+  .quota-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .quota-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .quota-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+  }
+
+  .quota-total {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .quota-footer {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+  }
+
+  .quota-date {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .quota-reset {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    font-style: italic;
+  }
+
+  .quota-error {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .quota-error p {
+    margin: 0 0 1rem 0;
+  }
+
+  .retry-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+
+  .retry-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Loading State */
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 1rem;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid var(--purple-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Renew Quota Section */
+  .renew-quota-section {
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .renew-quota-btn {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+  }
+
+  .renew-quota-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+  }
+
+  .renew-icon {
+    width: 20px;
+    height: 20px;
+    color: currentColor;
+  }
+
+  /* Premium Plans Section */
+  .premium-plans-section {
+    margin-top: 3rem;
+  }
+
+  .plans-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .plan-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 2px solid var(--border-color);
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .plan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .plan-card.popular {
+    border-color: #f39c12;
+    box-shadow: 0 4px 25px rgba(243, 156, 18, 0.2);
+  }
+
+  .popular-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .plan-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .plan-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .plan-price {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .diamond .plan-price {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gold .plan-price {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .silver .plan-price {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .plan-features {
+    margin-bottom: 2rem;
+  }
+
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .feature:last-child {
+    border-bottom: none;
+  }
+
+  .feature-icon {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+  }
+
+  .premium-feature {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.1));
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid rgba(155, 89, 182, 0.2);
+  }
+
+  .buy-now-btn {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .diamond-btn {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: white;
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
+  }
+
+  .diamond-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+  }
+
+  .gold-btn {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+  }
+
+  .gold-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+  }
+
+  .silver-btn {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+  }
+
+  .silver-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loading-state p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .account-container {
+      padding: 1rem;
+    }
+
+    .account-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .user-info h1 {
+      font-size: 1.5rem;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .action-btn {
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  interface UserData {
+    id: string;
+    username: string;
+    plan: string;
+    status: string;
+  }
+
+  interface QuotaData {
+    user_id: string;
+    date: string;
+    videos_remaining: number;
+    notes_remaining: number;
+    mcqs_remaining: number;
+    videos_total_remaining: number;
+    notes_total_remaining: number;
+    last_updated: string;
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const loginRequired = document.getElementById('login-required');
+    const accountDetails = document.getElementById('account-details');
+    const loadingState = document.getElementById('loading-state');
+    const logoutBtn = document.getElementById('logout-btn');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const clearDataBtn = document.getElementById('clear-data-btn');
+    const retryQuotaBtn = document.getElementById('retry-quota-btn');
+
+    function showLoginRequired() {
+      loadingState?.classList.add('hidden');
+      accountDetails?.classList.add('hidden');
+      loginRequired?.classList.remove('hidden');
+    }
+
+    function showAccountDetails() {
+      loadingState?.classList.add('hidden');
+      loginRequired?.classList.add('hidden');
+      accountDetails?.classList.remove('hidden');
+    }
+
+    function showLoading() {
+      loginRequired?.classList.add('hidden');
+      accountDetails?.classList.add('hidden');
+      loadingState?.classList.remove('hidden');
+    }
+
+    function populateAccountDetails(userData: UserData) {
+      // Update avatar initial
+      const userInitial = document.getElementById('user-initial');
+      if (userInitial) {
+        userInitial.textContent = userData.username.charAt(0).toUpperCase();
+      }
+
+      // Update display name and ID
+      const displayName = document.getElementById('display-name');
+      const userIdDisplay = document.getElementById('user-id-display');
+      if (displayName) displayName.textContent = userData.username;
+      if (userIdDisplay) userIdDisplay.textContent = `ID: ${userData.id}`;
+
+      // Update info grid
+      const usernameValue = document.getElementById('username-value');
+      const useridValue = document.getElementById('userid-value');
+      const planValue = document.getElementById('plan-value');
+      const statusValue = document.getElementById('status-value');
+
+      if (usernameValue) usernameValue.textContent = userData.username;
+      if (useridValue) useridValue.textContent = userData.id;
+      
+      if (planValue) {
+        planValue.textContent = userData.plan;
+        planValue.className = `plan-badge ${userData.plan.toLowerCase()}`;
+      }
+      
+      if (statusValue) {
+        statusValue.textContent = userData.status;
+        statusValue.className = `status-badge ${userData.status.toLowerCase()}`;
+      }
+    }
+
+    async function fetchQuotaData(userid: string): Promise<QuotaData> {
+      try {
+        const response = await fetch(`http://localhost:8000/quota/${userid}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+
+        const quotaData: QuotaData = await response.json();
+        return quotaData;
+      } catch (error) {
+        console.error('Error fetching quota data:', error);
+        
+        // Provide specific error messages
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          throw new Error('Cannot connect to server. Please ensure the backend API is running on localhost:8000');
+        }
+        
+        throw error;
+      }
+    }
+
+    function populateQuotaDetails(quotaData: QuotaData) {
+      // Update quota values
+      const videosRemaining = document.getElementById('videos-remaining');
+      const notesRemaining = document.getElementById('notes-remaining');
+      const mcqsRemaining = document.getElementById('mcqs-remaining');
+      const videosTotal = document.getElementById('videos-total');
+      const notesTotal = document.getElementById('notes-total');
+      const quotaLastUpdated = document.getElementById('quota-last-updated');
+
+      if (videosRemaining) videosRemaining.textContent = quotaData.videos_remaining.toString();
+      if (notesRemaining) notesRemaining.textContent = quotaData.notes_remaining.toString();
+      if (mcqsRemaining) mcqsRemaining.textContent = quotaData.mcqs_remaining.toString();
+      if (videosTotal) videosTotal.textContent = quotaData.videos_total_remaining.toString();
+      if (notesTotal) notesTotal.textContent = quotaData.notes_total_remaining.toString();
+      
+      if (quotaLastUpdated) {
+        const lastUpdated = new Date(quotaData.last_updated);
+        quotaLastUpdated.textContent = lastUpdated.toLocaleString();
+      }
+
+      // Show quota content and hide loading/error states
+      const quotaLoading = document.getElementById('quota-loading');
+      const quotaContent = document.getElementById('quota-content');
+      const quotaError = document.getElementById('quota-error');
+      
+      quotaLoading?.classList.add('hidden');
+      quotaError?.classList.add('hidden');
+      quotaContent?.classList.remove('hidden');
+    }
+
+    function showQuotaError() {
+      const quotaLoading = document.getElementById('quota-loading');
+      const quotaContent = document.getElementById('quota-content');
+      const quotaError = document.getElementById('quota-error');
+      
+      quotaLoading?.classList.add('hidden');
+      quotaContent?.classList.add('hidden');
+      quotaError?.classList.remove('hidden');
+    }
+
+    async function loadQuotaData(userid: string) {
+      try {
+        const quotaData = await fetchQuotaData(userid);
+        if (quotaData) {
+          populateQuotaDetails(quotaData);
+        } else {
+          showQuotaError();
+        }
+      } catch (error) {
+        showQuotaError();
+      }
+    }
+
+    async function refreshAccountData(userid: string) {
+      try {
+        const response = await fetch(`http://localhost:8000/cuser/${userid}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch account data');
+        }
+        
+        const userData: UserData = await response.json();
+        localStorage.setItem('medoracle_user', JSON.stringify(userData));
+        populateAccountDetails(userData);
+        return userData;
+      } catch (error) {
+        console.error('Error refreshing account data:', error);
+        throw error;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('medoracle_user');
+      // Notify auth manager that user logged out
+      if ((window as any).authManager) {
+        (window as any).authManager.onLogout();
+      }
+      // No need to redirect - auth overlay will show automatically
+    }
+
+    function clearLocalData() {
+      if (confirm('Are you sure you want to clear all local data? You will need to log in again.')) {
+        localStorage.clear();
+        // Notify auth manager that user logged out
+        if ((window as any).authManager) {
+          (window as any).authManager.onLogout();
+        }
+      }
+    }
+
+    // Initialize page
+    async function init() {
+      showLoading();
+      
+      const storedUser = localStorage.getItem('medoracle_user');
+      if (!storedUser) {
+        showLoginRequired();
+        return;
+      }
+
+      try {
+        const userData: UserData = JSON.parse(storedUser);
+        populateAccountDetails(userData);
+        showAccountDetails();
+        
+        // Load quota data
+        loadQuotaData(userData.id);
+        
+        // Try to refresh data in background
+        try {
+          await refreshAccountData(userData.id);
+        } catch (error) {
+          // If refresh fails, still show cached data
+          console.warn('Failed to refresh account data, showing cached data');
+        }
+      } catch (error) {
+        console.error('Error parsing stored user data:', error);
+        localStorage.removeItem('medoracle_user');
+        showLoginRequired();
+      }
+    }
+
+    // Event listeners
+    logoutBtn?.addEventListener('click', logout);
+    clearDataBtn?.addEventListener('click', clearLocalData);
+    
+    refreshBtn?.addEventListener('click', async () => {
+      const storedUser = localStorage.getItem('medoracle_user');
+      if (storedUser) {
+        try {
+          const userData: UserData = JSON.parse(storedUser);
+          refreshBtn.textContent = 'Refreshing...';
+          refreshBtn.setAttribute('disabled', 'true');
+          
+          await refreshAccountData(userData.id);
+          // Also refresh quota data
+          loadQuotaData(userData.id);
+          
+          refreshBtn.textContent = 'Refresh Account';
+          refreshBtn.removeAttribute('disabled');
+        } catch (error) {
+          refreshBtn.textContent = 'Refresh Failed';
+          setTimeout(() => {
+            refreshBtn.textContent = 'Refresh Account';
+            refreshBtn.removeAttribute('disabled');
+          }, 2000);
+        }
+      }
+    });
+
+    retryQuotaBtn?.addEventListener('click', () => {
+      const storedUser = localStorage.getItem('medoracle_user');
+      if (storedUser) {
+        try {
+          const userData: UserData = JSON.parse(storedUser);
+          loadQuotaData(userData.id);
+        } catch (error) {
+          console.error('Error retrying quota data:', error);
+        }
+      }
+    });
+
+    // Renew Quota Button
+    const renewQuotaBtn = document.getElementById('renew-quota-btn');
+    renewQuotaBtn?.addEventListener('click', () => {
+      const storedUser = localStorage.getItem('medoracle_user');
+      if (storedUser) {
+        try {
+          const userData: UserData = JSON.parse(storedUser);
+          const renewUrl = `https://medapi.pages.dev?uid=${userData.id}`;
+          window.open(renewUrl, '_blank');
+        } catch (error) {
+          console.error('Error opening renew quota page:', error);
+        }
+      }
+    });
+
+    // Buy Now Buttons
+    const buyNowButtons = document.querySelectorAll('.buy-now-btn');
+    buyNowButtons.forEach((button) => {
+      button.addEventListener('click', (e) => {
+        const target = e.target as HTMLButtonElement;
+        let planType = '';
+        
+        if (target.classList.contains('diamond-btn')) {
+          planType = 'diamond';
+        } else if (target.classList.contains('gold-btn')) {
+          planType = 'gold';
+        } else if (target.classList.contains('silver-btn')) {
+          planType = 'silver';
+        }
+
+        const storedUser = localStorage.getItem('medoracle_user');
+        if (storedUser && planType) {
+          try {
+            const userData: UserData = JSON.parse(storedUser);
+            const purchaseUrl = `https://medapi.pages.dev?uid=${userData.id}&plan=${planType}`;
+            window.open(purchaseUrl, '_blank');
+          } catch (error) {
+            console.error('Error opening purchase page:', error);
+          }
+        }
+      });
+    });
+
+    init();
+  });
+</script>
