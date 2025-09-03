@@ -290,7 +290,7 @@ import Layout from '../layouts/Layout.astro';
 
     async function loginUser(userid: string, username: string): Promise<UserData | null> {
       try {
-        const response = await fetch(`https://misc-1.onrender.com/cuser/${userid}`, {
+        const response = await fetch(`http://localhost:8000/cuser/${userid}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
