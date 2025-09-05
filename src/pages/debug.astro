@@ -1,0 +1,244 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Debug Info - Medoracle Academia">
+  <div class="debug-container">
+    <div class="debug-card">
+      <h1>Platform Debug Information</h1>
+      
+      <div class="debug-section">
+        <h3>Browser Detection</h3>
+        <div class="debug-info">
+          <div class="debug-item">
+            <span class="label">User Agent:</span>
+            <span id="user-agent" class="value">Loading...</span>
+          </div>
+          <div class="debug-item">
+            <span class="label">Detected Platform:</span>
+            <span id="browser-platform" class="value">Loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="debug-section">
+        <h3>Telegram WebApp</h3>
+        <div class="debug-info">
+          <div class="debug-item">
+            <span class="label">Telegram Available:</span>
+            <span id="telegram-available" class="value">Loading...</span>
+          </div>
+          <div class="debug-item">
+            <span class="label">WebApp Platform:</span>
+            <span id="webapp-platform" class="value">Loading...</span>
+          </div>
+          <div class="debug-item">
+            <span class="label">User ID:</span>
+            <span id="user-id" class="value">Loading...</span>
+          </div>
+          <div class="debug-item">
+            <span class="label">User Data:</span>
+            <span id="user-data" class="value">Loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="debug-section">
+        <h3>Current State</h3>
+        <div class="debug-info">
+          <div class="debug-item">
+            <span class="label">Current URL:</span>
+            <span id="current-url" class="value">Loading...</span>
+          </div>
+          <div class="debug-item">
+            <span class="label">Local Storage User:</span>
+            <span id="stored-user" class="value">Loading...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="debug-actions">
+        <button id="refresh-debug" class="debug-btn">Refresh Debug Info</button>
+        <button id="clear-storage" class="debug-btn">Clear Local Storage</button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .debug-container {
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .debug-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+  }
+
+  h1 {
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .debug-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+  }
+
+  .debug-section h3 {
+    color: var(--purple-primary);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .debug-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .debug-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+  }
+
+  .label {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    min-width: 150px;
+  }
+
+  .value {
+    color: var(--text-color);
+    font-family: monospace;
+    font-size: 0.9rem;
+    word-break: break-all;
+    text-align: right;
+    flex: 1;
+  }
+
+  .debug-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .debug-btn {
+    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .debug-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 600px) {
+    .debug-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .label {
+      min-width: auto;
+      margin-bottom: 0.25rem;
+    }
+
+    .value {
+      text-align: left;
+    }
+
+    .debug-actions {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    function updateDebugInfo() {
+      // Browser detection
+      const userAgentEl = document.getElementById('user-agent');
+      if (userAgentEl) userAgentEl.textContent = navigator.userAgent;
+      
+      const detectPlatform = () => {
+        const userAgent = navigator.userAgent.toLowerCase();
+        if (userAgent.includes('iphone')) return 'iPhone';
+        if (userAgent.includes('ipad')) return 'iPad';
+        if (userAgent.includes('mac')) return 'macOS';
+        if (userAgent.includes('android')) return 'Android';
+        if (userAgent.includes('windows')) return 'Windows';
+        if (userAgent.includes('linux')) return 'Linux';
+        return 'Unknown';
+      };
+      
+      const browserPlatformEl = document.getElementById('browser-platform');
+      if (browserPlatformEl) browserPlatformEl.textContent = detectPlatform();
+      
+      // Telegram WebApp info
+      const telegramAvailable = !!(window as any).Telegram?.WebApp;
+      const telegramAvailableEl = document.getElementById('telegram-available');
+      if (telegramAvailableEl) telegramAvailableEl.textContent = telegramAvailable ? 'Yes' : 'No';
+      
+      const webappPlatformEl = document.getElementById('webapp-platform');
+      const userIdEl = document.getElementById('user-id');
+      const userDataEl = document.getElementById('user-data');
+      
+      if (telegramAvailable) {
+        const tg = (window as any).Telegram.WebApp;
+        if (webappPlatformEl) webappPlatformEl.textContent = tg.platform || 'Not detected';
+        if (userIdEl) userIdEl.textContent = tg.initDataUnsafe?.user?.id || 'Not available';
+        if (userDataEl) userDataEl.textContent = JSON.stringify(tg.initDataUnsafe?.user || {}, null, 2);
+      } else {
+        if (webappPlatformEl) webappPlatformEl.textContent = 'N/A - Not in Telegram';
+        if (userIdEl) userIdEl.textContent = 'N/A - Not in Telegram';
+        if (userDataEl) userDataEl.textContent = 'N/A - Not in Telegram';
+      }
+      
+      // Current state
+      const currentUrlEl = document.getElementById('current-url');
+      if (currentUrlEl) currentUrlEl.textContent = window.location.href;
+      
+      const storedUser = localStorage.getItem('medoracle_user');
+      const storedUserEl = document.getElementById('stored-user');
+      if (storedUserEl) storedUserEl.textContent = storedUser || 'None';
+    }
+    
+    // Initial load
+    updateDebugInfo();
+    
+    // Refresh button
+    const refreshBtn = document.getElementById('refresh-debug');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', updateDebugInfo);
+    }
+    
+    // Clear storage button
+    const clearBtn = document.getElementById('clear-storage');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        localStorage.clear();
+        alert('Local storage cleared!');
+        updateDebugInfo();
+      });
+    }
+  });
+</script>

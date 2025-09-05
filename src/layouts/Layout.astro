@@ -21,12 +21,8 @@ const { title } = Astro.props;
     <ViewTransitions />
     <title>{title}</title>
     
-    <!-- Telegram WebApp Script -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="/src/config.js"></script>
     <script>
-      // @ts-nocheck
-      
       // Initialize theme management
       const initTheme = () => {
         const theme = localStorage.getItem('theme') || 'light';
@@ -37,7 +33,7 @@ const { title } = Astro.props;
       initTheme();
 
       // Handle theme toggle
-      window.toggleTheme = () => {
+      (window as any).toggleTheme = () => {
         const isDark = document.documentElement.classList.contains('dark');
         const newTheme = isDark ? 'light' : 'dark';
         document.documentElement.className = newTheme;
@@ -45,85 +41,32 @@ const { title } = Astro.props;
         return newTheme;
       };
 
-      // Initialize Telegram WebApp and Platform Guard
-      const initTelegramApp = async () => {
-        // Load external script and wait for initialization
-        loadTelegramScript();
-        
-        // Wait for script to load and initialize
-        await new Promise(resolve => {
-          const checkInit = () => {
-            if (window.telegramWebApp && window.platformGuard) {
-              resolve();
-            } else {
-              setTimeout(checkInit, 100);
-            }
-          };
-          checkInit();
-        });
-        
-        // Initialize platform guard
-        await window.platformGuard.init();
-      };
-
-      // Load external Telegram initialization script
-      const loadTelegramScript = () => {
-        const script = document.createElement('script');
-        script.src = '/src/scripts/telegram-init.js';
-        script.async = true;
-        document.head.appendChild(script);
-      };
-
-      // Authentication management - now checks platform first
+      // Simple authentication management
       const checkAuth = () => {
-        // First check platform compatibility
-        const telegramApp = window.telegramWebApp;
-        const platform = telegramApp?.getPlatform() || detectPlatformFallback();
-        
-        // If not iOS/macOS, redirect immediately
-        if (platform !== 'ios' && platform !== 'macos') {
-          window.location.href = '/download';
-          return false;
-        }
-        
         const storedUser = localStorage.getItem('medoracle_user');
         const appContent = document.getElementById('app-content');
         const authOverlay = document.getElementById('auth-overlay');
         
         if (storedUser) {
           try {
-            const userData = JSON.parse(storedUser);
-            // Verify it's a Telegram user with valid ID and correct platform
-            if (userData.id && (userData.platform === 'ios' || userData.platform === 'macos')) {
-              // User is authenticated - show content
-              appContent?.classList.remove('hidden');
-              authOverlay?.classList.add('hidden');
-              return true;
-            }
+            JSON.parse(storedUser);
+            // User is authenticated - show content
+            appContent?.classList.remove('hidden');
+            authOverlay?.classList.add('hidden');
+            return true;
           } catch (error) {
             localStorage.removeItem('medoracle_user');
-            localStorage.removeItem('telegram_user_id');
           }
         }
         
-        // User not authenticated - hide content and show loading
+        // User not authenticated - hide content
         appContent?.classList.add('hidden');
         authOverlay?.classList.remove('hidden');
         return false;
       };
 
-      // Platform detection fallback
-      const detectPlatformFallback = () => {
-        const userAgent = navigator.userAgent.toLowerCase();
-        if (userAgent.includes('iphone') || userAgent.includes('ipad')) return 'ios';
-        if (userAgent.includes('mac')) return 'macos';
-        if (userAgent.includes('android')) return 'android';
-        if (userAgent.includes('win')) return 'windows';
-        return 'unknown';
-      };
-
       // Global auth state manager
-      window.authManager = {
+      (window as any).authManager = {
         check: checkAuth,
         onLogin: () => {
           const appContent = document.getElementById('app-content');
@@ -139,34 +82,8 @@ const { title } = Astro.props;
         }
       };
 
-      // Initialize app with improved platform check
-      const initApp = async () => {
-        // Check if we're already on download page to prevent loops
-        if (window.location.pathname === '/download') {
-          return;
-        }
-        
-        // Immediate platform check before any other initialization
-        const platform = detectPlatformFallback();
-        console.log('Detected platform:', platform);
-        
-        if (platform !== 'ios' && platform !== 'macos') {
-          console.log('Redirecting to download page for platform:', platform);
-          window.location.href = '/download';
-          return;
-        }
-        
-        await initTelegramApp();
-        checkAuth();
-      };
-
-      // Start initialization immediately
-      initApp();
-
-      // Listen for user authentication from platform guard
-      window.addEventListener('user-authenticated', () => {
-        checkAuth();
-      });
+      // Check auth on page load
+      checkAuth();
 
       // Reapply theme after page transitions
       document.addEventListener('astro:after-swap', () => {
@@ -190,8 +107,7 @@ const { title } = Astro.props;
     <div id="auth-overlay" class="auth-overlay">
       <div class="auth-loading">
         <div class="auth-spinner"></div>
-        <p>Initializing Telegram Mini App...</p>
-        <p class="auth-subtext">Verifying iOS access and user credentials</p>
+        <p>Checking authentication...</p>
       </div>
     </div>
     <LoginModal />

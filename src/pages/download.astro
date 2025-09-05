@@ -2,90 +2,79 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Download App - Medoracle Academia">
-  <div class="download-container">
-    <div class="download-card">
-      <div class="icon-container">
-        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      
-      <h1>iOS/iPadOS/macOS Required</h1>
-      <p class="subtitle">This Mini App is only available for iOS, iPadOS, and macOS users</p>
-      
-      <div class="platform-info">
-        <div class="detected-platform">
-          <span class="label">Detected Platform:</span>
-          <span id="platform-display" class="platform-value">Detecting...</span>
-        </div>
-        <div class="detected-platform">
-          <span class="label">Telegram Platform:</span>
-          <span id="webapp-platform" class="platform-value">Checking...</span>
-        </div>
-        <div class="detected-platform">
-          <span class="label">User ID:</span>
-          <span id="user-id" class="platform-value">Loading...</span>
-        </div>
-      </div>
-      
-      <div class="download-options">
-        <h3>Get Medoracle Academia:</h3>
+<Layout title="Download Medoracle Academia">
+  <div class="container">
+    <div class="content">
+      <div class="card">
+        <h1>📱 Download Required</h1>
+        <p class="subtitle">Medoracle Academia is available for iOS, iPadOS, and macOS users only.</p>
         
-        <a href="https://t.me/Med" class="download-btn telegram-btn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-.38.24-1.07.7-.96.66-1.97 1.35-1.97 1.35s-.22.14-.63.02c-.4-.12-.91-.29-1.46-.53-.68-.3-1.22-.47-1.17-.99.03-.27.35-.54.88-.81 2.22-.97 3.71-1.62 4.47-1.95 2.62-1.13 3.16-1.33 3.51-1.33.08 0 .26.02.37.12.09.08.12.19.13.27-.01.06.01.24-.01.38z"/>
-          </svg>
-          Use Telegram Bot
-        </a>
-        
-        <div class="app-store-section">
-          <p class="store-text">Or download our mobile app:</p>
-          <div class="store-buttons">
-            <a href="#" class="store-btn app-store">
-              <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on App Store" />
-            </a>
-            <a href="#" class="store-btn google-play">
-              <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" />
+        <div class="platform-info">
+          <h3>🔍 Detection Results</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Your Platform:</strong>
+              <span id="user-platform">Detecting...</span>
+            </div>
+            <div class="info-item">
+              <strong>Telegram Platform:</strong>
+              <span id="telegram-platform">Detecting...</span>
+            </div>
+            <div class="info-item">
+              <strong>Telegram User ID:</strong>
+              <span id="telegram-user-id">Detecting...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="supported-platforms">
+          <h3>✅ Supported Platforms</h3>
+          <ul>
+            <li>📱 iPhone (iOS)</li>
+            <li>📱 iPad (iPadOS)</li>
+            <li>💻 Mac (macOS)</li>
+          </ul>
+        </div>
+
+        <div class="download-section">
+          <h3>📥 Get Telegram</h3>
+          <p>To access Medoracle Academia, you'll need Telegram on a supported device:</p>
+          
+          <div class="download-buttons">
+            <a href="https://t.me/Med" class="btn btn-primary" target="_blank">
+              🤖 Open Telegram Bot
             </a>
           </div>
         </div>
-      </div>
-      
-      <div class="help-section">
-        <h4>Need Help?</h4>
-        <p>Contact us through our Telegram bot for support and assistance.</p>
       </div>
     </div>
   </div>
 </Layout>
 
 <style>
-  .download-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 120px);
-    padding: 2rem 1rem;
-  }
-
-  .download-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 3rem 2rem;
-    width: 100%;
-    max-width: 500px;
+  .container {
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    color: white;
+    padding: 2rem 0;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .icon-container {
-    margin-bottom: 2rem;
-    color: var(--purple-primary);
+  .content {
+    margin-top: 4rem;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+    max-width: 600px;
+    margin: 0 auto;
   }
 
   h1 {
@@ -107,110 +96,102 @@ import Layout from '../layouts/Layout.astro';
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.5rem;
     margin-bottom: 2rem;
+    text-align: left;
   }
 
-  .detected-platform {
+  .platform-info h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #4f3bc4;
+  }
+
+  .info-grid {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .info-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .label {
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
+  .info-item:last-child {
+    border-bottom: none;
   }
 
-  .platform-value {
-    color: var(--text-color);
-    font-weight: 600;
-    text-transform: capitalize;
-  }
-
-  .download-options {
+  .supported-platforms {
+    background: rgba(79, 59, 196, 0.1);
+    border: 1px solid rgba(79, 59, 196, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
     margin-bottom: 2rem;
   }
 
-  .download-options h3 {
-    color: var(--text-color);
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
+  .supported-platforms h3 {
+    color: #4f3bc4;
+    margin-bottom: 1rem;
   }
 
-  .download-btn {
+  .supported-platforms ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .supported-platforms li {
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+  }
+
+  .download-section {
+    text-align: center;
+  }
+
+  .download-section h3 {
+    color: #4f3bc4;
+    margin-bottom: 1rem;
+  }
+
+  .download-section p {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .download-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    background: linear-gradient(135deg, #0088cc, #0066aa);
-    color: white;
-    text-decoration: none;
+    gap: 0.5rem;
     padding: 1rem 2rem;
     border-radius: 12px;
-    font-size: 1.1rem;
+    text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
-    margin-bottom: 2rem;
   }
 
-  .download-btn:hover {
+  .btn-primary {
+    background: linear-gradient(135deg, #0088cc, #0066aa);
+    color: white;
+  }
+
+  .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 136, 204, 0.3);
   }
 
-  .app-store-section {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1.5rem;
-  }
-
-  .store-text {
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 1rem;
-    font-size: 0.95rem;
-  }
-
-  .store-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .store-btn {
-    display: block;
-    transition: transform 0.3s ease;
-  }
-
-  .store-btn:hover {
-    transform: scale(1.05);
-  }
-
-  .store-btn img {
-    height: 50px;
-    width: auto;
-  }
-
-  .help-section {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1.5rem;
-    margin-top: 2rem;
-  }
-
-  .help-section h4 {
-    color: var(--text-color);
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-  }
-
-  .help-section p {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-
   @media (max-width: 480px) {
-    .download-card {
-      padding: 2rem 1.5rem;
+    .card {
+      padding: 1.5rem;
       margin: 1rem;
     }
 
@@ -218,68 +199,67 @@ import Layout from '../layouts/Layout.astro';
       font-size: 2rem;
     }
 
-    .store-buttons {
+    .download-buttons {
       flex-direction: column;
       align-items: center;
     }
   }
-</style>
+}</style>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
-    const platformDisplay = document.getElementById('platform-display');
-    const webappPlatform = document.getElementById('webapp-platform');
-    const userIdDisplay = document.getElementById('user-id');
-    
-    // Detect platform
-    function detectPlatform() {
-      const userAgent = navigator.userAgent.toLowerCase();
+  // Telegram WebApp script
+  const script = document.createElement('script');
+  script.src = 'https://telegram.org/js/telegram-web-app.js';
+  script.onload = initPlatformDetection;
+  document.head.appendChild(script);
+
+  function initPlatformDetection() {
+    setTimeout(() => {
+      detectAndShowPlatform();
+    }, 1000);
+  }
+
+  function detectAndShowPlatform() {
+    let detectedPlatform = 'unknown';
+    let telegramPlatform = 'Not available';
+    let userId = 'Not available';
+
+    // Detect user platform
+    detectedPlatform = detectPlatformFallback();
+
+    // Check if Telegram WebApp is available
+    if ((window as any).Telegram && (window as any).Telegram.WebApp) {
+      const webApp = (window as any).Telegram.WebApp;
+      telegramPlatform = webApp.platform || 'Not detected';
       
-      if (userAgent.includes('iphone')) return 'iPhone';
-      if (userAgent.includes('ipad')) return 'iPad';
-      if (userAgent.includes('mac')) return 'macOS';
-      if (userAgent.includes('android')) return 'Android';
-      if (userAgent.includes('windows')) return 'Windows';
-      if (userAgent.includes('linux')) return 'Linux';
-      
-      return 'Unknown';
-    }
-    
-    // Get Telegram WebApp info
-    function getTelegramInfo() {
-      if ((window as any).Telegram?.WebApp) {
-        const tg = (window as any).Telegram.WebApp;
-        const platform = tg.platform || 'Not detected';
-        const userId = tg.initDataUnsafe?.user?.id || 'Not available';
-        
-        return { platform, userId };
-      }
-      return { platform: 'Not in Telegram', userId: 'Not available' };
-    }
-    
-    // Update platform display
-    const platform = detectPlatform();
-    if (platformDisplay) {
-      platformDisplay.textContent = platform;
-      
-      // Color code the platform
-      if (platform.includes('iPhone') || platform.includes('iPad') || platform.includes('macOS')) {
-        platformDisplay.style.color = '#51cf66'; // Green for supported
-      } else {
-        platformDisplay.style.color = '#ff6b6b'; // Red for unsupported
+      // Get user ID from Telegram
+      if (webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
+        userId = webApp.initDataUnsafe.user.id.toString();
       }
     }
-    
-    // Update Telegram WebApp info
-    const telegramInfo = getTelegramInfo();
-    if (webappPlatform) {
-      webappPlatform.textContent = telegramInfo.platform;
-      webappPlatform.style.color = telegramInfo.platform === 'Not in Telegram' ? '#ff6b6b' : '#51cf66';
-    }
-    
-    if (userIdDisplay) {
-      userIdDisplay.textContent = telegramInfo.userId;
-      userIdDisplay.style.color = telegramInfo.userId === 'Not available' ? '#ff6b6b' : '#51cf66';
-    }
-  });
+
+    // Update display
+    const userPlatformEl = document.getElementById('user-platform');
+    const telegramPlatformEl = document.getElementById('telegram-platform');
+    const userIdEl = document.getElementById('telegram-user-id');
+
+    if (userPlatformEl) userPlatformEl.textContent = detectedPlatform;
+    if (telegramPlatformEl) telegramPlatformEl.textContent = telegramPlatform;
+    if (userIdEl) userIdEl.textContent = userId;
+  }
+
+  function detectPlatformFallback() {
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.includes('iphone')) return 'ios';
+    if (userAgent.includes('ipad')) return 'ios';
+    if (userAgent.includes('mac')) return 'macos';
+    if (userAgent.includes('android')) return 'android';
+    if (userAgent.includes('win')) return 'windows';
+    return 'unknown';
+  }
+
+  // Fallback if Telegram script fails to load
+  setTimeout(() => {
+    detectAndShowPlatform();
+  }, 3000);
 </script>
