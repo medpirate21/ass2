@@ -868,6 +868,7 @@ import Layout from '../layouts/Layout.astro';
   }
 </style>
 
+<script src="/src/config.js"></script>
 <script>
   interface UserData {
     id: string;
@@ -949,7 +950,7 @@ import Layout from '../layouts/Layout.astro';
 
     async function fetchQuotaData(userid: string): Promise<QuotaData> {
       try {
-        const response = await fetch(`http://localhost:8000/quota/${userid}`, {
+        const response = await fetch((window as any).APP_CONFIG.QUOTA_CHECK(userid), {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -967,7 +968,7 @@ import Layout from '../layouts/Layout.astro';
         
         // Provide specific error messages
         if (error instanceof TypeError && error.message.includes('fetch')) {
-          throw new Error('Cannot connect to server. Please ensure the backend API is running on localhost:8000');
+          throw new Error('Cannot connect to server. Please check your internet connection and try again.');
         }
         
         throw error;
@@ -1029,7 +1030,7 @@ import Layout from '../layouts/Layout.astro';
 
     async function refreshAccountData(userid: string) {
       try {
-        const response = await fetch(`http://localhost:8000/cuser/${userid}`);
+        const response = await fetch((window as any).APP_CONFIG.USER_LOGIN(userid));
         if (!response.ok) {
           throw new Error('Failed to fetch account data');
         }

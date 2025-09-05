@@ -309,6 +309,7 @@
     overflow: hidden;
   }
 </style>
+
 <script src="/src/config.js"></script>
 <script>
   interface UserData {
@@ -392,7 +393,7 @@
         
         // Provide specific error messages
         if (error instanceof TypeError && error.message.includes('fetch')) {
-          throw new Error('Cannot connect to server. Please ensure the backend API is running on localhost:8000');
+          throw new Error('Cannot connect to server. Please check your internet connection and try again.');
         }
         
         throw error;
