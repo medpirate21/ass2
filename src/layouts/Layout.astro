@@ -348,21 +348,21 @@ const { title } = Astro.props;
         }
         
         if (immediateplatformCheck()) {
-          // Avoid triggering auth multiple times
-          if (!(window as any).__medoraAuthTriggered) {
-            (window as any).__medoraAuthTriggered = true;
-            // Delay auth check to prevent race conditions
-            setTimeout(() => {
-              const flags = (window as any).__medoraAuthFlags;
-              // Skip if registration already shown or a check is ongoing
-              if (flags?.regShown || flags?.checking) {
-                return;
-              }
-              if ((window as any).loginModal?.checkAuth) {
-                (window as any).loginModal.checkAuth();
-              }
-            }, 500);
-          }
+          // Trigger auth check immediately after platform validation
+          console.log('🔐 Platform check passed, triggering auth');
+          
+          // Wait for LoginModal to be ready
+          const waitForLoginModal = () => {
+            if ((window as any).loginModal?.checkAuth) {
+              console.log('✅ LoginModal ready, starting auth check');
+              (window as any).loginModal.checkAuth();
+            } else {
+              console.log('⏳ Waiting for LoginModal...');
+              setTimeout(waitForLoginModal, 100);
+            }
+          };
+          
+          setTimeout(waitForLoginModal, 100);
         }
       };
 
@@ -373,12 +373,17 @@ const { title } = Astro.props;
       } else {
         console.log('⏳ Waiting for Telegram WebApp to load...');
         // Listen for Telegram WebApp ready event
+        let attempts = 0;
         const checkTelegramReady = () => {
+          attempts++;
           if ((window as any).Telegram?.WebApp) {
             console.log('✅ Telegram WebApp loaded');
             initializeApp();
-          } else {
+          } else if (attempts < 30) { // Max 3 seconds
             setTimeout(checkTelegramReady, 100);
+          } else {
+            console.log('⚠️ Telegram WebApp not found, proceeding without it');
+            initializeApp(); // Proceed anyway for testing
           }
         };
         checkTelegramReady();
