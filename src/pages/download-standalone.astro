@@ -1,0 +1,260 @@
+---
+// Standalone download page without Layout to avoid platform check conflicts
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Download Medoracle Academia</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #ff6b6b, #ffa500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .platform-info {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .platform-info h3 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #4f3bc4;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .supported-platforms {
+      background: rgba(79, 59, 196, 0.1);
+      border: 1px solid rgba(79, 59, 196, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .supported-platforms h3 {
+      color: #4f3bc4;
+      margin-bottom: 1rem;
+    }
+
+    .supported-platforms ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .supported-platforms li {
+      padding: 0.5rem 0;
+      font-size: 1.1rem;
+    }
+
+    .download-section {
+      text-align: center;
+    }
+
+    .download-section h3 {
+      color: #4f3bc4;
+      margin-bottom: 1rem;
+    }
+
+    .download-section p {
+      margin-bottom: 1.5rem;
+      opacity: 0.9;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #0088cc, #0066aa);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 136, 204, 0.3);
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>📱 Download Required</h1>
+      <p class="subtitle">Medoracle Academia is available for iOS, iPadOS, and macOS users only.</p>
+      
+      <div class="platform-info">
+        <h3>🔍 Detection Results</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>Your Platform:</strong>
+            <span id="user-platform">Detecting...</span>
+          </div>
+          <div class="info-item">
+            <strong>Telegram Platform:</strong>
+            <span id="telegram-platform">Detecting...</span>
+          </div>
+          <div class="info-item">
+            <strong>Telegram User ID:</strong>
+            <span id="telegram-user-id">Detecting...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="supported-platforms">
+        <h3>✅ Supported Platforms</h3>
+        <ul>
+          <li>📱 iPhone (iOS)</li>
+          <li>📱 iPad (iPadOS)</li>
+          <li>💻 Mac (macOS)</li>
+        </ul>
+      </div>
+
+      <div class="download-section">
+        <h3>📥 Get Telegram</h3>
+        <p>To access Medoracle Academia, you'll need Telegram on a supported device:</p>
+        
+        <a href="https://t.me/Med" class="btn" target="_blank">
+          🤖 Open Telegram Bot
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Telegram WebApp script
+    const script = document.createElement('script');
+    script.src = 'https://telegram.org/js/telegram-web-app.js';
+    script.onload = initPlatformDetection;
+    document.head.appendChild(script);
+
+    function initPlatformDetection() {
+      setTimeout(() => {
+        detectAndShowPlatform();
+      }, 1000);
+    }
+
+    function detectAndShowPlatform() {
+      let detectedPlatform = 'unknown';
+      let telegramPlatform = 'Not available';
+      let userId = 'Not available';
+
+      // Detect user platform
+      detectedPlatform = detectPlatformFallback();
+
+      // Check if Telegram WebApp is available
+      if ((window as any).Telegram && (window as any).Telegram.WebApp) {
+        const webApp = (window as any).Telegram.WebApp;
+        telegramPlatform = webApp.platform || 'Not detected';
+        
+        // Get user ID from Telegram
+        if (webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
+          userId = webApp.initDataUnsafe.user.id.toString();
+        }
+      }
+
+      // Update display
+      const userPlatformEl = document.getElementById('user-platform');
+      const telegramPlatformEl = document.getElementById('telegram-platform');
+      const userIdEl = document.getElementById('telegram-user-id');
+
+      if (userPlatformEl) userPlatformEl.textContent = detectedPlatform;
+      if (telegramPlatformEl) telegramPlatformEl.textContent = telegramPlatform;
+      if (userIdEl) userIdEl.textContent = userId;
+    }
+
+    function detectPlatformFallback() {
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.includes('iphone')) return 'ios';
+      if (userAgent.includes('ipad')) return 'ios';
+      if (userAgent.includes('mac')) return 'macos';
+      if (userAgent.includes('android')) return 'android';
+      if (userAgent.includes('win')) return 'windows';
+      return 'unknown';
+    }
+
+    // Fallback if Telegram script fails to load
+    setTimeout(() => {
+      detectAndShowPlatform();
+    }, 3000);
+  </script>
+</body>
+</html>

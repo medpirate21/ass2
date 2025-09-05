@@ -197,7 +197,7 @@ const icons = {
       item.addEventListener('click', (e) => {
         if (!checkPlatformBeforeNavigation()) {
           e.preventDefault();
-          window.location.href = '/download';
+          window.location.href = '/download-standalone';
         }
       });
     });
@@ -208,7 +208,7 @@ const icons = {
       quizLink.addEventListener('click', (e) => {
         if (!checkPlatformBeforeNavigation()) {
           e.preventDefault();
-          window.location.href = '/download';
+          window.location.href = '/download-standalone';
         } else {
           e.preventDefault();
           window.open('https://medoracle-quiz.pages.dev', '_blank', 'noopener,noreferrer');
