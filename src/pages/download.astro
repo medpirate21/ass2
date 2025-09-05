@@ -13,13 +13,21 @@ import Layout from '../layouts/Layout.astro';
         </svg>
       </div>
       
-      <h1>iOS/macOS Required</h1>
-      <p class="subtitle">This Mini App is only available for iOS and macOS users</p>
+      <h1>iOS/iPadOS/macOS Required</h1>
+      <p class="subtitle">This Mini App is only available for iOS, iPadOS, and macOS users</p>
       
       <div class="platform-info">
         <div class="detected-platform">
           <span class="label">Detected Platform:</span>
           <span id="platform-display" class="platform-value">Detecting...</span>
+        </div>
+        <div class="detected-platform">
+          <span class="label">Telegram Platform:</span>
+          <span id="webapp-platform" class="platform-value">Checking...</span>
+        </div>
+        <div class="detected-platform">
+          <span class="label">User ID:</span>
+          <span id="user-id" class="platform-value">Loading...</span>
         </div>
       </div>
       
@@ -220,6 +228,8 @@ import Layout from '../layouts/Layout.astro';
 <script>
   document.addEventListener('astro:page-load', () => {
     const platformDisplay = document.getElementById('platform-display');
+    const webappPlatform = document.getElementById('webapp-platform');
+    const userIdDisplay = document.getElementById('user-id');
     
     // Detect platform
     function detectPlatform() {
@@ -235,6 +245,19 @@ import Layout from '../layouts/Layout.astro';
       return 'Unknown';
     }
     
+    // Get Telegram WebApp info
+    function getTelegramInfo() {
+      if ((window as any).Telegram?.WebApp) {
+        const tg = (window as any).Telegram.WebApp;
+        const platform = tg.platform || 'Not detected';
+        const userId = tg.initDataUnsafe?.user?.id || 'Not available';
+        
+        return { platform, userId };
+      }
+      return { platform: 'Not in Telegram', userId: 'Not available' };
+    }
+    
+    // Update platform display
     const platform = detectPlatform();
     if (platformDisplay) {
       platformDisplay.textContent = platform;
@@ -245,6 +268,18 @@ import Layout from '../layouts/Layout.astro';
       } else {
         platformDisplay.style.color = '#ff6b6b'; // Red for unsupported
       }
+    }
+    
+    // Update Telegram WebApp info
+    const telegramInfo = getTelegramInfo();
+    if (webappPlatform) {
+      webappPlatform.textContent = telegramInfo.platform;
+      webappPlatform.style.color = telegramInfo.platform === 'Not in Telegram' ? '#ff6b6b' : '#51cf66';
+    }
+    
+    if (userIdDisplay) {
+      userIdDisplay.textContent = telegramInfo.userId;
+      userIdDisplay.style.color = telegramInfo.userId === 'Not available' ? '#ff6b6b' : '#51cf66';
     }
   });
 </script>
