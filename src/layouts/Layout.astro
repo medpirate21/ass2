@@ -84,13 +84,28 @@ const { title } = Astro.props;
         authOverlay?.classList.remove('hidden');
         
         // Show login modal after ensuring it's available
+        let retryCount = 0;
+        const maxRetries = 25; // 5 seconds max (25 * 200ms)
         const showLoginModal = () => {
           if (window.loginModal) {
             console.log('Showing login modal');
             window.loginModal.show();
-          } else {
-            console.log('Login modal not available, retrying...');
+          } else if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`Login modal not available, retrying... (${retryCount}/${maxRetries})`);
             setTimeout(showLoginModal, 200);
+          } else {
+            console.error('LoginModal failed to load after maximum retries. Forcing modal display...');
+            // Force show the modal element directly
+            const modal = document.getElementById('login-modal');
+            if (modal) {
+              modal.classList.remove('hidden');
+              modal.classList.add('show');
+              document.body.classList.add('modal-open');
+              console.log('Forced login modal to show');
+            } else {
+              console.error('Login modal element not found in DOM');
+            }
           }
         };
         setTimeout(showLoginModal, 100);
@@ -114,13 +129,28 @@ const { title } = Astro.props;
           authOverlay?.classList.remove('hidden');
           
           // Show login modal after logout
+          let logoutRetryCount = 0;
+          const maxLogoutRetries = 25; // 5 seconds max
           const showLoginModalAfterLogout = () => {
             if (window.loginModal) {
               console.log('Showing login modal after logout');
               window.loginModal.show();
-            } else {
-              console.log('Login modal not available after logout, retrying...');
+            } else if (logoutRetryCount < maxLogoutRetries) {
+              logoutRetryCount++;
+              console.log(`Login modal not available after logout, retrying... (${logoutRetryCount}/${maxLogoutRetries})`);
               setTimeout(showLoginModalAfterLogout, 200);
+            } else {
+              console.error('LoginModal failed to load after logout. Forcing modal display...');
+              // Force show the modal element directly
+              const modal = document.getElementById('login-modal');
+              if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('show');
+                document.body.classList.add('modal-open');
+                console.log('Forced login modal to show after logout');
+              } else {
+                console.error('Login modal element not found in DOM after logout');
+              }
             }
           };
           setTimeout(showLoginModalAfterLogout, 100);
