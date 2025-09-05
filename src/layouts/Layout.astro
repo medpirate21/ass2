@@ -144,11 +144,6 @@ const { title } = Astro.props;
         if (authOverlay) authOverlay.classList.add('hidden');
       };
 
-      // Simplified authentication - just show auth overlay
-      const checkAuth = () => {
-        console.log('🔐 Showing auth overlay for login check');
-        showAuthOverlay();
-      };
 
       // Show welcome message for allowed users
       const showWelcomeMessage = () => {
@@ -301,7 +296,6 @@ const { title } = Astro.props;
 
       // Global auth state manager
       (window as any).authManager = {
-        check: checkAuth,
         onLogin: () => {
           const appContent = document.getElementById('app-content');
           const authOverlay = document.getElementById('auth-overlay');
@@ -311,26 +305,20 @@ const { title } = Astro.props;
           updateDebugInfo();
         },
         onLogout: () => {
-          // Clear user data
           localStorage.removeItem('medoracle_user');
-          
-          // DO NOT clear telegram_user_id and telegram_platform - needed for re-authentication
-          // localStorage.removeItem('telegram_user_id');
-          // localStorage.removeItem('telegram_platform');
-          
-          // Remove welcome message
           const welcomeEl = document.getElementById('welcome-message');
           if (welcomeEl) welcomeEl.remove();
           
-          // Show auth overlay and trigger re-authentication
-          const appContent = document.getElementById('app-content');
-          const authOverlay = document.getElementById('auth-overlay');
-          appContent?.classList.add('hidden');
-          authOverlay?.classList.remove('hidden');
+          // Reset auth flags to allow re-authentication
+          (window as any).__medoraAuthTriggered = false;
+          if ((window as any).__medoraAuthFlags) {
+            (window as any).__medoraAuthFlags.regShown = false;
+            (window as any).__medoraAuthFlags.checking = false;
+          }
           
+          showAuthOverlay();
           updateDebugInfo();
           
-          // Trigger re-authentication check
           if ((window as any).loginModal?.checkAuth) {
             (window as any).loginModal.checkAuth();
           }
@@ -495,7 +483,11 @@ const { title } = Astro.props;
     view-transition-name: main;
     position: relative;
     z-index: 1;
+    margin: auto;
     margin-top: var(--header-height);
+    padding: 5rem 1.5rem 1.5rem;
+    max-width: 90ch;
+    animation: fade-in 0.3s ease-out;
   }
 
   body {
@@ -519,13 +511,6 @@ const { title } = Astro.props;
     z-index: -1;
   }
 
-  main {
-    margin: auto;
-    padding: 5rem 1.5rem 1.5rem;
-    max-width: 90ch;
-    animation: fade-in 0.3s ease-out;
-    view-transition-name: main;
-  }
 
   @media (max-width: 768px) {
     main {
