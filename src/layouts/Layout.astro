@@ -330,78 +330,58 @@ const { title } = Astro.props;
       // Create debug overlay
       createDebugOverlay();
 
-      // Initialize app once (global guard across page transitions)
-      const initializeApp = () => {
-        if ((window as any).__medoraInitDone) return;
-        (window as any).__medoraInitDone = true;
-        
-        console.log('🚀 Initializing app...');
-        
-        // Extract Telegram user data first
-        if ((window as any).Telegram?.WebApp) {
-          const webApp = (window as any).Telegram.WebApp;
-          if (webApp.initDataUnsafe?.user) {
-            const userId = webApp.initDataUnsafe.user.id.toString();
-            const platform = webApp.platform || detectPlatform();
-            
-            console.log('📱 Telegram user data extracted:', {
-              userId,
-              platform,
-              username: webApp.initDataUnsafe.user.username
-            });
-            
-            localStorage.setItem('telegram_user_id', userId);
-            localStorage.setItem('telegram_platform', platform);
-          }
-        }
-        
-        if (immediateplatformCheck()) {
-          // Avoid triggering auth multiple times
-          if (!(window as any).__medoraAuthTriggered) {
-            (window as any).__medoraAuthTriggered = true;
-            // Hide auth overlay immediately, let LoginModal handle UI
-            const authOverlay = document.getElementById('auth-overlay');
-            if (authOverlay) authOverlay.classList.add('hidden');
-            
-            // Delay auth check to prevent race conditions
-            setTimeout(() => {
-              const flags = (window as any).__medoraAuthFlags;
-              // Skip if registration already shown or a check is ongoing
-              if (flags?.regShown || flags?.checking) {
-                return;
-              }
-              if ((window as any).loginModal?.checkAuth) {
-                (window as any).loginModal.checkAuth();
-              }
-            }, 100);
-          }
-        }
-      };
+      // Prevent any re-initialization completely
+      if ((window as any).__medoraFullyInitialized) {
+        return; // Exit early if already initialized
+      }
+      (window as any).__medoraFullyInitialized = true;
 
-      // Check if Telegram WebApp is already loaded, otherwise wait
+      console.log('🚀 Initializing app (one time only)...');
+      
+      // Extract Telegram user data first
       if ((window as any).Telegram?.WebApp) {
-        console.log('🚀 Telegram WebApp already loaded');
-        initializeApp();
-      } else {
-        console.log('⏳ Waiting for Telegram WebApp to load...');
-        // Listen for Telegram WebApp ready event
-        const checkTelegramReady = () => {
-          if ((window as any).Telegram?.WebApp) {
-            console.log('✅ Telegram WebApp loaded');
-            initializeApp();
-          } else {
-            setTimeout(checkTelegramReady, 100);
+        const webApp = (window as any).Telegram.WebApp;
+        if (webApp.initDataUnsafe?.user) {
+          const userId = webApp.initDataUnsafe.user.id.toString();
+          const platform = webApp.platform || detectPlatform();
+          
+          console.log('📱 Telegram user data extracted:', {
+            userId,
+            platform,
+            username: webApp.initDataUnsafe.user.username
+          });
+          
+          localStorage.setItem('telegram_user_id', userId);
+          localStorage.setItem('telegram_platform', platform);
+        }
+      }
+      
+      if (immediateplatformCheck()) {
+        // Hide auth overlay immediately, let LoginModal handle UI
+        const authOverlay = document.getElementById('auth-overlay');
+        if (authOverlay) authOverlay.classList.add('hidden');
+        
+        // Single auth trigger with stronger guard
+        setTimeout(() => {
+          if ((window as any).__medoraAuthStarted) return;
+          (window as any).__medoraAuthStarted = true;
+          
+          if ((window as any).loginModal?.checkAuth) {
+            (window as any).loginModal.checkAuth();
           }
-        };
-        checkTelegramReady();
+        }, 200);
       }
 
-      // Only handle theme on page transitions - no re-initialization
+      // Only handle theme on page transitions - NO re-initialization
       document.addEventListener('astro:after-swap', () => {
-        initTheme();
+        if (!(window as any).__medoraFullyInitialized) {
+          initTheme();
+        }
       });
       document.addEventListener('astro:page-load', () => {
-        initTheme();
+        if (!(window as any).__medoraFullyInitialized) {
+          initTheme();
+        }
       });
     </script>
   </head>
