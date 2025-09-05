@@ -1,515 +1,362 @@
 ---
-import Navbar from '../components/Navbar.astro';
-import Header from '../components/Header.astro';
-import LoginModal from '../components/LoginModal.astro';
-import { ViewTransitions } from 'astro:transitions';
-interface Props {
-  title: string;
-}
-
-const { title } = Astro.props;
+import Layout from '../layouts/Layout.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <meta name="view-transition" content="same-origin" />
-    <ViewTransitions />
-    <title>{title}</title>
-    
-    <!-- Telegram WebApp Script -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-      // @ts-nocheck
-      declare global {
-        interface Window {
-          toggleTheme: () => string;
-          authManager: {
-            check: () => boolean;
-            onLogin: () => void;
-            onLogout: () => void;
-          };
-          telegramWebApp: any;
-          platformGuard: any;
-          Telegram: any;
-          APP_CONFIG: any;
-        }
-      }
+<Layout title="Login - Medoracle Academia">
+  <div class="login-container">
+    <div class="login-card">
+      <h1>Welcome Back</h1>
+      <p class="subtitle">Sign in with your Medoracle credentials</p>
       
-      // Initialize theme management
-      const initTheme = () => {
-        const theme = localStorage.getItem('theme') || 'light';
-        document.documentElement.className = theme;
-      }
-
-      // Run on initial load
-      initTheme();
-
-      // Handle theme toggle
-      window.toggleTheme = () => {
-        const isDark = document.documentElement.classList.contains('dark');
-        const newTheme = isDark ? 'light' : 'dark';
-        document.documentElement.className = newTheme;
-        localStorage.setItem('theme', newTheme);
-        return newTheme;
-      };
-
-      // Initialize Telegram WebApp and Platform Guard
-      const initTelegramApp = async () => {
-        // Initialize Telegram WebApp utilities inline
-        initTelegramWebAppUtils();
-        initPlatformGuard();
+      <form class="login-form" id="login-form">
+        <div class="form-group">
+          <label for="userid">User ID</label>
+          <input 
+            type="text" 
+            id="userid" 
+            name="userid" 
+            placeholder="Enter your User ID" 
+            required 
+          />
+        </div>
         
-        // Initialize platform guard
-        await window.platformGuard.init();
-      };
-
-      // Telegram WebApp utilities
-      function initTelegramWebAppUtils() {
-        class TelegramWebApp {
-          constructor() {
-            this.tg = window.Telegram?.WebApp;
-            this.isReady = false;
-            this.user = null;
-            this.platform = null;
-            
-            if (this.tg) {
-              this.init();
-            }
-          }
-
-          init() {
-            try {
-              this.tg.ready();
-              this.tg.expand();
-              this.user = this.tg.initDataUnsafe?.user || null;
-              this.platform = this.detectPlatform();
-              this.setTheme();
-              this.isReady = true;
-              
-              window.dispatchEvent(new CustomEvent('telegram-webapp-ready', {
-                detail: {
-                  user: this.user,
-                  platform: this.platform,
-                  isIOS: this.isIOS()
-                }
-              }));
-            } catch (error) {
-              console.error('Telegram WebApp initialization failed:', error);
-            }
-          }
-
-          detectPlatform() {
-            if (this.tg?.platform) return this.tg.platform;
-            
-            const userAgent = navigator.userAgent.toLowerCase();
-            if (userAgent.includes('iphone') || userAgent.includes('ipad')) return 'ios';
-            if (userAgent.includes('android')) return 'android';
-            if (userAgent.includes('mac')) return 'macos';
-            if (userAgent.includes('win')) return 'windows';
-            return 'unknown';
-          }
-
-          isIOS() { return this.platform === 'ios'; }
-          getUserId() { return this.user?.id || null; }
-          getUser() { return this.user; }
-          getPlatform() { return this.platform; }
-          isTelegramWebApp() { return !!window.Telegram?.WebApp; }
-          
-          setTheme() {
-            if (!this.tg) return;
-            const isDark = document.documentElement.classList.contains('dark');
-            this.tg.setHeaderColor(isDark ? '#13151a' : '#4f3bc4');
-            this.tg.setBackgroundColor(isDark ? '#13151a' : '#4f3bc4');
-          }
-
-          showAlert(message) {
-            if (this.tg) this.tg.showAlert(message);
-            else alert(message);
-          }
-
-          close() { if (this.tg) this.tg.close(); }
-        }
-
-        window.telegramWebApp = new TelegramWebApp();
-      }
-
-      // Platform Guard utilities
-      function initPlatformGuard() {
-        class PlatformGuard {
-          constructor() {
-            this.redirectUrl = window.APP_CONFIG?.REDIRECT_URL || 'https://t.me/Med';
-            this.isInitialized = false;
-          }
-
-          async init() {
-            if (this.isInitialized) return;
-            await this.waitForTelegramWebApp();
-            this.checkPlatformAccess();
-            this.isInitialized = true;
-          }
-
-          waitForTelegramWebApp() {
-            return new Promise((resolve) => {
-              if (window.telegramWebApp?.isReady) {
-                resolve();
-                return;
-              }
-              
-              const handleReady = () => {
-                window.removeEventListener('telegram-webapp-ready', handleReady);
-                resolve();
-              };
-              
-              window.addEventListener('telegram-webapp-ready', handleReady);
-              setTimeout(resolve, 3000);
-            });
-          }
-
-          checkPlatformAccess() {
-            const telegramApp = window.telegramWebApp;
-            
-            if (!telegramApp?.isTelegramWebApp()) {
-              this.redirectToTelegram('Please access this app through Telegram');
-              return;
-            }
-
-            if (!telegramApp.isIOS()) {
-              this.redirectToTelegram('This app is only available for iOS users. Please use our Telegram bot instead.');
-              return;
-            }
-
-            const userId = telegramApp.getUserId();
-            if (!userId) {
-              this.redirectToTelegram('Unable to verify user. Please restart the app from Telegram.');
-              return;
-            }
-
-            this.storeUserData(telegramApp.getUser());
-            console.log('Platform check passed - iOS user detected:', userId);
-          }
-
-          redirectToTelegram(message) {
-            if (window.telegramWebApp?.tg) {
-              window.telegramWebApp.showAlert(message + '\\n\\nRedirecting to Telegram bot...');
-              setTimeout(() => window.location.href = this.redirectUrl, 2000);
-            } else {
-              alert(message);
-              window.location.href = this.redirectUrl;
-            }
-          }
-
-          storeUserData(user) {
-            if (user) {
-              const userData = {
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                username: user.username,
-                language_code: user.language_code,
-                platform: 'ios',
-                timestamp: Date.now()
-              };
-              
-              localStorage.setItem('medoracle_user', JSON.stringify(userData));
-              localStorage.setItem('telegram_user_id', user.id.toString());
-              
-              window.dispatchEvent(new CustomEvent('user-authenticated', {
-                detail: userData
-              }));
-            }
-          }
-
-          getUserId() { return localStorage.getItem('telegram_user_id'); }
-          getUser() {
-            const userData = localStorage.getItem('medoracle_user');
-            return userData ? JSON.parse(userData) : null;
-          }
-          isAuthenticated() { return !!this.getUserId(); }
-        }
-
-        window.platformGuard = new PlatformGuard();
-      }
-
-      // Authentication management
-      const checkAuth = () => {
-        const storedUser = localStorage.getItem('medoracle_user');
-        const appContent = document.getElementById('app-content');
-        const authOverlay = document.getElementById('auth-overlay');
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="Enter your Username" 
+            required 
+          />
+        </div>
         
-        if (storedUser) {
-          try {
-            const userData = JSON.parse(storedUser);
-            // Verify it's a Telegram user with valid ID
-            if (userData.id && userData.platform === 'ios') {
-              // User is authenticated - show content
-              appContent?.classList.remove('hidden');
-              authOverlay?.classList.add('hidden');
-              return true;
-            }
-          } catch (error) {
-            localStorage.removeItem('medoracle_user');
-            localStorage.removeItem('telegram_user_id');
-          }
-        }
+        <button type="submit" class="login-btn" id="login-btn">
+          <span class="btn-text">Login</span>
+          <span class="btn-loading hidden">Logging in...</span>
+        </button>
         
-        // User not authenticated - hide content
-        appContent?.classList.add('hidden');
-        authOverlay?.classList.remove('hidden');
-        return false;
-      };
-
-      // Global auth state manager
-      window.authManager = {
-        check: checkAuth,
-        onLogin: () => {
-          const appContent = document.getElementById('app-content');
-          const authOverlay = document.getElementById('auth-overlay');
-          appContent?.classList.remove('hidden');
-          authOverlay?.classList.add('hidden');
-        },
-        onLogout: () => {
-          const appContent = document.getElementById('app-content');
-          const authOverlay = document.getElementById('auth-overlay');
-          appContent?.classList.add('hidden');
-          authOverlay?.classList.remove('hidden');
-        }
-      };
-
-      // Initialize app
-      const initApp = async () => {
-        await initTelegramApp();
-        checkAuth();
-      };
-
-      // Start initialization
-      initApp();
-
-      // Listen for user authentication from platform guard
-      window.addEventListener('user-authenticated', () => {
-        checkAuth();
-      });
-
-      // Reapply theme after page transitions
-      document.addEventListener('astro:after-swap', () => {
-        initTheme();
-        checkAuth();
-      });
-      document.addEventListener('astro:page-load', () => {
-        initTheme();
-        checkAuth();
-      });
-    </script>
-  </head>
-  <body>
-    <div id="app-content" class="app-content hidden">
-      <Header />
-      <main>
-        <slot />
-      </main>
-      <Navbar />
-    </div>
-    <div id="auth-overlay" class="auth-overlay">
-      <div class="auth-loading">
-        <div class="auth-spinner"></div>
-        <p>Initializing Telegram Mini App...</p>
-        <p class="auth-subtext">Verifying iOS access and user credentials</p>
+        <div id="error-message" class="error-message hidden"></div>
+        <div id="success-message" class="success-message hidden"></div>
+      </form>
+      
+      <div class="help-text">
+        <p>Don't have credentials? Get them from our <a href="/telegram-login/">Telegram Login</a></p>
       </div>
     </div>
-    <LoginModal />
-  </body>
-</html>
+  </div>
+</Layout>
 
-<style is:global>
-  :root {
-    /* Base colors */
-    --purple-primary: #4f3bc4;
-    --purple-secondary: #7e2fa4;
-    --dark-primary: #13151a;
-    --dark-secondary: #1f2937;
-
-    /* Default theme values */
-    --bg-gradient: linear-gradient(45deg, var(--purple-primary), var(--purple-secondary));
-    --text-color: #ffffff;
-    --card-bg: rgba(255, 255, 255, 0.15);
-    --nav-bg: rgba(255, 255, 255, 0.12);
-
-    --header-height: 60px;
-    --navbar-z-index: 100;
+<style>
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 120px);
+    padding: 2rem 1rem;
   }
 
-  header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: var(--navbar-z-index);
-  }
-
-  html {
-    font-family: system-ui, sans-serif;
-    background: var(--bg-gradient);
-    color: var(--text-color);
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-
-  html.light {
-    /* Light theme overrides */
-  }
-
-  html.dark {
-    --bg-gradient: linear-gradient(45deg, var(--dark-primary), var(--dark-secondary));
-    --text-color: #e1e1e1;
-    --card-bg: rgba(0, 0, 0, 0.3);
-    --nav-bg: rgba(0, 0, 0, 0.25);
-  }
-
-  /* Prevent white flash during transitions */
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-  }
-
-  /* Force background during transitions */
-  ::view-transition-group(root) {
-    background: var(--bg-gradient);
-  }
-
-  /* Remove transition animation */
-  html {
-    view-transition-name: none;
-  }
-
-  /* Keep main content transition */
-  main {
-    view-transition-name: main;
-    position: relative;
-    z-index: 1;
-    margin-top: var(--header-height);
-  }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    position: relative;
-    color: var(--text-color);
-  }
-
-  .background {
-    display: none; /* Remove duplicate background */
-  }
-
-  .blur {
-    position: absolute;
-    top: 0;
-    left: 0;
+  .login-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 3rem 2rem;
     width: 100%;
-    height: 100%;
-    backdrop-filter: blur(100px);
-    z-index: -1;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   }
 
-  main {
-    margin: auto;
-    padding: 5rem 1.5rem 1.5rem;
-    max-width: 90ch;
-    animation: fade-in 0.3s ease-out;
-    view-transition-name: main;
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
-  @media (max-width: 768px) {
-    main {
-      padding-bottom: 5rem;
-    }
+  .subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
   }
 
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: left;
   }
 
-  @keyframes fade-slide {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  /* Remove tap highlight color on mobile */
-  * {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
+  .form-group label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.95rem;
   }
 
-  /* Remove blue outline on buttons and links */
-  button, a {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    user-select: none;
+  .form-group input {
+    padding: 0.875rem 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: all 0.3s ease;
   }
 
-  /* Authentication overlay and content protection */
-  .app-content.hidden {
-    display: none !important;
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--purple-primary);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(79, 59, 196, 0.1);
   }
 
-  .auth-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg-gradient);
-    z-index: 9998;
+  .form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .login-btn {
+    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 59, 196, 0.3);
+  }
+
+  .login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-loading {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
   }
 
-  .auth-overlay.hidden {
-    display: none;
-  }
-
-  .auth-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    color: var(--text-color);
-  }
-
-  .auth-spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top: 3px solid var(--purple-primary);
+  .btn-loading::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
     border-radius: 50%;
-    animation: auth-spin 1s linear infinite;
+    animation: spin 1s linear infinite;
   }
 
-  @keyframes auth-spin {
+  @keyframes spin {
     to { transform: rotate(360deg); }
   }
 
-  .auth-loading p {
-    font-size: 1.2rem;
-    font-weight: 500;
-    opacity: 0.9;
+  .error-message {
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #ff6b6b;
+    padding: 0.875rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
   }
 
-  .auth-subtext {
-    font-size: 0.9rem !important;
-    opacity: 0.7 !important;
-    margin-top: -0.5rem;
+  .success-message {
+    background: rgba(39, 174, 96, 0.1);
+    border: 1px solid rgba(39, 174, 96, 0.3);
+    color: #51cf66;
+    padding: 0.875rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .help-text {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .help-text p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .help-text a {
+    color: var(--purple-primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .help-text a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    .login-card {
+      padding: 2rem 1.5rem;
+      margin: 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
   }
 </style>
+
+<script>
+  interface UserData {
+    id: string;
+    username: string;
+    plan: string;
+    status: string;
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const form = document.getElementById('login-form') as HTMLFormElement;
+    const loginBtn = document.getElementById('login-btn') as HTMLButtonElement;
+    const btnText = document.querySelector('.btn-text') as HTMLElement;
+    const btnLoading = document.querySelector('.btn-loading') as HTMLElement;
+    const errorMessage = document.getElementById('error-message') as HTMLElement;
+    const successMessage = document.getElementById('success-message') as HTMLElement;
+    const useridInput = document.getElementById('userid') as HTMLInputElement;
+    const usernameInput = document.getElementById('username') as HTMLInputElement;
+
+    // Check if user is already logged in
+    const storedUser = localStorage.getItem('medoracle_user');
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        showSuccess(`Welcome back, ${userData.username}! Redirecting...`);
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
+        return;
+      } catch (error) {
+        localStorage.removeItem('medoracle_user');
+      }
+    }
+
+    function showError(message: string) {
+      errorMessage.textContent = message;
+      errorMessage.classList.remove('hidden');
+      successMessage.classList.add('hidden');
+    }
+
+    function showSuccess(message: string) {
+      successMessage.textContent = message;
+      successMessage.classList.remove('hidden');
+      errorMessage.classList.add('hidden');
+    }
+
+    function hideMessages() {
+      errorMessage.classList.add('hidden');
+      successMessage.classList.add('hidden');
+    }
+
+    function setLoading(loading: boolean) {
+      loginBtn.disabled = loading;
+      if (loading) {
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+      } else {
+        btnText.classList.remove('hidden');
+        btnLoading.classList.add('hidden');
+      }
+    }
+
+    async function loginUser(userid: string, username: string): Promise<UserData | null> {
+      try {
+        const response = await fetch(`http://localhost:8000/cuser/${userid}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const userData: UserData = await response.json();
+        
+        // Verify username matches
+        if (userData.username.toLowerCase() !== username.toLowerCase()) {
+          throw new Error('Username does not match the provided User ID');
+        }
+
+        return userData;
+      } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessages();
+
+      const userid = useridInput.value.trim();
+      const username = usernameInput.value.trim();
+
+      if (!userid || !username) {
+        showError('Please fill in all fields');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const userData = await loginUser(userid, username);
+        
+        if (userData) {
+          // Store user data in localStorage
+          localStorage.setItem('medoracle_user', JSON.stringify(userData));
+          
+          showSuccess(`Welcome, ${userData.username}! Login successful. Redirecting...`);
+          
+          // Redirect to home page after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          showError(error.message);
+        } else {
+          showError('Login failed. Please check your credentials and try again.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Clear error messages when user starts typing
+    [useridInput, usernameInput].forEach(input => {
+      input.addEventListener('input', hideMessages);
+    });
+  });
+</script>
