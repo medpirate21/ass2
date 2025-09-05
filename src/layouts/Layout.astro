@@ -103,6 +103,81 @@ const { title } = Astro.props;
               modal.classList.add('show');
               document.body.classList.add('modal-open');
               console.log('Forced login modal to show');
+              
+              // Add form functionality since LoginModal script didn't load
+              const form = document.getElementById('modal-login-form');
+              const loginBtn = document.getElementById('modal-login-btn');
+              const errorMessage = document.getElementById('modal-error-message');
+              
+              if (form && !form.hasAttribute('data-listener-added')) {
+                form.setAttribute('data-listener-added', 'true');
+                form.addEventListener('submit', async (e) => {
+                  e.preventDefault();
+                  console.log('Form submitted via fallback handler');
+                  
+                  const useridInput = document.getElementById('modal-userid') as HTMLInputElement;
+                  const usernameInput = document.getElementById('modal-username') as HTMLInputElement;
+                  
+                  const userid = useridInput?.value.trim();
+                  const username = usernameInput?.value.trim();
+                  
+                  if (!userid || !username) {
+                    if (errorMessage) {
+                      errorMessage.textContent = 'Please fill in all fields';
+                      errorMessage.classList.remove('hidden');
+                    }
+                    return;
+                  }
+                  
+                  // Set loading state
+                  if (loginBtn) {
+                    loginBtn.textContent = 'Signing in...';
+                    loginBtn.setAttribute('disabled', 'true');
+                  }
+                  
+                  try {
+                    const response = await fetch(`https://medapi.pages.dev/user/${userid}`, {
+                      method: 'GET',
+                      headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    if (!response.ok) {
+                      throw new Error(`Server responded with ${response.status}`);
+                    }
+                    
+                    const userData = await response.json();
+                    
+                    if (userData.username.toLowerCase() !== username.toLowerCase()) {
+                      throw new Error('Username does not match the provided User ID');
+                    }
+                    
+                    // Store user data and hide modal
+                    localStorage.setItem('medoracle_user', JSON.stringify(userData));
+                    modal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
+                    
+                    // Notify auth manager
+                    if (window.authManager) {
+                      window.authManager.onLogin();
+                    }
+                    
+                    console.log('Login successful via fallback');
+                  } catch (error) {
+                    console.error('Login error:', error);
+                    if (errorMessage) {
+                      errorMessage.textContent = error.message || 'Login failed. Please try again.';
+                      errorMessage.classList.remove('hidden');
+                    }
+                  } finally {
+                    if (loginBtn) {
+                      loginBtn.textContent = 'Sign In';
+                      loginBtn.removeAttribute('disabled');
+                    }
+                  }
+                });
+                console.log('Fallback form handler added');
+              }
             } else {
               console.error('Login modal element not found in DOM');
             }
