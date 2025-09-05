@@ -888,7 +888,9 @@ import Layout from '../layouts/Layout.astro';
     last_updated: string;
   }
 
-  document.addEventListener('astro:page-load', () => {
+  // Run immediately and also on page load events
+  function initializeAccountPage() {
+    console.log('initializeAccountPage() called');
     const loginRequired = document.getElementById('login-required');
     const accountDetails = document.getElementById('account-details');
     const loadingState = document.getElementById('loading-state');
@@ -1232,6 +1234,18 @@ import Layout from '../layouts/Layout.astro';
       });
     });
 
+    // Call init function
     init();
-  });
+  }
+
+  // Run initialization immediately
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeAccountPage);
+  } else {
+    initializeAccountPage();
+  }
+
+  // Also run on Astro page transitions
+  document.addEventListener('astro:page-load', initializeAccountPage);
+  document.addEventListener('astro:after-swap', initializeAccountPage);
 </script>
