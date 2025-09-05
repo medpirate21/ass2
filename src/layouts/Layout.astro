@@ -57,23 +57,29 @@ const { title } = Astro.props;
 
       // Authentication management
       const checkAuth = () => {
+        console.log('Checking authentication...');
         const storedUser = localStorage.getItem('medoracle_user');
         const appContent = document.getElementById('app-content');
         const authOverlay = document.getElementById('auth-overlay');
+        
+        console.log('Stored user:', storedUser ? 'exists' : 'not found');
         
         if (storedUser) {
           try {
             JSON.parse(storedUser);
             // User is authenticated - show content
+            console.log('User authenticated, showing content');
             appContent?.classList.remove('hidden');
             authOverlay?.classList.add('hidden');
             return true;
           } catch (error) {
+            console.log('Invalid stored user data, removing');
             localStorage.removeItem('medoracle_user');
           }
         }
         
         // User not authenticated - hide content
+        console.log('User not authenticated, showing auth overlay');
         appContent?.classList.add('hidden');
         authOverlay?.classList.remove('hidden');
         return false;
@@ -136,16 +142,42 @@ const { title } = Astro.props;
 
       // Universal platform check on any page visit
       const universalPlatformCheck = async () => {
-        const platformAllowed = await checkTelegramPlatform();
-        if (!platformAllowed) {
-          // Block all site access
+        console.log('Starting platform check...');
+        try {
+          const platformAllowed = await checkTelegramPlatform();
+          console.log('Platform check result:', platformAllowed);
+          if (!platformAllowed) {
+            // Block all site access
+            const appContent = document.getElementById('app-content');
+            appContent?.classList.add('hidden');
+            console.log('Site access blocked due to platform restriction');
+          } else {
+            console.log('Platform check passed, site access allowed');
+            // Ensure content is shown if platform is allowed
+            const appContent = document.getElementById('app-content');
+            const authOverlay = document.getElementById('auth-overlay');
+            if (localStorage.getItem('medoracle_user')) {
+              appContent?.classList.remove('hidden');
+              authOverlay?.classList.add('hidden');
+            }
+          }
+        } catch (error) {
+          console.error('Platform check error:', error);
+          // On error, allow access to prevent blocking legitimate users
           const appContent = document.getElementById('app-content');
-          appContent?.classList.add('hidden');
+          const authOverlay = document.getElementById('auth-overlay');
+          if (localStorage.getItem('medoracle_user')) {
+            appContent?.classList.remove('hidden');
+            authOverlay?.classList.add('hidden');
+          }
         }
       };
 
-      // Run platform check on page load
-      universalPlatformCheck();
+      // Run platform check after a short delay to allow DOM to load
+      console.log('Initializing platform check...');
+      setTimeout(() => {
+        universalPlatformCheck();
+      }, 100);
 
       // Reapply theme after page transitions
       document.addEventListener('astro:after-swap', () => {
