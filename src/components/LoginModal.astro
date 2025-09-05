@@ -417,6 +417,16 @@
       }
     }
 
+    // Remove all modal close functionality - login is mandatory
+    // modalClose?.addEventListener('click', hideModal);
+    // modalBackdrop?.addEventListener('click', hideModal);
+
+    // Disable escape key to close modal
+    // document.addEventListener('keydown', (e) => {
+    //   if (e.key === 'Escape' && modal?.classList.contains('show')) {
+    //     hideModal();
+    //   }
+    // });
 
     form?.addEventListener('submit', async (e) => {
       e.preventDefault();
