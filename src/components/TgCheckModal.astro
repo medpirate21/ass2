@@ -1,0 +1,418 @@
+---
+// TgCheckModal.astro - Telegram platform verification modal
+---
+
+<div id="tg-check-modal" class="tg-check-modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Platform Verification</h2>
+      <p>Checking your Telegram platform...</p>
+    </div>
+    
+    <div class="modal-body">
+      <div id="platform-checking" class="checking-state">
+        <div class="spinner"></div>
+        <p>Detecting platform...</p>
+        <div class="platform-info">
+          <span id="detected-platform">Unknown</span>
+        </div>
+      </div>
+      
+      <div id="platform-allowed" class="success-state hidden">
+        <div class="success-icon">✅</div>
+        <h3>Platform Verified</h3>
+        <p>Access granted from <span id="allowed-platform"></span></p>
+      </div>
+      
+      <div id="platform-restricted" class="error-state hidden">
+        <div class="error-icon">❌</div>
+        <h3>Platform Not Supported</h3>
+        <p>Access is restricted to iOS and Desktop Telegram clients only.</p>
+        <p>Current platform: <span id="restricted-platform"></span></p>
+        <div class="restriction-info">
+          <p>Please use:</p>
+          <ul>
+            <li>📱 Telegram iOS app</li>
+            <li>💻 Telegram Desktop</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div id="platform-error" class="error-state hidden">
+        <div class="error-icon">⚠️</div>
+        <h3>Verification Error</h3>
+        <p>Unable to verify platform. Please ensure you're accessing this through Telegram.</p>
+        <button id="retry-check" class="retry-btn">Retry Verification</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tg-check-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tg-check-modal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .modal-content {
+    position: relative;
+    background: var(--card-bg);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tg-check-modal.show .modal-content {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-header {
+    padding: 2rem 2rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .modal-header p {
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .modal-body {
+    padding: 2rem;
+  }
+
+  .checking-state {
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid var(--purple-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  .success-state, .error-state {
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .success-icon, .error-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .success-state h3 {
+    color: #27ae60;
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+  }
+
+  .error-state h3 {
+    color: #e74c3c;
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+  }
+
+  .platform-info {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .platform-info span {
+    font-weight: 600;
+    color: var(--purple-primary);
+  }
+
+  .restriction-info {
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    text-align: left;
+  }
+
+  .restriction-info ul {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+  }
+
+  .restriction-info li {
+    margin: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .retry-btn {
+    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    color: white;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+
+  .retry-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 59, 196, 0.3);
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 480px) {
+    .modal-content {
+      margin: 1rem;
+      max-width: calc(100% - 2rem);
+    }
+
+    .modal-header {
+      padding: 1.5rem 1.5rem 1rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+  }
+
+  /* Prevent body scroll when modal is open */
+  body.tg-modal-open {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  // Telegram WebApp API types
+  interface TelegramWebApp {
+    platform: string;
+    initData: string;
+    initDataUnsafe: {
+      user?: {
+        id: number;
+        first_name: string;
+        last_name?: string;
+        username?: string;
+      };
+    };
+    ready: () => void;
+    close: () => void;
+  }
+
+  declare global {
+    interface Window {
+      Telegram?: {
+        WebApp: TelegramWebApp;
+      };
+      tgCheckModal?: {
+        show: () => void;
+        hide: () => void;
+        checkPlatform: () => Promise<boolean>;
+      };
+    }
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const modal = document.getElementById('tg-check-modal');
+    const checkingState = document.getElementById('platform-checking');
+    const allowedState = document.getElementById('platform-allowed');
+    const restrictedState = document.getElementById('platform-restricted');
+    const errorState = document.getElementById('platform-error');
+    const retryBtn = document.getElementById('retry-check');
+    const detectedPlatform = document.getElementById('detected-platform');
+    const allowedPlatform = document.getElementById('allowed-platform');
+    const restrictedPlatform = document.getElementById('restricted-platform');
+
+    // Allowed platforms
+    const ALLOWED_PLATFORMS = ['ios', 'tdesktop', 'macos'];
+
+    function showModal() {
+      modal?.classList.remove('hidden');
+      document.body.classList.add('tg-modal-open');
+      setTimeout(() => {
+        modal?.classList.add('show');
+      }, 10);
+    }
+
+    function hideModal() {
+      modal?.classList.remove('show');
+      document.body.classList.remove('tg-modal-open');
+      setTimeout(() => {
+        modal?.classList.add('hidden');
+      }, 300);
+    }
+
+    function showState(state: 'checking' | 'allowed' | 'restricted' | 'error') {
+      // Hide all states
+      checkingState?.classList.add('hidden');
+      allowedState?.classList.add('hidden');
+      restrictedState?.classList.add('hidden');
+      errorState?.classList.add('hidden');
+
+      // Show selected state
+      switch (state) {
+        case 'checking':
+          checkingState?.classList.remove('hidden');
+          break;
+        case 'allowed':
+          allowedState?.classList.remove('hidden');
+          break;
+        case 'restricted':
+          restrictedState?.classList.remove('hidden');
+          break;
+        case 'error':
+          errorState?.classList.remove('hidden');
+          break;
+      }
+    }
+
+    async function checkTelegramPlatform(): Promise<boolean> {
+      try {
+        showState('checking');
+
+        // Check if Telegram WebApp is available
+        if (!window.Telegram?.WebApp) {
+          throw new Error('Telegram WebApp API not available');
+        }
+
+        const webApp = window.Telegram.WebApp;
+        
+        // Initialize WebApp
+        webApp.ready();
+
+        // Get platform and user info
+        const platform = webApp.platform.toLowerCase();
+        const userId = webApp.initDataUnsafe.user?.id;
+
+        console.log('Detected platform:', platform);
+        console.log('User ID:', userId);
+
+        // Update UI with detected platform
+        if (detectedPlatform) {
+          detectedPlatform.textContent = platform;
+        }
+
+        // Check if platform is allowed
+        const isAllowed = ALLOWED_PLATFORMS.includes(platform);
+
+        if (isAllowed) {
+          // Platform is allowed
+          if (allowedPlatform) {
+            allowedPlatform.textContent = platform;
+          }
+          showState('allowed');
+
+          // Platform verification successful - no backend call needed
+
+          // Auto-hide modal after success
+          setTimeout(() => {
+            hideModal();
+          }, 2000);
+
+          return true;
+        } else {
+          // Platform is restricted
+          if (restrictedPlatform) {
+            restrictedPlatform.textContent = platform;
+          }
+          showState('restricted');
+          return false;
+        }
+
+      } catch (error) {
+        console.error('Platform check error:', error);
+        showState('error');
+        return false;
+      }
+    }
+
+    // Retry button functionality
+    retryBtn?.addEventListener('click', () => {
+      checkTelegramPlatform();
+    });
+
+    // Auto-check platform when modal is shown
+    async function checkPlatform(): Promise<boolean> {
+      showModal();
+      return await checkTelegramPlatform();
+    }
+
+    // Make functions globally available
+    (window as any).tgCheckModal = {
+      show: showModal,
+      hide: hideModal,
+      checkPlatform: checkPlatform
+    };
+
+    // Auto-check if we're in Telegram WebApp environment
+    if (window.Telegram?.WebApp) {
+      console.log('Telegram WebApp detected, checking platform...');
+      // Don't auto-show, let pages decide when to check
+    }
+  });
+</script>
