@@ -33,10 +33,16 @@ class TelegramWebApp {
   }
 
   detectPlatform() {
-    if (this.tg?.platform) return this.tg.platform;
+    if (this.tg?.platform) {
+      console.log('Telegram platform detected:', this.tg.platform);
+      return this.tg.platform;
+    }
     
     const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('iphone') || userAgent.includes('ipad')) return 'ios';
+    console.log('User agent:', userAgent);
+    
+    if (userAgent.includes('iphone')) return 'ios';
+    if (userAgent.includes('ipad')) return 'ios';
     if (userAgent.includes('android')) return 'android';
     if (userAgent.includes('mac')) return 'macos';
     if (userAgent.includes('win')) return 'windows';
@@ -98,8 +104,13 @@ class PlatformGuard {
   checkPlatformAccess() {
     const telegramApp = window.telegramWebApp;
     
+    console.log('Platform check - Telegram app available:', !!telegramApp);
+    console.log('Platform check - Is Telegram WebApp:', telegramApp?.isTelegramWebApp());
+    
     if (!telegramApp?.isTelegramWebApp()) {
       const platform = this.detectPlatformFallback();
+      console.log('Not in Telegram, detected platform:', platform);
+      
       if (platform === 'ios' || platform === 'macos') {
         this.redirectToTelegram('Please access this app through Telegram');
       } else {
@@ -109,12 +120,17 @@ class PlatformGuard {
     }
 
     const platform = telegramApp.getPlatform();
+    const userId = telegramApp.getUserId();
+    
+    console.log('Telegram WebApp platform:', platform);
+    console.log('Telegram WebApp user ID:', userId);
+    
     if (platform !== 'ios' && platform !== 'macos') {
+      console.log('Unsupported platform, redirecting to download');
       this.redirectToDownload();
       return;
     }
 
-    const userId = telegramApp.getUserId();
     if (!userId) {
       this.redirectToTelegram('Unable to verify user. Please restart the app from Telegram.');
       return;
