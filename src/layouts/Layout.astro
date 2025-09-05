@@ -139,11 +139,19 @@ const { title } = Astro.props;
         }
       };
 
-      // Initialize app with immediate platform check
+      // Initialize app with improved platform check
       const initApp = async () => {
+        // Check if we're already on download page to prevent loops
+        if (window.location.pathname === '/download') {
+          return;
+        }
+        
         // Immediate platform check before any other initialization
         const platform = detectPlatformFallback();
+        console.log('Detected platform:', platform);
+        
         if (platform !== 'ios' && platform !== 'macos') {
+          console.log('Redirecting to download page for platform:', platform);
           window.location.href = '/download';
           return;
         }
