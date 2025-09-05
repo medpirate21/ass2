@@ -551,8 +551,7 @@
 
       // If we've already shown the registration for this user, just ensure UI is set and exit
       if (flags.regShown && flags.lastUserId === telegramUserId) {
-        showModal();
-        showRegisterForm();
+        console.log('📝 Registration already shown for this user, skipping');
         return false;
       }
 
