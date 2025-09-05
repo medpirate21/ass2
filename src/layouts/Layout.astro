@@ -83,15 +83,17 @@ const { title } = Astro.props;
         appContent?.classList.add('hidden');
         authOverlay?.classList.remove('hidden');
         
-        // Show login modal after a short delay to ensure DOM is ready
-        setTimeout(() => {
+        // Show login modal after ensuring it's available
+        const showLoginModal = () => {
           if (window.loginModal) {
             console.log('Showing login modal');
             window.loginModal.show();
           } else {
-            console.log('Login modal not available');
+            console.log('Login modal not available, retrying...');
+            setTimeout(showLoginModal, 200);
           }
-        }, 500);
+        };
+        setTimeout(showLoginModal, 100);
         
         return false;
       };
@@ -112,12 +114,16 @@ const { title } = Astro.props;
           authOverlay?.classList.remove('hidden');
           
           // Show login modal after logout
-          setTimeout(() => {
+          const showLoginModalAfterLogout = () => {
             if (window.loginModal) {
               console.log('Showing login modal after logout');
               window.loginModal.show();
+            } else {
+              console.log('Login modal not available after logout, retrying...');
+              setTimeout(showLoginModalAfterLogout, 200);
             }
-          }, 500);
+          };
+          setTimeout(showLoginModalAfterLogout, 100);
         }
       };
 
