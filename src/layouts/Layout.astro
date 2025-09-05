@@ -70,7 +70,7 @@ const { title } = Astro.props;
         
         // Check if running in Telegram Desktop (Windows/Linux with Telegram WebApp)
         const isTelegramDesktop = (platform === 'windows' || platform === 'linux') && 
-                                  (window as any).Telegram && (window as any).Telegram.WebApp;
+                                  (window as any).Telegram?.WebApp;
         
         return allowedPlatforms.includes(platform) || 
                (storedPlatform && allowedPlatforms.includes(storedPlatform)) || 
@@ -145,7 +145,7 @@ const { title } = Astro.props;
           // Determine platform display name
           let platformName = 'User';
           const isTelegramDesktop = (platform === 'windows' || platform === 'linux') && 
-                                    (window as any).Telegram && (window as any).Telegram.WebApp;
+                                    (window as any).Telegram?.WebApp;
           
           if (platform === 'ios' || storedPlatform === 'ios') {
             platformName = 'iOS User';
@@ -245,7 +245,7 @@ const { title } = Astro.props;
         
         const currentPlatform = detectPlatform();
         const isTelegramDesktop = (currentPlatform === 'windows' || currentPlatform === 'linux') && 
-                                  (window as any).Telegram && (window as any).Telegram.WebApp;
+                                  (window as any).Telegram?.WebApp;
         const isAllowed = isAllowedPlatform();
         
         console.log('🐛 DEBUG UPDATE:', {

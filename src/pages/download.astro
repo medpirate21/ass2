@@ -5,34 +5,30 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="Download Medoracle Academia">
   <div class="container">
     <div class="content">
-      <div class="card">
+      <div class="download-content">
         <h1>📱 Download Required</h1>
-        <p class="subtitle">Medoracle Academia is available for iOS, iPadOS, and macOS users only.</p>
+        <p class="download-subtitle">Medoracle Academia is available for iOS, iPadOS, macOS, and Telegram Desktop users.</p>
         
-        <div class="platform-info">
-          <h3>🔍 Detection Results</h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <strong>Your Platform:</strong>
-              <span id="user-platform">Detecting...</span>
-            </div>
-            <div class="info-item">
-              <strong>Telegram Platform:</strong>
-              <span id="telegram-platform">Detecting...</span>
-            </div>
-            <div class="info-item">
-              <strong>Telegram User ID:</strong>
-              <span id="telegram-user-id">Detecting...</span>
-            </div>
+        <div class="detection-results">
+          <h2>🔍 Detection Results</h2>
+          <div class="result-item">
+            <strong>Your Platform:</strong> <span id="detected-platform">Detecting...</span>
+          </div>
+          <div class="result-item">
+            <strong>Telegram Platform:</strong> <span id="telegram-platform">Checking...</span>
+          </div>
+          <div class="result-item">
+            <strong>Telegram User ID:</strong> <span id="user-id">Checking...</span>
           </div>
         </div>
 
         <div class="supported-platforms">
-          <h3>✅ Supported Platforms</h3>
+          <h2>✅ Supported Platforms</h2>
           <ul>
             <li>📱 iPhone (iOS)</li>
             <li>📱 iPad (iPadOS)</li>
             <li>💻 Mac (macOS)</li>
+            <li>🖥️ Telegram Desktop (Windows/Linux)</li>
           </ul>
         </div>
 
@@ -226,6 +222,17 @@ import Layout from '../layouts/Layout.astro';
 
     // Detect user platform
     detectedPlatform = detectPlatformFallback();
+    
+    // Check if running in Telegram Desktop
+    const isTelegramDesktop = (detectedPlatform === 'windows' || detectedPlatform === 'linux') && 
+                              (window as any).Telegram?.WebApp;
+    
+    if (isTelegramDesktop) {
+      telegramPlatform = 'Telegram Desktop';
+      // Redirect Telegram Desktop users to main site
+      window.location.href = '/';
+      return;
+    }
 
     // Check if Telegram WebApp is available
     if ((window as any).Telegram && (window as any).Telegram.WebApp) {
