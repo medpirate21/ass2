@@ -898,35 +898,53 @@ import Layout from '../layouts/Layout.astro';
     const retryQuotaBtn = document.getElementById('retry-quota-btn');
 
     function showLoginRequired() {
+      console.log('showLoginRequired() called');
       loadingState?.classList.add('hidden');
       accountDetails?.classList.add('hidden');
       loginRequired?.classList.remove('hidden');
     }
 
     function showAccountDetails() {
+      console.log('showAccountDetails() called');
       loadingState?.classList.add('hidden');
       loginRequired?.classList.add('hidden');
       accountDetails?.classList.remove('hidden');
     }
 
     function showLoading() {
+      console.log('showLoading() called');
       loginRequired?.classList.add('hidden');
       accountDetails?.classList.add('hidden');
       loadingState?.classList.remove('hidden');
     }
 
     function populateAccountDetails(userData: UserData) {
+      console.log('populateAccountDetails() called with:', userData);
+      
       // Update avatar initial
       const userInitial = document.getElementById('user-initial');
       if (userInitial) {
         userInitial.textContent = userData.username.charAt(0).toUpperCase();
+        console.log('Updated user initial:', userData.username.charAt(0).toUpperCase());
+      } else {
+        console.log('user-initial element not found');
       }
 
       // Update display name and ID
       const displayName = document.getElementById('display-name');
       const userIdDisplay = document.getElementById('user-id-display');
-      if (displayName) displayName.textContent = userData.username;
-      if (userIdDisplay) userIdDisplay.textContent = `ID: ${userData.id}`;
+      if (displayName) {
+        displayName.textContent = userData.username;
+        console.log('Updated display name:', userData.username);
+      } else {
+        console.log('display-name element not found');
+      }
+      if (userIdDisplay) {
+        userIdDisplay.textContent = `ID: ${userData.id}`;
+        console.log('Updated user ID display:', userData.id);
+      } else {
+        console.log('user-id-display element not found');
+      }
 
       // Update info grid
       const usernameValue = document.getElementById('username-value');
@@ -934,17 +952,34 @@ import Layout from '../layouts/Layout.astro';
       const planValue = document.getElementById('plan-value');
       const statusValue = document.getElementById('status-value');
 
-      if (usernameValue) usernameValue.textContent = userData.username;
-      if (useridValue) useridValue.textContent = userData.id;
+      if (usernameValue) {
+        usernameValue.textContent = userData.username;
+        console.log('Updated username value:', userData.username);
+      } else {
+        console.log('username-value element not found');
+      }
+      
+      if (useridValue) {
+        useridValue.textContent = userData.id;
+        console.log('Updated userid value:', userData.id);
+      } else {
+        console.log('userid-value element not found');
+      }
       
       if (planValue) {
         planValue.textContent = userData.plan;
         planValue.className = `plan-badge ${userData.plan.toLowerCase()}`;
+        console.log('Updated plan value:', userData.plan);
+      } else {
+        console.log('plan-value element not found');
       }
       
       if (statusValue) {
         statusValue.textContent = userData.status;
         statusValue.className = `status-badge ${userData.status.toLowerCase()}`;
+        console.log('Updated status value:', userData.status);
+      } else {
+        console.log('status-value element not found');
       }
     }
 
@@ -1016,14 +1051,20 @@ import Layout from '../layouts/Layout.astro';
     }
 
     async function loadQuotaData(userid: string) {
+      console.log('loadQuotaData called for user:', userid);
       try {
+        console.log('Fetching quota data...');
         const quotaData = await fetchQuotaData(userid);
+        console.log('Quota data received:', quotaData);
         if (quotaData) {
+          console.log('Populating quota details...');
           populateQuotaDetails(quotaData);
         } else {
+          console.log('No quota data received, showing error');
           showQuotaError();
         }
       } catch (error) {
+        console.error('Error in loadQuotaData:', error);
         showQuotaError();
       }
     }
@@ -1066,28 +1107,40 @@ import Layout from '../layouts/Layout.astro';
 
     // Initialize page
     async function init() {
+      console.log('Account page init() started');
       showLoading();
       
       const storedUser = localStorage.getItem('medoracle_user');
+      console.log('Stored user data:', storedUser ? 'found' : 'not found');
+      
       if (!storedUser) {
+        console.log('No stored user, showing login required');
         showLoginRequired();
         return;
       }
 
       try {
         const userData: UserData = JSON.parse(storedUser);
+        console.log('Parsed user data:', userData);
+        
+        console.log('Populating account details...');
         populateAccountDetails(userData);
+        
+        console.log('Showing account details...');
         showAccountDetails();
         
         // Load quota data
+        console.log('Loading quota data for user:', userData.id);
         loadQuotaData(userData.id);
         
         // Try to refresh data in background
         try {
+          console.log('Refreshing account data...');
           await refreshAccountData(userData.id);
+          console.log('Account data refreshed successfully');
         } catch (error) {
           // If refresh fails, still show cached data
-          console.warn('Failed to refresh account data, showing cached data');
+          console.warn('Failed to refresh account data, showing cached data:', error);
         }
       } catch (error) {
         console.error('Error parsing stored user data:', error);
