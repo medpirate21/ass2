@@ -69,12 +69,12 @@
       
       <div id="manual-error-message" class="error-message hidden"></div>
     </form>
-
+    
     <!-- Registration Section (Hidden by default) -->
     <form class="modal-form hidden" id="registration-form">
       <div class="registration-header">
-        <h3>Create Your Account</h3>
-        <p>We couldn't find your account. Let's create one for you!</p>
+        <h3>Create New Account</h3>
+        <p>User not found. Let's create your account!</p>
       </div>
       
       <div class="form-group">
@@ -394,34 +394,43 @@
 
   .switch-manual-btn, .switch-auto-btn {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
-    cursor: pointer;
     font-size: 0.9rem;
+    cursor: pointer;
     transition: all 0.3s ease;
+    margin-top: 1rem;
+    width: 100%;
   }
 
-  .switch-auto-btn:hover {
+  .switch-manual-btn:hover, .switch-auto-btn:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--text-color);
   }
 
+  /* Registration Styles */
   .registration-header {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    border-radius: 8px;
   }
 
   .registration-header h3 {
-    color: var(--text-color);
     margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
+    color: #2ecc71;
+    font-size: 1.2rem;
+    font-weight: 600;
   }
 
   .registration-header p {
-    color: rgba(255, 255, 255, 0.7);
     margin: 0;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 0.9rem;
   }
 
@@ -473,6 +482,7 @@
 (window as any).APP_CONFIG.VIDEO_QUOTA_DECREMENT = (userid: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/dquota/${userid}/v`;
 (window as any).APP_CONFIG.NOTE_QUOTA_DECREMENT = (userid: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/dquota/${userid}/n`;
 (window as any).APP_CONFIG.USER_LOGIN = (userid: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/cuser/${userid}`;
+(window as any).APP_CONFIG.USER_REGISTER = (userid: string, username: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/nuser/${userid}/${username}`;
 (window as any).APP_CONFIG.TG_PLATFORM_CHECK = (userid: string, platform: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/tgcheck/${userid}/${platform}`;
 (window as any).APP_CONFIG.TELEGRAM_URL = `https://t.me/${(window as any).APP_CONFIG.TELEGRAM_BOT_NAME}`;
 (window as any).APP_CONFIG.VIDEO_PLAYER_URL = (encodedId: string) => `${(window as any).APP_CONFIG.EDIA_API_BASE_URL}?vid=${encodedId}`;
@@ -591,6 +601,19 @@
       }
     }
 
+    function showRegistrationError(message: string) {
+      if (registrationErrorMessage) {
+        registrationErrorMessage.textContent = message;
+        registrationErrorMessage.classList.remove('hidden');
+      }
+    }
+
+    function hideRegistrationError() {
+      if (registrationErrorMessage) {
+        registrationErrorMessage.classList.add('hidden');
+      }
+    }
+
     function setAutoLoading(loading: boolean) {
       if (autoLoginBtn) {
         const btnText = autoLoginBtn.querySelector('.btn-text');
@@ -623,52 +646,6 @@
       }
     }
 
-    function switchToManualLogin() {
-      autoLoginSection?.classList.add('hidden');
-      manualLoginForm?.classList.remove('hidden');
-      if (loginStatus) {
-        loginStatus.textContent = 'Please enter your credentials';
-      }
-    }
-
-    function switchToAutoLogin() {
-      manualLoginForm?.classList.add('hidden');
-      registrationForm?.classList.add('hidden');
-      autoLoginSection?.classList.remove('hidden');
-      if (loginStatus) {
-        loginStatus.textContent = 'Continue with detected account';
-      }
-    }
-
-    function switchToRegistration(userid: string, username: string) {
-      autoLoginSection?.classList.add('hidden');
-      manualLoginForm?.classList.add('hidden');
-      registrationForm?.classList.remove('hidden');
-      
-      if (regUseridInput) {
-        regUseridInput.value = userid;
-      }
-      if (regUsernameInput) {
-        regUsernameInput.value = username;
-      }
-      if (loginStatus) {
-        loginStatus.textContent = 'Create your account';
-      }
-    }
-
-    function showRegistrationError(message: string) {
-      if (registrationErrorMessage) {
-        registrationErrorMessage.textContent = message;
-        registrationErrorMessage.classList.remove('hidden');
-      }
-    }
-
-    function hideRegistrationError() {
-      if (registrationErrorMessage) {
-        registrationErrorMessage.classList.add('hidden');
-      }
-    }
-
     function setRegistrationLoading(loading: boolean) {
       if (registerBtn) {
         const btnText = registerBtn.querySelector('.btn-text');
@@ -685,13 +662,85 @@
       }
     }
 
+    function switchToManualLogin() {
+      autoLoginSection?.classList.add('hidden');
+      registrationForm?.classList.add('hidden');
+      manualLoginForm?.classList.remove('hidden');
+      if (loginStatus) {
+        loginStatus.textContent = 'Please enter your credentials';
+      }
+    }
+
+    function switchToAutoLogin() {
+      manualLoginForm?.classList.add('hidden');
+      registrationForm?.classList.add('hidden');
+      autoLoginSection?.classList.remove('hidden');
+      if (loginStatus) {
+        loginStatus.textContent = 'Continue with detected account';
+      }
+    }
+
+    function switchToRegistration(userid?: string, username?: string) {
+      autoLoginSection?.classList.add('hidden');
+      manualLoginForm?.classList.add('hidden');
+      registrationForm?.classList.remove('hidden');
+      
+      if (userid && regUseridInput) {
+        regUseridInput.value = userid;
+      }
+      if (username && regUsernameInput) {
+        regUsernameInput.value = username;
+      }
+      
+      if (loginStatus) {
+        loginStatus.textContent = 'Create your new account';
+      }
+    }
+
+    async function loginUser(userid: string, username: string): Promise<UserData | null> {
+      try {
+        console.log('Using API endpoint:', (window as any).APP_CONFIG.USER_LOGIN(userid));
+        const response = await fetch((window as any).APP_CONFIG.USER_LOGIN(userid), {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (response.status === 404) {
+          // User not found, trigger registration
+          throw new Error('USER_NOT_FOUND');
+        }
+
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+
+        const userData: UserData = await response.json();
+        
+        // Verify username matches
+        if (userData.username.toLowerCase() !== username.toLowerCase()) {
+          throw new Error('Username does not match the provided User ID');
+        }
+
+        return userData;
+      } catch (error) {
+        console.error('Login error:', error);
+        
+        // Provide specific error messages
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          throw new Error('Cannot connect to server. Please check your internet connection and try again.');
+        }
+        
+        throw error;
+      }
+    }
+
     async function registerUser(userid: string, username: string): Promise<UserData | null> {
       try {
-        const apiUrl = `${(window as any).APP_CONFIG.API_BASE_URL}/nuser/${userid}/${username}`;
-        console.log('Using registration API endpoint:', apiUrl);
-        
-        const response = await fetch(apiUrl, {
-          method: 'POST',
+        console.log('Using registration endpoint:', (window as any).APP_CONFIG.USER_REGISTER(userid, username));
+        const response = await fetch((window as any).APP_CONFIG.USER_REGISTER(userid, username), {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           }
@@ -710,40 +759,7 @@
         }
       } catch (error) {
         console.error('Registration error:', error);
-        throw error;
-      }
-    }
-
-    async function loginUser(userid: string, username: string): Promise<UserData | null> {
-      try {
-        console.log('Using API endpoint:', (window as any).APP_CONFIG.USER_LOGIN(userid));
-        const response = await fetch((window as any).APP_CONFIG.USER_LOGIN(userid), {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            // User not found, trigger registration
-            throw new Error('USER_NOT_FOUND');
-          }
-          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
-        }
-
-        const userData: UserData = await response.json();
         
-        // Verify username matches
-        if (userData.username.toLowerCase() !== username.toLowerCase()) {
-          throw new Error('Username does not match the provided User ID');
-        }
-
-        return userData;
-      } catch (error) {
-        console.error('Login error:', error);
-        
-        // Provide specific error messages
         if (error instanceof TypeError && error.message.includes('fetch')) {
           throw new Error('Cannot connect to server. Please check your internet connection and try again.');
         }
@@ -830,7 +846,12 @@
         }
       } catch (error) {
         if (error instanceof Error) {
-          showManualError(error.message);
+          if (error.message === 'USER_NOT_FOUND') {
+            // Switch to registration form
+            switchToRegistration(userid, username);
+          } else {
+            showManualError(error.message);
+          }
         } else {
           showManualError('Login failed. Please check your credentials and try again.');
         }
@@ -876,9 +897,73 @@
       }
     }
 
+    // Registration form handler
+    registrationForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideRegistrationError();
+
+      const userid = regUseridInput?.value.trim();
+      const username = regUsernameInput?.value.trim();
+
+      if (!userid || !username) {
+        showRegistrationError('Please fill in all fields');
+        return;
+      }
+
+      setRegistrationLoading(true);
+
+      try {
+        const userData = await registerUser(userid, username);
+        
+        if (userData) {
+          localStorage.setItem('medoracle_user', JSON.stringify(userData));
+          hideModal();
+          
+          if ((window as any).authManager) {
+            (window as any).authManager.onLogin();
+          }
+          
+          const notification = document.createElement('div');
+          notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 10000;
+            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+            animation: slideIn 0.3s ease;
+          `;
+          notification.textContent = `Account created! Welcome, ${userData.username}!`;
+          document.body.appendChild(notification);
+          
+          setTimeout(() => {
+            notification.remove();
+          }, 3000);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          showRegistrationError(error.message);
+        } else {
+          showRegistrationError('Registration failed. Please try again.');
+        }
+      } finally {
+        setRegistrationLoading(false);
+      }
+    });
+
+    // Clear error messages when user starts typing in registration
+    [regUseridInput, regUsernameInput].forEach(input => {
+      input?.addEventListener('input', hideRegistrationError);
+    });
+
     // Event listeners
     switchManualBtn?.addEventListener('click', switchToManualLogin);
     switchAutoBtn?.addEventListener('click', switchToAutoLogin);
+    backToLoginBtn?.addEventListener('click', switchToManualLogin);
 
     // Auto login button handler
     autoLoginBtn?.addEventListener('click', async () => {
@@ -905,7 +990,12 @@
       } catch (error) {
         console.error('Auto login error:', error);
         if (error instanceof Error) {
-          showAutoError(error.message);
+          if (error.message === 'USER_NOT_FOUND') {
+            // Switch to registration form with detected user data
+            switchToRegistration(detectedUser.id, detectedUser.username);
+          } else {
+            showAutoError(error.message);
+          }
         } else {
           showAutoError('Login failed. Please try manual login.');
         }
