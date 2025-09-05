@@ -44,12 +44,37 @@ const { title } = Astro.props;
       // Platform detection
       const detectPlatform = () => {
         const userAgent = navigator.userAgent.toLowerCase();
-        if (userAgent.includes('iphone')) return 'ios';
-        if (userAgent.includes('ipad')) return 'ios';
-        if (userAgent.includes('mac')) return 'macos';
-        if (userAgent.includes('android')) return 'android';
-        if (userAgent.includes('win')) return 'windows';
+        
+        if (userAgent.includes('iphone') || userAgent.includes('ipad')) {
+          return 'ios';
+        } else if (userAgent.includes('macintosh') || userAgent.includes('mac os x')) {
+          return 'macos';
+        } else if (userAgent.includes('android')) {
+          return 'android';
+        } else if (userAgent.includes('windows')) {
+          return 'windows';
+        } else if (userAgent.includes('linux')) {
+          return 'linux';
+        }
+        
         return 'unknown';
+      };
+
+      // Check if platform is allowed (iOS, iPadOS, macOS, or Telegram Desktop)
+      const isAllowedPlatform = () => {
+        const platform = detectPlatform();
+        const storedPlatform = localStorage.getItem('telegram_platform');
+        
+        // Allow iOS, macOS, and Telegram Desktop users
+        const allowedPlatforms = ['ios', 'macos'];
+        
+        // Check if running in Telegram Desktop (Windows/Linux with Telegram WebApp)
+        const isTelegramDesktop = (platform === 'windows' || platform === 'linux') && 
+                                  (window as any).Telegram && (window as any).Telegram.WebApp;
+        
+        return allowedPlatforms.includes(platform) || 
+               (storedPlatform && allowedPlatforms.includes(storedPlatform)) || 
+               isTelegramDesktop;
       };
 
       // Immediate platform check - runs before anything else
@@ -59,21 +84,21 @@ const { title } = Astro.props;
           return true;
         }
 
-        const platform = detectPlatform();
-        const storedPlatform = localStorage.getItem('telegram_platform');
-        
-        // If not iOS/macOS, redirect immediately
-        if (platform !== 'ios' && platform !== 'macos' && storedPlatform !== 'ios' && storedPlatform !== 'macos') {
-          // Redirect to standalone download page to avoid Layout conflicts
+        // Use the new isAllowedPlatform function
+        if (!isAllowedPlatform()) {
+          console.log('🚫 Platform not allowed, redirecting to download page');
+          // Redirect non-allowed users to standalone download page
           window.location.replace('/download-standalone');
           return false;
         }
         
+        console.log('✅ Platform allowed, proceeding with authentication');
         return true;
       };
 
       // Enhanced authentication management
       const checkAuth = () => {
+        console.log('🔐 Checking authentication status...');
         // Platform check already done, proceed with auth
         const storedUser = localStorage.getItem('medoracle_user');
         const appContent = document.getElementById('app-content');
@@ -81,30 +106,33 @@ const { title } = Astro.props;
         
         if (storedUser) {
           try {
-            JSON.parse(storedUser);
+            const userData = JSON.parse(storedUser);
+            console.log('✅ User authenticated:', userData);
             // User is authenticated - show content
             appContent?.classList.remove('hidden');
             authOverlay?.classList.add('hidden');
             showWelcomeMessage();
             return true;
           } catch (error) {
+            console.log('❌ Invalid user data, clearing storage');
             localStorage.removeItem('medoracle_user');
           }
         }
         
+        console.log('❌ User not authenticated, showing auth overlay');
         // User not authenticated - hide content
         appContent?.classList.add('hidden');
         authOverlay?.classList.remove('hidden');
         return false;
       };
 
-      // Show welcome message for iOS users
+      // Show welcome message for allowed users
       const showWelcomeMessage = () => {
         const platform = detectPlatform();
         const storedPlatform = localStorage.getItem('telegram_platform');
         const userId = localStorage.getItem('telegram_user_id');
         
-        if ((platform === 'ios' || platform === 'macos' || storedPlatform === 'ios' || storedPlatform === 'macos') && userId) {
+        if (isAllowedPlatform() && userId) {
           // Remove existing welcome message
           const existingWelcome = document.getElementById('welcome-message');
           if (existingWelcome) {
@@ -114,9 +142,22 @@ const { title } = Astro.props;
           // Create welcome message
           const welcomeDiv = document.createElement('div');
           welcomeDiv.id = 'welcome-message';
+          // Determine platform display name
+          let platformName = 'User';
+          const isTelegramDesktop = (platform === 'windows' || platform === 'linux') && 
+                                    (window as any).Telegram && (window as any).Telegram.WebApp;
+          
+          if (platform === 'ios' || storedPlatform === 'ios') {
+            platformName = 'iOS User';
+          } else if (platform === 'macos' || storedPlatform === 'macos') {
+            platformName = 'macOS User';
+          } else if (isTelegramDesktop) {
+            platformName = 'Telegram Desktop User';
+          }
+          
           welcomeDiv.innerHTML = `
             <div style="position: fixed; top: 20px; left: 20px; background: rgba(79, 59, 196, 0.9); color: white; padding: 12px 16px; border-radius: 8px; font-size: 14px; z-index: 1000; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
-              Welcome ${platform === 'ios' || storedPlatform === 'ios' ? 'iOS' : 'macOS'} User! 
+              Welcome ${platformName}! 
               <br><strong>ID:</strong> ${userId}
               <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; float: right; margin-left: 10px;">×</button>
             </div>
@@ -202,9 +243,28 @@ const { title } = Astro.props;
           userObj = 'INVALID JSON';
         }
         
+        const currentPlatform = detectPlatform();
+        const isTelegramDesktop = (currentPlatform === 'windows' || currentPlatform === 'linux') && 
+                                  (window as any).Telegram && (window as any).Telegram.WebApp;
+        const isAllowed = isAllowedPlatform();
+        
+        console.log('🐛 DEBUG UPDATE:', {
+          currentPath,
+          platform: currentPlatform,
+          storedPlatform: telegramPlatform,
+          telegramUserId,
+          medoracleUser: userObj,
+          authStatus: medoracleUser ? 'LOGGED IN' : 'NOT LOGGED IN',
+          isAllowedPlatform: isAllowed,
+          isTelegramDesktop,
+          timestamp: new Date().toLocaleTimeString()
+        });
+        
         debugContent.innerHTML = `
           <div><strong>Current Path:</strong> ${currentPath}</div>
-          <div><strong>Platform:</strong> ${detectPlatform()} (stored: ${telegramPlatform || 'none'})</div>
+          <div><strong>Platform:</strong> ${currentPlatform} (stored: ${telegramPlatform || 'none'})</div>
+          <div><strong>Allowed Platform:</strong> ${isAllowed ? '✅ YES' : '❌ NO'}</div>
+          <div><strong>Telegram Desktop:</strong> ${isTelegramDesktop ? '✅ YES' : '❌ NO'}</div>
           <div><strong>Telegram User ID:</strong> ${telegramUserId || 'none'}</div>
           <div><strong>Medoracle User:</strong> ${userObj ? (typeof userObj === 'string' ? userObj : JSON.stringify(userObj, null, 2)) : 'none'}</div>
           <div><strong>Auth Status:</strong> ${medoracleUser ? '✅ LOGGED IN' : '❌ NOT LOGGED IN'}</div>
