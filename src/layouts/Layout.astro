@@ -329,21 +329,49 @@ const { title } = Astro.props;
       // Create debug overlay
       createDebugOverlay();
 
-      // Check if Telegram WebApp is already loaded, otherwise wait
-      if ((window as any).Telegram?.WebApp) {
-        console.log('🚀 Telegram WebApp already loaded, running platform check');
+      // Initialize app once
+      let isInitialized = false;
+      
+      const initializeApp = () => {
+        if (isInitialized) return;
+        isInitialized = true;
+        
+        console.log('🚀 Initializing app...');
+        
+        // Extract Telegram user data first
+        if ((window as any).Telegram?.WebApp) {
+          const webApp = (window as any).Telegram.WebApp;
+          if (webApp.initDataUnsafe?.user) {
+            const userId = webApp.initDataUnsafe.user.id.toString();
+            const platform = webApp.platform || detectPlatform();
+            
+            console.log('📱 Telegram user data extracted:', {
+              userId,
+              platform,
+              username: webApp.initDataUnsafe.user.username
+            });
+            
+            localStorage.setItem('telegram_user_id', userId);
+            localStorage.setItem('telegram_platform', platform);
+          }
+        }
+        
         if (immediateplatformCheck()) {
           checkAuth();
         }
+      };
+
+      // Check if Telegram WebApp is already loaded, otherwise wait
+      if ((window as any).Telegram?.WebApp) {
+        console.log('🚀 Telegram WebApp already loaded');
+        initializeApp();
       } else {
         console.log('⏳ Waiting for Telegram WebApp to load...');
         // Listen for Telegram WebApp ready event
         const checkTelegramReady = () => {
           if ((window as any).Telegram?.WebApp) {
-            console.log('✅ Telegram WebApp loaded, running platform check');
-            if (immediateplatformCheck()) {
-              checkAuth();
-            }
+            console.log('✅ Telegram WebApp loaded');
+            initializeApp();
           } else {
             setTimeout(checkTelegramReady, 100);
           }
@@ -354,15 +382,11 @@ const { title } = Astro.props;
       // Reapply theme and checks after page transitions
       document.addEventListener('astro:after-swap', () => {
         initTheme();
-        if (immediateplatformCheck()) {
-          checkAuth();
-        }
+        initializeApp();
       });
       document.addEventListener('astro:page-load', () => {
         initTheme();
-        if (immediateplatformCheck()) {
-          checkAuth();
-        }
+        initializeApp();
       });
     </script>
   </head>
