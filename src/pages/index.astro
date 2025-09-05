@@ -4,19 +4,17 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Medoracle Academia">
   <div class="container">
+    <!-- Checking overlay -->
     <div class="checking-overlay" id="checking-overlay">
       <div class="checking-content">
         <div class="spinner"></div>
         <h2>Checking Details...</h2>
         <p>Verifying platform and user information</p>
-        <div class="details" id="platform-details" style="display: none;">
-          <p><strong>Platform:</strong> <span id="detected-platform">-</span></p>
-          <p><strong>User ID:</strong> <span id="user-id">-</span></p>
-        </div>
       </div>
     </div>
     
-    <div class="content" id="main-content" style="display: none;">
+    <!-- Main content (hidden until login success) -->
+    <div class="content hidden" id="main-content">
       <div class="card">
         <h2>Welcome Medicos</h2>
         <p>Discover a world of knowledge and innovation at Medoracle Academia.</p>
@@ -26,97 +24,26 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <script>
-  // Telegram WebApp script
-  const script = document.createElement('script');
-  script.src = 'https://telegram.org/js/telegram-web-app.js';
-  script.onload = initPlatformCheck;
-  document.head.appendChild(script);
-
-  let platformCheckComplete = false;
-
-  function initPlatformCheck() {
-    setTimeout(() => {
-      checkPlatformAndUser();
-    }, 1000);
-  }
-
-  function checkPlatformAndUser() {
-    if (platformCheckComplete) return;
-    platformCheckComplete = true;
-
-    let detectedPlatform = 'unknown';
-    let userId = null;
-
-    // Check if Telegram WebApp is available
-    if ((window as any).Telegram && (window as any).Telegram.WebApp) {
-      const webApp = (window as any).Telegram.WebApp;
-      detectedPlatform = webApp.platform || detectPlatformFallback();
-      
-      // Get user ID from Telegram
-      if (webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
-        userId = webApp.initDataUnsafe.user.id;
+  document.addEventListener("astro:page-load", () => {
+    // Auth manager connects Layout + LoginModal to the page UI
+    (window as any).authManager = {
+      onLogin: () => {
+        console.log("✅ User logged in");
+        const checkingEl = document.getElementById("checking-overlay");
+        const mainEl = document.getElementById("main-content");
+        if (checkingEl) checkingEl.style.display = "none";
+        if (mainEl) mainEl.classList.remove("hidden");
+      },
+      onLogout: () => {
+        console.log("⚠️ User logged out");
+        localStorage.removeItem("medoracle_user");
+        // Reopen modal for login
+        if ((window as any).loginModal) {
+          (window as any).loginModal.show();
+        }
       }
-    } else {
-      detectedPlatform = detectPlatformFallback();
-    }
-
-    // Show detected details
-    const platformEl = document.getElementById('detected-platform');
-    const userIdEl = document.getElementById('user-id');
-    const detailsEl = document.getElementById('platform-details');
-    
-    if (platformEl) platformEl.textContent = detectedPlatform;
-    if (userIdEl) userIdEl.textContent = userId || 'Not available';
-    if (detailsEl) detailsEl.style.display = 'block';
-
-    // Wait 2 seconds to show details, then route
-    setTimeout(() => {
-      routeUser(detectedPlatform, userId);
-    }, 2000);
-  }
-
-  function detectPlatformFallback() {
-    const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('iphone')) return 'ios';
-    if (userAgent.includes('ipad')) return 'ios';
-    if (userAgent.includes('mac')) return 'macos';
-    if (userAgent.includes('android')) return 'android';
-    if (userAgent.includes('win')) return 'windows';
-    return 'unknown';
-  }
-
-  function routeUser(platform, userId) {
-    // Check if iOS, iPadOS, or macOS
-    if (platform === 'ios' || platform === 'macos') {
-      // Store platform and user info
-      if (userId) {
-        localStorage.setItem('telegram_user_id', userId.toString());
-        localStorage.setItem('telegram_platform', platform);
-      }
-      
-      // Show main content and trigger login modal
-      const checkingEl = document.getElementById('checking-overlay');
-      const mainContentEl = document.getElementById('main-content');
-      
-      if (checkingEl) checkingEl.style.display = 'none';
-      if (mainContentEl) mainContentEl.style.display = 'block';
-      
-      // Trigger auth check which will show login modal if needed
-      if ((window as any).authManager) {
-        (window as any).authManager.check();
-      }
-    } else {
-      // Redirect to download page for other platforms
-      window.location.href = '/download';
-    }
-  }
-
-  // Fallback if Telegram script fails to load
-  setTimeout(() => {
-    if (!platformCheckComplete) {
-      initPlatformCheck();
-    }
-  }, 3000);
+    };
+  });
 </script>
 
 <style>
@@ -174,24 +101,8 @@ import Layout from '../layouts/Layout.astro';
     margin-bottom: 1rem;
   }
 
-  .details {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    margin-top: 1rem;
-    text-align: left;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .details p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-  }
-
-  .content {
-    margin-top: 4rem;
+  .content.hidden {
+    display: none;
   }
 
   .card {
