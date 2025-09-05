@@ -69,6 +69,47 @@
       
       <div id="manual-error-message" class="error-message hidden"></div>
     </form>
+
+    <!-- Registration Section (Hidden by default) -->
+    <form class="modal-form hidden" id="registration-form">
+      <div class="registration-header">
+        <h3>Create Your Account</h3>
+        <p>We couldn't find your account. Let's create one for you!</p>
+      </div>
+      
+      <div class="form-group">
+        <label for="reg-userid">User ID</label>
+        <input 
+          type="text" 
+          id="reg-userid" 
+          name="userid" 
+          placeholder="Your User ID" 
+          readonly
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="reg-username">Username</label>
+        <input 
+          type="text" 
+          id="reg-username" 
+          name="username" 
+          placeholder="Choose a username" 
+          required 
+        />
+      </div>
+      
+      <button type="submit" class="modal-login-btn" id="register-btn">
+        <span class="btn-text">Create Account</span>
+        <span class="btn-loading hidden">Creating account...</span>
+      </button>
+      
+      <button type="button" class="switch-manual-btn" id="back-to-login-btn">
+        Back to login
+      </button>
+      
+      <div id="registration-error-message" class="error-message hidden"></div>
+    </form>
     
     <div class="modal-footer">
       <p>Having trouble? <a href="/telegram-login/" target="_blank">Get help from Telegram</a></p>
@@ -353,21 +394,41 @@
 
   .switch-manual-btn, .switch-auto-btn {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-color);
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
-    font-size: 0.9rem;
     cursor: pointer;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
-    margin-top: 1rem;
-    width: 100%;
   }
 
-  .switch-manual-btn:hover, .switch-auto-btn:hover {
+  .switch-auto-btn:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .registration-header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .registration-header h3 {
     color: var(--text-color);
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+  }
+
+  .registration-header p {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  #reg-userid {
+    background: rgba(255, 255, 255, 0.02) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    cursor: not-allowed;
   }
 
   @media (max-width: 480px) {
@@ -447,6 +508,14 @@
     const useridInput = document.getElementById('modal-userid') as HTMLInputElement;
     const usernameInput = document.getElementById('modal-username') as HTMLInputElement;
     const manualErrorMessage = document.getElementById('manual-error-message');
+    
+    // Registration elements
+    const registrationForm = document.getElementById('registration-form') as HTMLFormElement;
+    const registerBtn = document.getElementById('register-btn');
+    const backToLoginBtn = document.getElementById('back-to-login-btn');
+    const regUseridInput = document.getElementById('reg-userid') as HTMLInputElement;
+    const regUsernameInput = document.getElementById('reg-username') as HTMLInputElement;
+    const registrationErrorMessage = document.getElementById('registration-error-message');
     
     let detectedUser: any = null;
 
@@ -564,9 +633,84 @@
 
     function switchToAutoLogin() {
       manualLoginForm?.classList.add('hidden');
+      registrationForm?.classList.add('hidden');
       autoLoginSection?.classList.remove('hidden');
       if (loginStatus) {
         loginStatus.textContent = 'Continue with detected account';
+      }
+    }
+
+    function switchToRegistration(userid: string, username: string) {
+      autoLoginSection?.classList.add('hidden');
+      manualLoginForm?.classList.add('hidden');
+      registrationForm?.classList.remove('hidden');
+      
+      if (regUseridInput) {
+        regUseridInput.value = userid;
+      }
+      if (regUsernameInput) {
+        regUsernameInput.value = username;
+      }
+      if (loginStatus) {
+        loginStatus.textContent = 'Create your account';
+      }
+    }
+
+    function showRegistrationError(message: string) {
+      if (registrationErrorMessage) {
+        registrationErrorMessage.textContent = message;
+        registrationErrorMessage.classList.remove('hidden');
+      }
+    }
+
+    function hideRegistrationError() {
+      if (registrationErrorMessage) {
+        registrationErrorMessage.classList.add('hidden');
+      }
+    }
+
+    function setRegistrationLoading(loading: boolean) {
+      if (registerBtn) {
+        const btnText = registerBtn.querySelector('.btn-text');
+        const btnLoading = registerBtn.querySelector('.btn-loading');
+        
+        (registerBtn as HTMLButtonElement).disabled = loading;
+        if (loading) {
+          btnText?.classList.add('hidden');
+          btnLoading?.classList.remove('hidden');
+        } else {
+          btnText?.classList.remove('hidden');
+          btnLoading?.classList.add('hidden');
+        }
+      }
+    }
+
+    async function registerUser(userid: string, username: string): Promise<UserData | null> {
+      try {
+        const apiUrl = `${(window as any).APP_CONFIG.API_BASE_URL}/nuser/${userid}/${username}`;
+        console.log('Using registration API endpoint:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Registration failed with ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success && result.user) {
+          return result.user;
+        } else {
+          throw new Error('Registration failed: Invalid response format');
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
       }
     }
 
@@ -581,6 +725,10 @@
         });
 
         if (!response.ok) {
+          if (response.status === 404) {
+            // User not found, trigger registration
+            throw new Error('USER_NOT_FOUND');
+          }
           throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
         }
 
