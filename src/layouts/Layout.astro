@@ -20,9 +20,18 @@ const { title } = Astro.props;
     <meta name="view-transition" content="same-origin" />
     <ViewTransitions />
     <title>{title}</title>
-    
-    <script src="/src/config.js"></script>
     <script>
+      declare global {
+        interface Window {
+          toggleTheme: () => string;
+          authManager: {
+            check: () => boolean;
+            onLogin: () => void;
+            onLogout: () => void;
+          };
+        }
+      }
+      
       // Initialize theme management
       const initTheme = () => {
         const theme = localStorage.getItem('theme') || 'light';
@@ -33,7 +42,7 @@ const { title } = Astro.props;
       initTheme();
 
       // Handle theme toggle
-      (window as any).toggleTheme = () => {
+      window.toggleTheme = () => {
         const isDark = document.documentElement.classList.contains('dark');
         const newTheme = isDark ? 'light' : 'dark';
         document.documentElement.className = newTheme;
@@ -41,360 +50,58 @@ const { title } = Astro.props;
         return newTheme;
       };
 
-      // Platform detection
-      const detectPlatform = () => {
-        const userAgent = navigator.userAgent.toLowerCase();
-        
-        if (userAgent.includes('iphone') || userAgent.includes('ipad')) {
-          return 'ios';
-        } else if (userAgent.includes('macintosh') || userAgent.includes('mac os x')) {
-          return 'macos';
-        } else if (userAgent.includes('android')) {
-          return 'android';
-        } else if (userAgent.includes('windows')) {
-          return 'windows';
-        } else if (userAgent.includes('linux')) {
-          return 'linux';
-        }
-        
-        return 'unknown';
-      };
-
-      // Check if platform is allowed (iOS, iPadOS, macOS, or Telegram Desktop)
-      const isAllowedPlatform = () => {
-        const platform = detectPlatform();
-        const storedPlatform = localStorage.getItem('telegram_platform');
-        
-        // Allow iOS, macOS, and Telegram Desktop users
-        const allowedPlatforms = ['ios', 'macos'];
-        
-        // Check if running in Telegram Desktop (Windows/Linux with Telegram WebApp)
-        const isTelegramDesktop = (platform === 'windows' || platform === 'linux') && 
-                                  (window as any).Telegram?.WebApp;
-        
-        return allowedPlatforms.includes(platform) || 
-               (storedPlatform && allowedPlatforms.includes(storedPlatform)) || 
-               isTelegramDesktop;
-      };
-
-      // Immediate platform check - runs before anything else
-      const immediateplatformCheck = () => {
-        // Skip check only for download page
-        if (window.location.pathname === '/download') {
-          return true;
-        }
-
-        const platform = detectPlatform();
-        const storedPlatform = localStorage.getItem('telegram_platform');
-        const hasTelegramWebApp = !!(window as any).Telegram?.WebApp;
-        const isTelegramDesktop = (platform === 'windows' || platform === 'linux') && hasTelegramWebApp;
-        
-        console.log('🔍 Platform Detection:', {
-          detectedPlatform: platform,
-          storedPlatform,
-          hasTelegramWebApp,
-          isTelegramDesktop,
-          userAgent: navigator.userAgent
-        });
-
-        // Use the new isAllowedPlatform function
-        if (!isAllowedPlatform()) {
-          console.log('🚫 Platform not allowed, redirecting to download page');
-          // Redirect non-allowed users to standalone download page
-          window.location.replace('/download-standalone');
-          return false;
-        }
-        
-        console.log('✅ Platform allowed, proceeding with authentication');
-        return true;
-      };
-
-      // Show/hide auth overlay
-      const showAuthOverlay = () => {
-        const appContent = document.getElementById('app-content');
-        const authOverlay = document.getElementById('auth-overlay');
-        
-        if (appContent) appContent.classList.add('hidden');
-        if (authOverlay) authOverlay.classList.remove('hidden');
-      };
-
-      const showApp = () => {
-        const appContent = document.getElementById('app-content');
-        const authOverlay = document.getElementById('auth-overlay');
-        
-        if (appContent) appContent.classList.remove('hidden');
-        if (authOverlay) authOverlay.classList.add('hidden');
-      };
-
-      // Simplified authentication - just show auth overlay
+      // Authentication management
       const checkAuth = () => {
-        console.log('🔐 Showing auth overlay for login check');
-        showAuthOverlay();
-      };
-
-      // Show welcome message for allowed users
-      const showWelcomeMessage = () => {
-        const platform = detectPlatform();
-        const storedPlatform = localStorage.getItem('telegram_platform');
-        const userId = localStorage.getItem('telegram_user_id');
+        const storedUser = localStorage.getItem('medoracle_user');
+        const appContent = document.getElementById('app-content');
+        const authOverlay = document.getElementById('auth-overlay');
         
-        if (isAllowedPlatform() && userId) {
-          // Remove existing welcome message
-          const existingWelcome = document.getElementById('welcome-message');
-          if (existingWelcome) {
-            existingWelcome.remove();
+        if (storedUser) {
+          try {
+            JSON.parse(storedUser);
+            // User is authenticated - show content
+            appContent?.classList.remove('hidden');
+            authOverlay?.classList.add('hidden');
+            return true;
+          } catch (error) {
+            localStorage.removeItem('medoracle_user');
           }
-
-          // Create welcome message
-          const welcomeDiv = document.createElement('div');
-          welcomeDiv.id = 'welcome-message';
-          // Determine platform display name
-          let platformName = 'User';
-          const isTelegramDesktop = (platform === 'windows' || platform === 'linux') && 
-                                    (window as any).Telegram?.WebApp;
-          
-          if (platform === 'ios' || storedPlatform === 'ios') {
-            platformName = 'iOS User';
-          } else if (platform === 'macos' || storedPlatform === 'macos') {
-            platformName = 'macOS User';
-          } else if (isTelegramDesktop) {
-            platformName = 'Telegram Desktop User';
-          }
-          
-          welcomeDiv.innerHTML = `
-            <div style="position: fixed; top: 20px; left: 20px; background: rgba(79, 59, 196, 0.9); color: white; padding: 12px 16px; border-radius: 8px; font-size: 14px; z-index: 1000; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
-              Welcome ${platformName}! 
-              <br><strong>ID:</strong> ${userId}
-              <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; float: right; margin-left: 10px;">×</button>
-            </div>
-          `;
-          document.body.appendChild(welcomeDiv);
-
-          // Auto-hide after 5 seconds
-          setTimeout(() => {
-            const welcomeEl = document.getElementById('welcome-message');
-            if (welcomeEl) welcomeEl.remove();
-          }, 5000);
-        }
-      };
-
-      // Debug overlay for authentication debugging
-      const createDebugOverlay = () => {
-        const debugOverlay = document.createElement('div');
-        debugOverlay.id = 'debug-overlay';
-        debugOverlay.style.cssText = `
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: rgba(0, 0, 0, 0.9);
-          color: #00ff00;
-          font-family: 'Courier New', monospace;
-          font-size: 12px;
-          padding: 10px;
-          z-index: 9999;
-          max-height: 200px;
-          overflow-y: auto;
-          border-top: 2px solid #00ff00;
-          display: none;
-        `;
-        debugOverlay.innerHTML = `
-          <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
-            <strong>🐛 AUTH DEBUG OVERLAY</strong>
-            <button onclick="document.getElementById('debug-overlay').style.display='none'" style="background: #ff0000; color: white; border: none; padding: 2px 8px; margin-left: auto; cursor: pointer;">✕</button>
-          </div>
-          <div id="debug-content"></div>
-        `;
-        document.body.appendChild(debugOverlay);
-        
-        // Add toggle button
-        const toggleBtn = document.createElement('button');
-        toggleBtn.style.cssText = `
-          position: fixed;
-          bottom: 10px;
-          right: 10px;
-          background: #4f3bc4;
-          color: white;
-          border: none;
-          padding: 8px 12px;
-          border-radius: 20px;
-          cursor: pointer;
-          z-index: 10000;
-          font-size: 12px;
-        `;
-        toggleBtn.textContent = '🐛 DEBUG';
-        toggleBtn.onclick = () => {
-          const overlay = document.getElementById('debug-overlay');
-          if (overlay) {
-            overlay.style.display = overlay.style.display === 'none' ? 'block' : 'none';
-            updateDebugInfo();
-          }
-        };
-        document.body.appendChild(toggleBtn);
-      };
-
-      const updateDebugInfo = () => {
-        const debugContent = document.getElementById('debug-content');
-        if (!debugContent) return;
-        
-        const telegramUserId = localStorage.getItem('telegram_user_id');
-        const telegramPlatform = localStorage.getItem('telegram_platform');
-        const medoracleUser = localStorage.getItem('medoracle_user');
-        const currentPath = window.location.pathname;
-        
-        let userObj: any = null;
-        try {
-          userObj = medoracleUser ? JSON.parse(medoracleUser) : null;
-        } catch (e) {
-          userObj = 'INVALID JSON';
         }
         
-        const currentPlatform = detectPlatform();
-        const isTelegramDesktop = (currentPlatform === 'windows' || currentPlatform === 'linux') && 
-                                  (window as any).Telegram?.WebApp;
-        const isAllowed = isAllowedPlatform();
-        
-        console.log('🐛 DEBUG UPDATE:', {
-          currentPath,
-          platform: currentPlatform,
-          storedPlatform: telegramPlatform,
-          telegramUserId,
-          medoracleUser: userObj,
-          authStatus: medoracleUser ? 'LOGGED IN' : 'NOT LOGGED IN',
-          isAllowedPlatform: isAllowed,
-          isTelegramDesktop,
-          timestamp: new Date().toLocaleTimeString()
-        });
-        
-        debugContent.innerHTML = `
-          <div><strong>Current Path:</strong> ${currentPath}</div>
-          <div><strong>Platform:</strong> ${currentPlatform} (stored: ${telegramPlatform || 'none'})</div>
-          <div><strong>Allowed Platform:</strong> ${isAllowed ? '✅ YES' : '❌ NO'}</div>
-          <div><strong>Telegram Desktop:</strong> ${isTelegramDesktop ? '✅ YES' : '❌ NO'}</div>
-          <div><strong>Telegram User ID:</strong> ${telegramUserId || 'none'}</div>
-          <div><strong>Medoracle User:</strong> ${userObj ? (typeof userObj === 'string' ? userObj : JSON.stringify(userObj, null, 2)) : 'none'}</div>
-          <div><strong>Auth Status:</strong> ${medoracleUser ? '✅ LOGGED IN' : '❌ NOT LOGGED IN'}</div>
-          <div><strong>Modal State:</strong> ${document.getElementById('login-modal')?.classList.contains('hidden') ? 'HIDDEN' : 'VISIBLE'}</div>
-          <div><strong>App Content:</strong> ${document.getElementById('app-content')?.classList.contains('hidden') ? 'HIDDEN' : 'VISIBLE'}</div>
-          <div><strong>Auth Overlay:</strong> ${document.getElementById('auth-overlay')?.classList.contains('hidden') ? 'HIDDEN' : 'VISIBLE'}</div>
-          <div><strong>Timestamp:</strong> ${new Date().toLocaleTimeString()}</div>
-        `;
+        // User not authenticated - hide content
+        appContent?.classList.add('hidden');
+        authOverlay?.classList.remove('hidden');
+        return false;
       };
 
       // Global auth state manager
-      (window as any).authManager = {
+      window.authManager = {
         check: checkAuth,
         onLogin: () => {
           const appContent = document.getElementById('app-content');
           const authOverlay = document.getElementById('auth-overlay');
           appContent?.classList.remove('hidden');
           authOverlay?.classList.add('hidden');
-          showWelcomeMessage();
-          updateDebugInfo();
         },
         onLogout: () => {
-          // Clear user data
-          localStorage.removeItem('medoracle_user');
-          
-          // DO NOT clear telegram_user_id and telegram_platform - needed for re-authentication
-          // localStorage.removeItem('telegram_user_id');
-          // localStorage.removeItem('telegram_platform');
-          
-          // Remove welcome message
-          const welcomeEl = document.getElementById('welcome-message');
-          if (welcomeEl) welcomeEl.remove();
-          
-          // Show auth overlay and trigger re-authentication
           const appContent = document.getElementById('app-content');
           const authOverlay = document.getElementById('auth-overlay');
           appContent?.classList.add('hidden');
           authOverlay?.classList.remove('hidden');
-          
-          updateDebugInfo();
-          
-          // Trigger re-authentication check
-          if ((window as any).loginModal?.checkAuth) {
-            (window as any).loginModal.checkAuth();
-          }
         }
       };
 
-      // Create debug overlay
-      createDebugOverlay();
+      // Check auth on page load
+      checkAuth();
 
-      // Initialize app once (global guard across page transitions)
-      const initializeApp = () => {
-        if ((window as any).__medoraInitDone) return;
-        (window as any).__medoraInitDone = true;
-        
-        console.log('🚀 Initializing app...');
-        
-        // Extract Telegram user data first
-        if ((window as any).Telegram?.WebApp) {
-          const webApp = (window as any).Telegram.WebApp;
-          if (webApp.initDataUnsafe?.user) {
-            const userId = webApp.initDataUnsafe.user.id.toString();
-            const platform = webApp.platform || detectPlatform();
-            
-            console.log('📱 Telegram user data extracted:', {
-              userId,
-              platform,
-              username: webApp.initDataUnsafe.user.username
-            });
-            
-            localStorage.setItem('telegram_user_id', userId);
-            localStorage.setItem('telegram_platform', platform);
-          }
-        }
-        
-        if (immediateplatformCheck()) {
-          // Trigger auth check immediately after platform validation
-          console.log('🔐 Platform check passed, triggering auth');
-          
-          // Wait for LoginModal to be ready
-          const waitForLoginModal = () => {
-            if ((window as any).loginModal?.checkAuth) {
-              console.log('✅ LoginModal ready, starting auth check');
-              (window as any).loginModal.checkAuth();
-            } else {
-              console.log('⏳ Waiting for LoginModal...');
-              setTimeout(waitForLoginModal, 100);
-            }
-          };
-          
-          setTimeout(waitForLoginModal, 100);
-        }
-      };
-
-      // Check if Telegram WebApp is already loaded, otherwise wait
-      if ((window as any).Telegram?.WebApp) {
-        console.log('🚀 Telegram WebApp already loaded');
-        initializeApp();
-      } else {
-        console.log('⏳ Waiting for Telegram WebApp to load...');
-        // Listen for Telegram WebApp ready event
-        let attempts = 0;
-        const checkTelegramReady = () => {
-          attempts++;
-          if ((window as any).Telegram?.WebApp) {
-            console.log('✅ Telegram WebApp loaded');
-            initializeApp();
-          } else if (attempts < 30) { // Max 3 seconds
-            setTimeout(checkTelegramReady, 100);
-          } else {
-            console.log('⚠️ Telegram WebApp not found, proceeding without it');
-            initializeApp(); // Proceed anyway for testing
-          }
-        };
-        checkTelegramReady();
-      }
-
-      // Only handle theme on page transitions - no re-initialization
+      // Reapply theme after page transitions
       document.addEventListener('astro:after-swap', () => {
         initTheme();
+        checkAuth();
       });
       document.addEventListener('astro:page-load', () => {
         initTheme();
+        checkAuth();
       });
     </script>
   </head>
@@ -492,9 +199,6 @@ const { title } = Astro.props;
     color: var(--text-color);
   }
 
-  .background {
-    display: none; /* Remove duplicate background */
-  }
 
   .blur {
     position: absolute;
@@ -506,13 +210,6 @@ const { title } = Astro.props;
     z-index: -1;
   }
 
-  main {
-    margin: auto;
-    padding: 5rem 1.5rem 1.5rem;
-    max-width: 90ch;
-    animation: fade-in 0.3s ease-out;
-    view-transition-name: main;
-  }
 
   @media (max-width: 768px) {
     main {
@@ -531,10 +228,6 @@ const { title } = Astro.props;
     }
   }
 
-  @keyframes fade-slide {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 
   /* Remove tap highlight color on mobile */
   * {
@@ -597,11 +290,5 @@ const { title } = Astro.props;
     font-size: 1.2rem;
     font-weight: 500;
     opacity: 0.9;
-  }
-
-  .auth-subtext {
-    font-size: 0.9rem !important;
-    opacity: 0.7 !important;
-    margin-top: -0.5rem;
   }
 </style>

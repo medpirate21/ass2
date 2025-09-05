@@ -1029,8 +1029,7 @@ import Layout from '../layouts/Layout.astro';
 
     async function refreshAccountData(userid: string) {
       try {
-        const apiUrl = (window as any).APP_CONFIG?.API_BASE_URL || 'https://misc-1.onrender.com';
-        const response = await fetch(`${apiUrl}/cuser/${userid}`);
+        const response = await fetch(`http://localhost:8000/cuser/${userid}`);
         if (!response.ok) {
           throw new Error('Failed to fetch account data');
         }

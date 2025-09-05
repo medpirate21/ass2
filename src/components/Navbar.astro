@@ -172,47 +172,13 @@ const icons = {
 </style>
 
 <script>
-  // Platform check for navbar navigation
-  const checkPlatformBeforeNavigation = () => {
-    const userAgent = navigator.userAgent.toLowerCase();
-    let platform = 'unknown';
-    if (userAgent.includes('iphone') || userAgent.includes('ipad')) platform = 'ios';
-    else if (userAgent.includes('mac')) platform = 'macos';
-    else if (userAgent.includes('android')) platform = 'android';
-    else if (userAgent.includes('win')) platform = 'windows';
-
-    const storedPlatform = localStorage.getItem('telegram_platform');
-    
-    // Block navigation for non-iOS/macOS users
-    if (platform !== 'ios' && platform !== 'macos' && storedPlatform !== 'ios' && storedPlatform !== 'macos') {
-      return false;
-    }
-    return true;
-  };
-
+  // Force external navigation for quiz link
   document.addEventListener('astro:page-load', () => {
-    // Block all navbar navigation for unauthorized platforms
-    const navItems = document.querySelectorAll('.nav-item:not(.quiz-link)');
-    navItems.forEach(item => {
-      item.addEventListener('click', (e) => {
-        if (!checkPlatformBeforeNavigation()) {
-          e.preventDefault();
-          window.location.href = '/download-standalone';
-        }
-      });
-    });
-
-    // Handle quiz link separately
     const quizLink = document.querySelector('.quiz-link');
     if (quizLink) {
       quizLink.addEventListener('click', (e) => {
-        if (!checkPlatformBeforeNavigation()) {
-          e.preventDefault();
-          window.location.href = '/download-standalone';
-        } else {
-          e.preventDefault();
-          window.open('https://medoracle-quiz.pages.dev', '_blank', 'noopener,noreferrer');
-        }
+        e.preventDefault();
+        window.open('https://medoracle-quiz.pages.dev', '_blank', 'noopener,noreferrer');
       });
     }
   });
