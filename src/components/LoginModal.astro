@@ -391,8 +391,13 @@
 
     function showRegisterForm() {
       const loadingDiv = document.getElementById('modal-loading');
-      loadingDiv?.classList.add('hidden');
-      registerForm?.classList.remove('hidden');
+      if (loadingDiv) {
+        loadingDiv.classList.add('hidden');
+      }
+      
+      if (registerForm) {
+        registerForm.classList.remove('hidden');
+      }
       
       const subtitle = document.getElementById('modal-subtitle');
       if (subtitle) {
@@ -404,27 +409,32 @@
       if (telegramUserId && registerUseridInput) {
         registerUseridInput.value = telegramUserId;
       }
-      
-      hideError();
-      hideRegisterError();
     }
 
     function showError(message: string) {
-      errorMessage.textContent = message;
-      errorMessage.classList.remove('hidden');
+      if (errorMessage) {
+        errorMessage.textContent = message;
+        errorMessage.classList.remove('hidden');
+      }
     }
 
     function hideError() {
-      errorMessage.classList.add('hidden');
+      if (errorMessage) {
+        errorMessage.classList.add('hidden');
+      }
     }
 
     function showRegisterError(message: string) {
-      registerErrorMessage.textContent = message;
-      registerErrorMessage.classList.remove('hidden');
+      if (registerErrorMessage) {
+        registerErrorMessage.textContent = message;
+        registerErrorMessage.classList.remove('hidden');
+      }
     }
 
     function hideRegisterError() {
-      registerErrorMessage.classList.add('hidden');
+      if (registerErrorMessage) {
+        registerErrorMessage.classList.add('hidden');
+      }
     }
 
     function setLoading(loading: boolean) {
