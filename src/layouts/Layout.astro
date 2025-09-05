@@ -145,6 +145,8 @@ const { title } = Astro.props;
       };
 
 
+      
+
       // Show welcome message for allowed users
       const showWelcomeMessage = () => {
         const platform = detectPlatform();
@@ -357,6 +359,10 @@ const { title } = Astro.props;
           // Avoid triggering auth multiple times
           if (!(window as any).__medoraAuthTriggered) {
             (window as any).__medoraAuthTriggered = true;
+            // Hide auth overlay immediately, let LoginModal handle UI
+            const authOverlay = document.getElementById('auth-overlay');
+            if (authOverlay) authOverlay.classList.add('hidden');
+            
             // Delay auth check to prevent race conditions
             setTimeout(() => {
               const flags = (window as any).__medoraAuthFlags;
@@ -367,7 +373,7 @@ const { title } = Astro.props;
               if ((window as any).loginModal?.checkAuth) {
                 (window as any).loginModal.checkAuth();
               }
-            }, 500);
+            }, 100);
           }
         }
       };
