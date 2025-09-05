@@ -310,7 +310,24 @@
   }
 </style>
 
-<script src="/src/config.js"></script>
+<script>
+// Inline config to ensure it loads
+(window as any).APP_CONFIG = {
+  API_BASE_URL: 'https://misc-1.onrender.com',
+  TELEGRAM_BOT_NAME: 'Med',
+  MEDIA_API_BASE_URL: 'http://noods.ddnsfree.com',
+  EDIA_API_BASE_URL: 'http://vid.ddnsfree.com',
+};
+
+(window as any).APP_CONFIG.QUOTA_CHECK = (userid: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/quota/${userid}`;
+(window as any).APP_CONFIG.VIDEO_QUOTA_DECREMENT = (userid: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/dquota/${userid}/v`;
+(window as any).APP_CONFIG.NOTE_QUOTA_DECREMENT = (userid: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/dquota/${userid}/n`;
+(window as any).APP_CONFIG.USER_LOGIN = (userid: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/cuser/${userid}`;
+(window as any).APP_CONFIG.TG_PLATFORM_CHECK = (userid: string, platform: string) => `${(window as any).APP_CONFIG.API_BASE_URL}/tgcheck/${userid}/${platform}`;
+(window as any).APP_CONFIG.TELEGRAM_URL = `https://t.me/${(window as any).APP_CONFIG.TELEGRAM_BOT_NAME}`;
+(window as any).APP_CONFIG.VIDEO_PLAYER_URL = (encodedId: string) => `${(window as any).APP_CONFIG.EDIA_API_BASE_URL}?vid=${encodedId}`;
+(window as any).APP_CONFIG.NOTE_VIEWER_URL = (encodedId: string) => `${(window as any).APP_CONFIG.MEDIA_API_BASE_URL}?nid=${encodedId}`;
+</script>
 <script>
   interface UserData {
     id: string;
@@ -319,7 +336,9 @@
     status: string;
   }
 
-  document.addEventListener('astro:page-load', () => {
+  // Run immediately and on page load events
+  function initializeLoginModal() {
+    console.log('LoginModal initialization started');
     const modal = document.getElementById('login-modal');
     const modalClose = document.getElementById('modal-close');
     const modalBackdrop = document.querySelector('.modal-backdrop');
@@ -369,6 +388,7 @@
 
     async function loginUser(userid: string, username: string): Promise<UserData | null> {
       try {
+        console.log('Using API endpoint:', (window as any).APP_CONFIG.USER_LOGIN(userid));
         const response = await fetch((window as any).APP_CONFIG.USER_LOGIN(userid), {
           method: 'GET',
           headers: {
@@ -500,12 +520,25 @@
     checkAuthStatus();
 
     // Make functions globally available for other components
+    console.log('Setting window.loginModal...');
     (window as any).loginModal = {
       show: showModal,
       hide: hideModal,
       checkAuth: checkAuthStatus
     };
-  });
+    console.log('LoginModal initialization completed');
+  }
+
+  // Run initialization immediately
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeLoginModal);
+  } else {
+    initializeLoginModal();
+  }
+
+  // Also run on Astro page transitions
+  document.addEventListener('astro:page-load', initializeLoginModal);
+  document.addEventListener('astro:after-swap', initializeLoginModal);
 
   // Add slide in animation
   const style = document.createElement('style');
