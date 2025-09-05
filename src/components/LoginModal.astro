@@ -579,36 +579,34 @@
         }
       }
 
-      // Show modal with loading state
-      showModal();
-
       try {
-        // Auto-check if user exists with Telegram ID
+        // Auto-check if user exists with Telegram ID (no loading UI yet)
         const userData = await loginUser(telegramUserId, '');
 
         if (userData) {
-          // User found - auto login
+          // User found - auto login (no modal needed)
           localStorage.setItem('medoracle_user', JSON.stringify(userData));
           flags.checking = false;
           flags.regShown = false;
-          hideModal();
           if ((window as any).authManager?.onLogin) {
             (window as any).authManager.onLogin();
           }
           return true;
         } else {
-          // User not found - show registration form (only once)
+          // User not found - show registration form directly
           console.log('📝 User not found, showing registration form');
           flags.regShown = true;
+          showModal();
           showRegisterForm();
           flags.checking = false;
           return false;
         }
       } catch (error) {
         console.error('Auto-login check failed:', error);
-        // Show registration form on error (only once)
+        // Show registration form on error
         console.log('📝 Error occurred, showing registration form');
         flags.regShown = true;
+        showModal();
         showRegisterForm();
         flags.checking = false;
         return false;
