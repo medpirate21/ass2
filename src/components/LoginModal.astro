@@ -7,11 +7,35 @@
   <div class="modal-content">
     <div class="modal-header">
       <h2>Welcome to Medoracle Academia</h2>
-      <p>Please sign in to continue</p>
-      <!-- Close button removed - login is mandatory -->
+      <p id="login-status">Checking your credentials...</p>
     </div>
     
-    <form class="modal-form" id="modal-login-form">
+    <!-- Auto Login Section -->
+    <div id="auto-login-section" class="modal-form">
+      <div class="auto-login-info">
+        <div class="user-avatar" id="user-avatar">
+          <span id="user-initial">?</span>
+        </div>
+        <div class="user-info">
+          <h3 id="detected-username">Detecting user...</h3>
+          <p id="detected-userid">ID: Loading...</p>
+        </div>
+      </div>
+      
+      <button type="button" class="modal-login-btn" id="auto-login-btn">
+        <span class="btn-text">Continue as User</span>
+        <span class="btn-loading hidden">Signing in...</span>
+      </button>
+      
+      <button type="button" class="switch-manual-btn" id="switch-manual-btn">
+        Use different account
+      </button>
+      
+      <div id="modal-error-message" class="error-message hidden"></div>
+    </div>
+    
+    <!-- Manual Login Section (Hidden by default) -->
+    <form class="modal-form hidden" id="manual-login-form">
       <div class="form-group">
         <label for="modal-userid">User ID</label>
         <input 
@@ -34,16 +58,20 @@
         />
       </div>
       
-      <button type="submit" class="modal-login-btn" id="modal-login-btn">
+      <button type="submit" class="modal-login-btn" id="manual-login-btn">
         <span class="btn-text">Sign In</span>
         <span class="btn-loading hidden">Signing in...</span>
       </button>
       
-      <div id="modal-error-message" class="error-message hidden"></div>
+      <button type="button" class="switch-auto-btn" id="switch-auto-btn">
+        Back to auto login
+      </button>
+      
+      <div id="manual-error-message" class="error-message hidden"></div>
     </form>
     
     <div class="modal-footer">
-      <p>Don't have credentials? <a href="/telegram-login/" target="_blank">Get them from Telegram</a></p>
+      <p>Having trouble? <a href="/telegram-login/" target="_blank">Get help from Telegram</a></p>
       <p class="mandatory-notice">⚠️ Login is required to access this site</p>
     </div>
   </div>
@@ -281,6 +309,67 @@
     text-align: center;
   }
 
+  /* Auto Login Styles */
+  .auto-login-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .user-info {
+    flex: 1;
+  }
+
+  .user-info h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+
+  .user-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .switch-manual-btn, .switch-auto-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .switch-manual-btn:hover, .switch-auto-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--text-color);
+  }
+
   @media (max-width: 480px) {
     .modal-content {
       margin: 1rem;
@@ -340,15 +429,26 @@
   function initializeLoginModal() {
     console.log('LoginModal initialization started');
     const modal = document.getElementById('login-modal');
-    const modalClose = document.getElementById('modal-close');
-    const modalBackdrop = document.querySelector('.modal-backdrop');
-    const form = document.getElementById('modal-login-form') as HTMLFormElement;
-    const loginBtn = document.getElementById('modal-login-btn') as HTMLButtonElement;
-    const btnText = document.querySelector('.btn-text') as HTMLElement;
-    const btnLoading = document.querySelector('.btn-loading') as HTMLElement;
-    const errorMessage = document.getElementById('modal-error-message') as HTMLElement;
+    const loginStatus = document.getElementById('login-status');
+    
+    // Auto login elements
+    const autoLoginSection = document.getElementById('auto-login-section');
+    const autoLoginBtn = document.getElementById('auto-login-btn');
+    const switchManualBtn = document.getElementById('switch-manual-btn');
+    const userInitial = document.getElementById('user-initial');
+    const detectedUsername = document.getElementById('detected-username');
+    const detectedUserid = document.getElementById('detected-userid');
+    const errorMessage = document.getElementById('modal-error-message');
+    
+    // Manual login elements
+    const manualLoginForm = document.getElementById('manual-login-form') as HTMLFormElement;
+    const manualLoginBtn = document.getElementById('manual-login-btn');
+    const switchAutoBtn = document.getElementById('switch-auto-btn');
     const useridInput = document.getElementById('modal-userid') as HTMLInputElement;
     const usernameInput = document.getElementById('modal-username') as HTMLInputElement;
+    const manualErrorMessage = document.getElementById('manual-error-message');
+    
+    let detectedUser: any = null;
 
     function showModal() {
       modal?.classList.remove('hidden');
@@ -366,23 +466,107 @@
       }, 300);
     }
 
-    function showError(message: string) {
-      errorMessage.textContent = message;
-      errorMessage.classList.remove('hidden');
+    // Telegram WebApp data extraction
+    function extractTelegramUserData() {
+      try {
+        const webApp = (window as any).Telegram?.WebApp;
+        if (!webApp) {
+          console.log('Telegram WebApp not available');
+          return null;
+        }
+
+        const initDataUnsafe = webApp.initDataUnsafe;
+        if (!initDataUnsafe || !initDataUnsafe.user) {
+          console.log('No user data in initDataUnsafe');
+          return null;
+        }
+
+        const user = initDataUnsafe.user;
+        console.log('Extracted Telegram user data:', user);
+        
+        return {
+          id: user.id.toString(),
+          first_name: user.first_name,
+          last_name: user.last_name || '',
+          username: user.username || user.first_name
+        };
+      } catch (error) {
+        console.error('Error extracting Telegram user data:', error);
+        return null;
+      }
     }
 
-    function hideError() {
-      errorMessage.classList.add('hidden');
+    function showAutoError(message: string) {
+      if (errorMessage) {
+        errorMessage.textContent = message;
+        errorMessage.classList.remove('hidden');
+      }
     }
 
-    function setLoading(loading: boolean) {
-      loginBtn.disabled = loading;
-      if (loading) {
-        btnText.classList.add('hidden');
-        btnLoading.classList.remove('hidden');
-      } else {
-        btnText.classList.remove('hidden');
-        btnLoading.classList.add('hidden');
+    function hideAutoError() {
+      if (errorMessage) {
+        errorMessage.classList.add('hidden');
+      }
+    }
+
+    function showManualError(message: string) {
+      if (manualErrorMessage) {
+        manualErrorMessage.textContent = message;
+        manualErrorMessage.classList.remove('hidden');
+      }
+    }
+
+    function hideManualError() {
+      if (manualErrorMessage) {
+        manualErrorMessage.classList.add('hidden');
+      }
+    }
+
+    function setAutoLoading(loading: boolean) {
+      if (autoLoginBtn) {
+        const btnText = autoLoginBtn.querySelector('.btn-text');
+        const btnLoading = autoLoginBtn.querySelector('.btn-loading');
+        
+        (autoLoginBtn as HTMLButtonElement).disabled = loading;
+        if (loading) {
+          btnText?.classList.add('hidden');
+          btnLoading?.classList.remove('hidden');
+        } else {
+          btnText?.classList.remove('hidden');
+          btnLoading?.classList.add('hidden');
+        }
+      }
+    }
+
+    function setManualLoading(loading: boolean) {
+      if (manualLoginBtn) {
+        const btnText = manualLoginBtn.querySelector('.btn-text');
+        const btnLoading = manualLoginBtn.querySelector('.btn-loading');
+        
+        (manualLoginBtn as HTMLButtonElement).disabled = loading;
+        if (loading) {
+          btnText?.classList.add('hidden');
+          btnLoading?.classList.remove('hidden');
+        } else {
+          btnText?.classList.remove('hidden');
+          btnLoading?.classList.add('hidden');
+        }
+      }
+    }
+
+    function switchToManualLogin() {
+      autoLoginSection?.classList.add('hidden');
+      manualLoginForm?.classList.remove('hidden');
+      if (loginStatus) {
+        loginStatus.textContent = 'Please enter your credentials';
+      }
+    }
+
+    function switchToAutoLogin() {
+      manualLoginForm?.classList.add('hidden');
+      autoLoginSection?.classList.remove('hidden');
+      if (loginStatus) {
+        loginStatus.textContent = 'Continue with detected account';
       }
     }
 
@@ -449,36 +633,32 @@
     //   }
     // });
 
-    form?.addEventListener('submit', async (e) => {
+    // Manual login form handler
+    manualLoginForm?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      hideError();
+      hideManualError();
 
-      const userid = useridInput.value.trim();
-      const username = usernameInput.value.trim();
+      const userid = useridInput?.value.trim();
+      const username = usernameInput?.value.trim();
 
       if (!userid || !username) {
-        showError('Please fill in all fields');
+        showManualError('Please fill in all fields');
         return;
       }
 
-      setLoading(true);
+      setManualLoading(true);
 
       try {
         const userData = await loginUser(userid, username);
         
         if (userData) {
-          // Store user data in localStorage
           localStorage.setItem('medoracle_user', JSON.stringify(userData));
-          
-          // Hide modal and show success
           hideModal();
           
-          // Notify auth manager that user logged in
           if ((window as any).authManager) {
             (window as any).authManager.onLogin();
           }
           
-          // Optional: Show success notification
           const notification = document.createElement('div');
           notification.style.cssText = `
             position: fixed;
@@ -502,22 +682,97 @@
         }
       } catch (error) {
         if (error instanceof Error) {
-          showError(error.message);
+          showManualError(error.message);
         } else {
-          showError('Login failed. Please check your credentials and try again.');
+          showManualError('Login failed. Please check your credentials and try again.');
         }
       } finally {
-        setLoading(false);
+        setManualLoading(false);
       }
     });
 
     // Clear error messages when user starts typing
     [useridInput, usernameInput].forEach(input => {
-      input?.addEventListener('input', hideError);
+      input?.addEventListener('input', hideManualError);
+    });
+
+    // Auto login functionality
+    async function attemptAutoLogin() {
+      const telegramUser = extractTelegramUserData();
+      if (!telegramUser) {
+        console.log('No Telegram user data found, switching to manual login');
+        switchToManualLogin();
+        return;
+      }
+
+      detectedUser = telegramUser;
+      
+      // Update UI with detected user info
+      if (userInitial) {
+        userInitial.textContent = telegramUser.first_name.charAt(0).toUpperCase();
+      }
+      if (detectedUsername) {
+        detectedUsername.textContent = `${telegramUser.first_name} ${telegramUser.last_name}`.trim();
+      }
+      if (detectedUserid) {
+        detectedUserid.textContent = `ID: ${telegramUser.id}`;
+      }
+      if (autoLoginBtn) {
+        const btnText = autoLoginBtn.querySelector('.btn-text');
+        if (btnText) {
+          btnText.textContent = `Continue as ${telegramUser.first_name}`;
+        }
+      }
+      if (loginStatus) {
+        loginStatus.textContent = 'Continue with your Telegram account';
+      }
+    }
+
+    // Event listeners
+    switchManualBtn?.addEventListener('click', switchToManualLogin);
+    switchAutoBtn?.addEventListener('click', switchToAutoLogin);
+
+    // Auto login button handler
+    autoLoginBtn?.addEventListener('click', async () => {
+      if (!detectedUser) {
+        showAutoError('No user data detected');
+        return;
+      }
+
+      hideAutoError();
+      setAutoLoading(true);
+
+      try {
+        const userData = await loginUser(detectedUser.id, detectedUser.username);
+        if (userData) {
+          localStorage.setItem('medoracle_user', JSON.stringify(userData));
+          hideModal();
+          
+          if ((window as any).authManager) {
+            (window as any).authManager.onLogin();
+          }
+          
+          console.log('Auto login successful');
+        }
+      } catch (error) {
+        console.error('Auto login error:', error);
+        if (error instanceof Error) {
+          showAutoError(error.message);
+        } else {
+          showAutoError('Login failed. Please try manual login.');
+        }
+      } finally {
+        setAutoLoading(false);
+      }
     });
 
     // Initialize modal state
     checkAuthStatus();
+    
+    // Attempt auto login when modal is shown
+    setTimeout(() => {
+      attemptAutoLogin();
+    }, 500);
 
     // Make functions globally available for other components
     console.log('Setting window.loginModal...');
