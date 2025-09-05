@@ -84,6 +84,19 @@ const { title } = Astro.props;
           return true;
         }
 
+        const platform = detectPlatform();
+        const storedPlatform = localStorage.getItem('telegram_platform');
+        const hasTelegramWebApp = !!(window as any).Telegram?.WebApp;
+        const isTelegramDesktop = (platform === 'windows' || platform === 'linux') && hasTelegramWebApp;
+        
+        console.log('🔍 Platform Detection:', {
+          detectedPlatform: platform,
+          storedPlatform,
+          hasTelegramWebApp,
+          isTelegramDesktop,
+          userAgent: navigator.userAgent
+        });
+
         // Use the new isAllowedPlatform function
         if (!isAllowedPlatform()) {
           console.log('🚫 Platform not allowed, redirecting to download page');
@@ -316,9 +329,26 @@ const { title } = Astro.props;
       // Create debug overlay
       createDebugOverlay();
 
-      // Run immediate platform check FIRST, then auth
-      if (immediateplatformCheck()) {
-        checkAuth();
+      // Check if Telegram WebApp is already loaded, otherwise wait
+      if ((window as any).Telegram?.WebApp) {
+        console.log('🚀 Telegram WebApp already loaded, running platform check');
+        if (immediateplatformCheck()) {
+          checkAuth();
+        }
+      } else {
+        console.log('⏳ Waiting for Telegram WebApp to load...');
+        // Listen for Telegram WebApp ready event
+        const checkTelegramReady = () => {
+          if ((window as any).Telegram?.WebApp) {
+            console.log('✅ Telegram WebApp loaded, running platform check');
+            if (immediateplatformCheck()) {
+              checkAuth();
+            }
+          } else {
+            setTimeout(checkTelegramReady, 100);
+          }
+        };
+        checkTelegramReady();
       }
 
       // Reapply theme and checks after page transitions
