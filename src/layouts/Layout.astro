@@ -144,15 +144,25 @@ const { title } = Astro.props;
         onLogout: () => {
           // Clear user data
           localStorage.removeItem('medoracle_user');
-          localStorage.removeItem('telegram_user_id');
-          localStorage.removeItem('telegram_platform');
+          
+          // DO NOT clear telegram_user_id and telegram_platform - needed for re-authentication
+          // localStorage.removeItem('telegram_user_id');
+          // localStorage.removeItem('telegram_platform');
           
           // Remove welcome message
           const welcomeEl = document.getElementById('welcome-message');
           if (welcomeEl) welcomeEl.remove();
           
-          // Redirect to home page to restart flow
-          window.location.href = '/';
+          // Show auth overlay and trigger re-authentication
+          const appContent = document.getElementById('app-content');
+          const authOverlay = document.getElementById('auth-overlay');
+          appContent?.classList.add('hidden');
+          authOverlay?.classList.remove('hidden');
+          
+          // Trigger re-authentication check
+          if ((window as any).loginModal?.checkAuth) {
+            (window as any).loginModal.checkAuth();
+          }
         }
       };
 
