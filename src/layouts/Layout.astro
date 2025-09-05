@@ -78,10 +78,21 @@ const { title } = Astro.props;
           }
         }
         
-        // User not authenticated - hide content
-        console.log('User not authenticated, showing auth overlay');
+        // User not authenticated - hide content and show login modal
+        console.log('User not authenticated, showing auth overlay and login modal');
         appContent?.classList.add('hidden');
         authOverlay?.classList.remove('hidden');
+        
+        // Show login modal after a short delay to ensure DOM is ready
+        setTimeout(() => {
+          if (window.loginModal) {
+            console.log('Showing login modal');
+            window.loginModal.show();
+          } else {
+            console.log('Login modal not available');
+          }
+        }, 500);
+        
         return false;
       };
 
@@ -99,6 +110,14 @@ const { title } = Astro.props;
           const authOverlay = document.getElementById('auth-overlay');
           appContent?.classList.add('hidden');
           authOverlay?.classList.remove('hidden');
+          
+          // Show login modal after logout
+          setTimeout(() => {
+            if (window.loginModal) {
+              console.log('Showing login modal after logout');
+              window.loginModal.show();
+            }
+          }, 500);
         }
       };
 
