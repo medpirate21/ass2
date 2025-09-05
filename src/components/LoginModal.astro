@@ -464,13 +464,16 @@
         });
 
         if (!response.ok) {
+          if (response.status === 404) {
+            return null; // User not found
+          }
           throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
         }
 
         const userData: UserData = await response.json();
         
-        // Verify username matches
-        if (userData.username.toLowerCase() !== username.toLowerCase()) {
+        // Skip username verification for auto-login check
+        if (username && userData.username.toLowerCase() !== username.toLowerCase()) {
           throw new Error('Username does not match the provided User ID');
         }
 
@@ -478,7 +481,13 @@
       } catch (error) {
         console.error('Login error:', error);
         
-        // Provide specific error messages
+        // For auto-check (no username), treat errors as user not found
+        if (!username) {
+          console.error('Auto-check failed, treating as user not found:', error);
+          return null;
+        }
+        
+        // Provide specific error messages for manual login
         if (error instanceof TypeError && error.message.includes('fetch')) {
           throw new Error('Cannot connect to server. Please check your internet connection.');
         }
