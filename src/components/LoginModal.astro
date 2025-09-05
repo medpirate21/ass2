@@ -375,6 +375,8 @@
 
     function showModal() {
       modal?.classList.remove('hidden');
+      modal?.classList.add('show');
+      document.body.classList.add('modal-open');
     }
 
     function hideModal() {
@@ -538,12 +540,33 @@
     // Auto-check user with Telegram ID
     async function checkAuthStatus() {
       const telegramUserId = localStorage.getItem('telegram_user_id');
-      
+
+      // Global flags to avoid repeated checks and UI flicker
+      const w = window as any;
+      if (!w.__medoraAuthFlags) {
+        w.__medoraAuthFlags = { checking: false, regShown: false, lastUserId: null };
+      }
+      const flags = w.__medoraAuthFlags as { checking: boolean; regShown: boolean; lastUserId: string | null };
+
       if (!telegramUserId) {
         console.error('No Telegram user ID found');
         showModal();
         return false;
       }
+
+      // If we've already shown the registration for this user, just ensure UI is set and exit
+      if (flags.regShown && flags.lastUserId === telegramUserId) {
+        showModal();
+        showRegisterForm();
+        return false;
+      }
+
+      // If already checking, don't start another request
+      if (flags.checking) {
+        return false;
+      }
+      flags.checking = true;
+      flags.lastUserId = telegramUserId;
 
       // Check if user already exists in our system
       const storedUser = localStorage.getItem('medoracle_user');
@@ -551,6 +574,8 @@
         try {
           const userData = JSON.parse(storedUser);
           if (userData && userData.userid && userData.username) {
+            flags.checking = false;
+            flags.regShown = false;
             return true;
           }
         } catch (error) {
@@ -561,27 +586,36 @@
 
       // Show modal with loading state
       showModal();
-      
+
       try {
         // Auto-check if user exists with Telegram ID
         const userData = await loginUser(telegramUserId, '');
-        
+
         if (userData) {
           // User found - auto login
           localStorage.setItem('medoracle_user', JSON.stringify(userData));
+          flags.checking = false;
+          flags.regShown = false;
           hideModal();
+          if ((window as any).authManager?.onLogin) {
+            (window as any).authManager.onLogin();
+          }
           return true;
         } else {
-          // User not found - show registration form
+          // User not found - show registration form (only once)
           console.log('📝 User not found, showing registration form');
+          flags.regShown = true;
           showRegisterForm();
+          flags.checking = false;
           return false;
         }
       } catch (error) {
         console.error('Auto-login check failed:', error);
-        // Show registration form on error
+        // Show registration form on error (only once)
         console.log('📝 Error occurred, showing registration form');
+        flags.regShown = true;
         showRegisterForm();
+        flags.checking = false;
         return false;
       }
     }
@@ -705,6 +739,11 @@
           if (userData) {
             localStorage.setItem('medoracle_user', JSON.stringify(userData));
             hideModal();
+            
+            // Notify auth manager and show app
+            if ((window as any).authManager?.onLogin) {
+              (window as any).authManager.onLogin();
+            }
           }
         }
       } catch (error) {
