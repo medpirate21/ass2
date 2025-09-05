@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import DropdownManager from '../../components/DropdownManager.astro';
+import LoginModal from '../../components/LoginModal.astro';
 ---
 
 <Layout title="Marrow Lectures">
@@ -237,6 +238,7 @@ import DropdownManager from '../../components/DropdownManager.astro';
   </div>
   
   <DropdownManager />
+  <LoginModal />
 </Layout>
 
 <style>
@@ -349,6 +351,17 @@ import DropdownManager from '../../components/DropdownManager.astro';
 
 <script src="/src/config.js"></script>
 <script>
+  // TypeScript declarations
+  declare global {
+    interface Window {
+      loginModal?: {
+        show: () => void;
+        hide: () => void;
+        checkAuth: () => boolean;
+      };
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded - marr2.astro');
     setupDropdowns();
@@ -454,8 +467,10 @@ import DropdownManager from '../../components/DropdownManager.astro';
             // Get user data from localStorage
             const storedUser = localStorage.getItem('medoracle_user');
             if (!storedUser) {
-              // User not logged in, redirect to login
-              window.location.href = '/login';
+              // User not logged in, show login modal
+              if (window.loginModal) {
+                window.loginModal.show();
+              }
               return;
             }
 
@@ -505,8 +520,10 @@ import DropdownManager from '../../components/DropdownManager.astro';
             // Get user data from localStorage
             const storedUser = localStorage.getItem('medoracle_user');
             if (!storedUser) {
-              // User not logged in, redirect to login
-              window.location.href = '/login';
+              // User not logged in, show login modal
+              if (window.loginModal) {
+                window.loginModal.show();
+              }
               return;
             }
 

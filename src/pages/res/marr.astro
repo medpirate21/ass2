@@ -1497,8 +1497,10 @@ import DropdownManager from '../../components/DropdownManager.astro';
             // Get user data from localStorage
             const storedUser = localStorage.getItem('medoracle_user');
             if (!storedUser) {
-              // User not logged in, redirect to login
-              window.location.href = '/login';
+              // User not logged in, show login modal
+              if (window.loginModal) {
+                window.loginModal.show();
+              }
               return;
             }
 
@@ -1548,8 +1550,10 @@ import DropdownManager from '../../components/DropdownManager.astro';
             // Get user data from localStorage
             const storedUser = localStorage.getItem('medoracle_user');
             if (!storedUser) {
-              // User not logged in, redirect to login
-              window.location.href = '/login';
+              // User not logged in, show login modal
+              if (window.loginModal) {
+                window.loginModal.show();
+              }
               return;
             }
 

@@ -368,7 +368,7 @@
 
     async function loginUser(userid: string, username: string): Promise<UserData | null> {
       try {
-        const response = await fetch(`http://localhost:8000/cuser/${userid}`, {
+        const response = await fetch((window as any).APP_CONFIG.USER_LOGIN(userid), {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
