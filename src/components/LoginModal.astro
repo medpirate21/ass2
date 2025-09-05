@@ -350,24 +350,11 @@
 
   document.addEventListener('astro:page-load', () => {
     const modal = document.getElementById('login-modal');
-    const modalClose = document.getElementById('modal-close');
-    const modalBackdrop = document.querySelector('.modal-backdrop');
-    const form = document.getElementById('modal-login-form') as HTMLFormElement;
-    const loginBtn = document.getElementById('modal-login-btn') as HTMLButtonElement;
-    const btnText = document.querySelector('.btn-text') as HTMLElement;
-    const btnLoading = document.querySelector('.btn-loading') as HTMLElement;
-    const errorMessage = document.getElementById('modal-error-message') as HTMLElement;
-    const useridInput = document.getElementById('modal-userid') as HTMLInputElement;
-    const usernameInput = document.getElementById('modal-username') as HTMLInputElement;
-    
-    // Registration form elements
     const registerForm = document.getElementById('modal-register-form') as HTMLFormElement;
     const registerBtn = document.getElementById('modal-register-btn') as HTMLButtonElement;
     const registerUseridInput = document.getElementById('register-userid') as HTMLInputElement;
     const registerUsernameInput = document.getElementById('register-username') as HTMLInputElement;
     const registerErrorMessage = document.getElementById('modal-register-error') as HTMLElement;
-    
-    // Remove unused form toggle elements
 
     function showModal() {
       modal?.classList.remove('hidden');
@@ -377,48 +364,20 @@
 
     function hideModal() {
       modal?.classList.add('hidden');
-    }
-
-    function showLoginForm() {
-      form?.classList.remove('hidden');
-      registerForm?.classList.add('hidden');
-      hideError();
-      hideRegisterError();
+      document.body.classList.remove('modal-open');
     }
 
     function showRegisterForm() {
       const loadingDiv = document.getElementById('modal-loading');
-      if (loadingDiv) {
-        loadingDiv.classList.add('hidden');
-      }
-      
-      if (registerForm) {
-        registerForm.classList.remove('hidden');
-      }
-      
+      if (loadingDiv) loadingDiv.classList.add('hidden');
+
+      registerForm?.classList.remove('hidden');
+
       const subtitle = document.getElementById('modal-subtitle');
-      if (subtitle) {
-        subtitle.textContent = 'Create your account to get started';
-      }
-      
-      // Prefill user ID with Telegram user ID
+      if (subtitle) subtitle.textContent = 'Create your account to get started';
+
       const telegramUserId = localStorage.getItem('telegram_user_id');
-      if (telegramUserId && registerUseridInput) {
-        registerUseridInput.value = telegramUserId;
-      }
-    }
-
-    function showError(message: string) {
-      if (errorMessage) {
-        errorMessage.textContent = message;
-        errorMessage.classList.remove('hidden');
-      }
-    }
-
-    function hideError() {
-      if (errorMessage) {
-        errorMessage.classList.add('hidden');
-      }
+      if (telegramUserId) registerUseridInput.value = telegramUserId;
     }
 
     function showRegisterError(message: string) {
@@ -434,22 +393,11 @@
       }
     }
 
-    function setLoading(loading: boolean) {
-      loginBtn.disabled = loading;
-      if (loading) {
-        btnText.classList.add('hidden');
-        btnLoading.classList.remove('hidden');
-      } else {
-        btnText.classList.remove('hidden');
-        btnLoading.classList.add('hidden');
-      }
-    }
-
     function setRegisterLoading(loading: boolean) {
       registerBtn.disabled = loading;
       const registerBtnText = registerBtn.querySelector('.btn-text') as HTMLElement;
       const registerBtnLoading = registerBtn.querySelector('.btn-loading') as HTMLElement;
-      
+
       if (loading) {
         registerBtnText?.classList.add('hidden');
         registerBtnLoading?.classList.remove('hidden');
@@ -459,160 +407,85 @@
       }
     }
 
-    async function loginUser(userid: string, username: string): Promise<UserData | null> {
+    async function loginUser(userid: string): Promise<UserData | null> {
       try {
-        // Use config.js API endpoint
         const apiUrl = (window as any).APP_CONFIG?.API_BASE_URL || 'https://misc-1.onrender.com';
         const response = await fetch(`${apiUrl}/cuser/${userid}`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
+          headers: { 'Content-Type': 'application/json' }
         });
 
         if (!response.ok) {
-          if (response.status === 404) {
-            return null; // User not found
-          }
-          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+          if (response.status === 404) return null; // user not found
+          throw new Error(`Server responded with ${response.status}`);
         }
 
-        const userData: UserData = await response.json();
-        
-        // Skip username verification for auto-login check
-        if (username && userData.username.toLowerCase() !== username.toLowerCase()) {
-          throw new Error('Username does not match the provided User ID');
-        }
-
-        return userData;
+        return await response.json();
       } catch (error) {
         console.error('Login error:', error);
-        
-        // For auto-check (no username), treat errors as user not found
-        if (!username) {
-          console.error('Auto-check failed, treating as user not found:', error);
-          return null;
-        }
-        
-        // Provide specific error messages for manual login
-        if (error instanceof TypeError && error.message.includes('fetch')) {
-          throw new Error('Cannot connect to server. Please check your internet connection.');
-        }
-        
-        throw error;
+        return null;
       }
     }
 
     async function registerUser(userid: string, username: string): Promise<boolean> {
       try {
-        // Use config.js API endpoint
         const apiUrl = (window as any).APP_CONFIG?.API_BASE_URL || 'https://misc-1.onrender.com';
         const response = await fetch(`${apiUrl}/nuser/${userid}/${username}`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
+          headers: { 'Content-Type': 'application/json' }
         });
-
-        if (!response.ok) {
-          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
-        }
-
-        const result = await response.text();
-        return true;
+        return response.ok;
       } catch (error) {
         console.error('Registration error:', error);
-        
-        // Provide specific error messages
-        if (error instanceof TypeError && error.message.includes('fetch')) {
-          throw new Error('Cannot connect to server. Please check your internet connection.');
-        }
-        
-        throw error;
+        return false;
       }
     }
 
-    // Auto-check user with Telegram ID
+    // === Main authentication flow ===
     async function checkAuthStatus() {
       const telegramUserId = localStorage.getItem('telegram_user_id');
-
-      // Global flags to avoid repeated checks and UI flicker
-      const w = window as any;
-      if (!w.__medoraAuthFlags) {
-        w.__medoraAuthFlags = { checking: false, regShown: false, lastUserId: null };
-      }
-      const flags = w.__medoraAuthFlags as { checking: boolean; regShown: boolean; lastUserId: string | null };
-
       if (!telegramUserId) {
-        console.error('No Telegram user ID found');
+        console.warn('No Telegram user ID found');
         showModal();
+        showRegisterForm();
         return false;
       }
 
-      // If we've already shown the registration for this user, just ensure UI is set and exit
-      if (flags.regShown && flags.lastUserId === telegramUserId) {
-        console.log('📝 Registration already shown for this user, skipping');
-        return false;
-      }
-
-      // If already checking, don't start another request
-      if (flags.checking) {
-        return false;
-      }
-      flags.checking = true;
-      flags.lastUserId = telegramUserId;
-
-      // Check if user already exists in our system
+      // already logged in?
       const storedUser = localStorage.getItem('medoracle_user');
       if (storedUser) {
         try {
           const userData = JSON.parse(storedUser);
-          if (userData && userData.userid && userData.username) {
-            flags.checking = false;
-            flags.regShown = false;
+          if (userData?.id === telegramUserId) {
+            if ((window as any).authManager?.onLogin) {
+              (window as any).authManager.onLogin();
+            }
             return true;
           }
-        } catch (error) {
-          console.error('Error parsing stored user data:', error);
+        } catch (e) {
           localStorage.removeItem('medoracle_user');
         }
       }
 
-      try {
-        // Auto-check if user exists with Telegram ID (no loading UI yet)
-        const userData = await loginUser(telegramUserId, '');
+      showModal(); // show modal while checking
+      const userData = await loginUser(telegramUserId);
 
-        if (userData) {
-          // User found - auto login (no modal needed)
-          localStorage.setItem('medoracle_user', JSON.stringify(userData));
-          flags.checking = false;
-          flags.regShown = false;
-          if ((window as any).authManager?.onLogin) {
-            (window as any).authManager.onLogin();
-          }
-          return true;
-        } else {
-          // User not found - show registration form directly
-          console.log('📝 User not found, showing registration form');
-          flags.regShown = true;
-          showModal();
-          showRegisterForm();
-          flags.checking = false;
-          return false;
+      if (userData) {
+        // auto-login success
+        localStorage.setItem('medoracle_user', JSON.stringify(userData));
+        hideModal();
+        if ((window as any).authManager?.onLogin) {
+          (window as any).authManager.onLogin();
         }
-      } catch (error) {
-        console.error('Auto-login check failed:', error);
-        // Show registration form on error
-        console.log('📝 Error occurred, showing registration form');
-        flags.regShown = true;
-        showModal();
+        return true;
+      } else {
+        // user not found → show registration
         showRegisterForm();
-        flags.checking = false;
         return false;
       }
     }
 
-    // Registration form submit handler
+    // === Registration submit ===
     registerForm?.addEventListener('submit', async (e) => {
       e.preventDefault();
       hideRegisterError();
@@ -626,85 +499,34 @@
       }
 
       setRegisterLoading(true);
+      const success = await registerUser(userid, username);
 
-      try {
-        const success = await registerUser(userid, username);
-        
-        if (success) {
-          // Show success message and switch to login form
-          const notification = document.createElement('div');
-          notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 500;
-            z-index: 10000;
-            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
-            animation: slideIn 0.3s ease;
-          `;
-          notification.textContent = `Account created successfully! You can now sign in.`;
-          document.body.appendChild(notification);
-          
-          setTimeout(() => {
-            notification.remove();
-          }, 3000);
-
-          // Auto-login after successful registration
-          const userData = await loginUser(userid, username);
-          if (userData) {
-            localStorage.setItem('medoracle_user', JSON.stringify(userData));
-            hideModal();
-            
-            // Notify auth manager and show app
-            if ((window as any).authManager?.onLogin) {
-              (window as any).authManager.onLogin();
-            }
+      if (success) {
+        const userData = await loginUser(userid);
+        if (userData) {
+          localStorage.setItem('medoracle_user', JSON.stringify(userData));
+          hideModal();
+          if ((window as any).authManager?.onLogin) {
+            (window as any).authManager.onLogin();
           }
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          showRegisterError(error.message);
-        } else {
-          showRegisterError('Registration failed. Please try again.');
-        }
-      } finally {
-        setRegisterLoading(false);
+      } else {
+        showRegisterError('Registration failed. Try again.');
       }
+
+      setRegisterLoading(false);
     });
 
-    // Clear error messages when user starts typing
-    [registerUseridInput, registerUsernameInput].forEach(input => {
-      input?.addEventListener('input', hideRegisterError);
-    });
+    // clear errors while typing
+    [registerUseridInput, registerUsernameInput].forEach(input =>
+      input?.addEventListener('input', hideRegisterError)
+    );
 
-    // Don't auto-initialize - let Layout.astro handle it
-    // checkAuthStatus();
-
-    // Make functions globally available for other components
+    // expose globally
     (window as any).loginModal = {
       show: showModal,
       hide: hideModal,
       checkAuth: checkAuthStatus
     };
   });
-
-  // Add slide in animation
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideIn {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-  `;
-  document.head.appendChild(style);
 </script>
