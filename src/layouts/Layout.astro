@@ -109,34 +109,27 @@ const { title } = Astro.props;
         return true;
       };
 
-      // Enhanced authentication management
-      const checkAuth = () => {
-        console.log('🔐 Checking authentication status...');
-        // Platform check already done, proceed with auth
-        const storedUser = localStorage.getItem('medoracle_user');
+      // Show/hide auth overlay
+      const showAuthOverlay = () => {
         const appContent = document.getElementById('app-content');
         const authOverlay = document.getElementById('auth-overlay');
         
-        if (storedUser) {
-          try {
-            const userData = JSON.parse(storedUser);
-            console.log('✅ User authenticated:', userData);
-            // User is authenticated - show content
-            appContent?.classList.remove('hidden');
-            authOverlay?.classList.add('hidden');
-            showWelcomeMessage();
-            return true;
-          } catch (error) {
-            console.log('❌ Invalid user data, clearing storage');
-            localStorage.removeItem('medoracle_user');
-          }
-        }
+        if (appContent) appContent.classList.add('hidden');
+        if (authOverlay) authOverlay.classList.remove('hidden');
+      };
+
+      const showApp = () => {
+        const appContent = document.getElementById('app-content');
+        const authOverlay = document.getElementById('auth-overlay');
         
-        console.log('❌ User not authenticated, showing auth overlay');
-        // User not authenticated - hide content
-        appContent?.classList.add('hidden');
-        authOverlay?.classList.remove('hidden');
-        return false;
+        if (appContent) appContent.classList.remove('hidden');
+        if (authOverlay) authOverlay.classList.add('hidden');
+      };
+
+      // Simplified authentication - just show auth overlay
+      const checkAuth = () => {
+        console.log('🔐 Showing auth overlay for login check');
+        showAuthOverlay();
       };
 
       // Show welcome message for allowed users
@@ -337,6 +330,7 @@ const { title } = Astro.props;
         isInitialized = true;
         
         console.log('🚀 Initializing app...');
+        console.clear(); // Clear console to prevent log spam
         
         // Extract Telegram user data first
         if ((window as any).Telegram?.WebApp) {
@@ -357,7 +351,12 @@ const { title } = Astro.props;
         }
         
         if (immediateplatformCheck()) {
-          checkAuth();
+          // Delay auth check to prevent loops
+          setTimeout(() => {
+            if ((window as any).loginModal?.checkAuth) {
+              (window as any).loginModal.checkAuth();
+            }
+          }, 500);
         }
       };
 
@@ -379,14 +378,12 @@ const { title } = Astro.props;
         checkTelegramReady();
       }
 
-      // Reapply theme and checks after page transitions
+      // Only handle theme on page transitions - no re-initialization
       document.addEventListener('astro:after-swap', () => {
         initTheme();
-        initializeApp();
       });
       document.addEventListener('astro:page-load', () => {
         initTheme();
-        initializeApp();
       });
     </script>
   </head>

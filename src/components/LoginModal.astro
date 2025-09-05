@@ -573,21 +573,15 @@
           return true;
         } else {
           // User not found - show registration form
+          console.log('📝 User not found, showing registration form');
           showRegisterForm();
-          const registerUseridInput = document.getElementById('register-userid') as HTMLInputElement;
-          if (registerUseridInput) {
-            registerUseridInput.value = telegramUserId;
-          }
           return false;
         }
       } catch (error) {
         console.error('Auto-login check failed:', error);
         // Show registration form on error
+        console.log('📝 Error occurred, showing registration form');
         showRegisterForm();
-        const registerUseridInput = document.getElementById('register-userid') as HTMLInputElement;
-        if (registerUseridInput) {
-          registerUseridInput.value = telegramUserId;
-        }
         return false;
       }
     }
@@ -733,8 +727,8 @@
       input?.addEventListener('input', hideRegisterError);
     });
 
-    // Initialize modal state
-    checkAuthStatus();
+    // Don't auto-initialize - let Layout.astro handle it
+    // checkAuthStatus();
 
     // Make functions globally available for other components
     (window as any).loginModal = {
