@@ -27,48 +27,8 @@
         <span class="btn-loading hidden">Signing in...</span>
       </button>
       
-      <button type="button" class="switch-manual-btn" id="switch-manual-btn">
-        Use different account
-      </button>
-      
       <div id="modal-error-message" class="error-message hidden"></div>
     </div>
-    
-    <!-- Manual Login Section (Hidden by default) -->
-    <form class="modal-form hidden" id="manual-login-form">
-      <div class="form-group">
-        <label for="modal-userid">User ID</label>
-        <input 
-          type="text" 
-          id="modal-userid" 
-          name="userid" 
-          placeholder="Enter your User ID" 
-          required 
-        />
-      </div>
-      
-      <div class="form-group">
-        <label for="modal-username">Username</label>
-        <input 
-          type="text" 
-          id="modal-username" 
-          name="username" 
-          placeholder="Enter your Username" 
-          required 
-        />
-      </div>
-      
-      <button type="submit" class="modal-login-btn" id="manual-login-btn">
-        <span class="btn-text">Sign In</span>
-        <span class="btn-loading hidden">Signing in...</span>
-      </button>
-      
-      <button type="button" class="switch-auto-btn" id="switch-auto-btn">
-        Back to auto login
-      </button>
-      
-      <div id="manual-error-message" class="error-message hidden"></div>
-    </form>
     
     <!-- Registration Section (Hidden by default) -->
     <form class="modal-form hidden" id="registration-form">
@@ -77,35 +37,19 @@
         <p>User not found. Let's create your account!</p>
       </div>
       
-      <div class="form-group">
-        <label for="reg-userid">User ID</label>
-        <input 
-          type="text" 
-          id="reg-userid" 
-          name="userid" 
-          placeholder="Your User ID" 
-          readonly
-        />
-      </div>
-      
-      <div class="form-group">
-        <label for="reg-username">Username</label>
-        <input 
-          type="text" 
-          id="reg-username" 
-          name="username" 
-          placeholder="Choose a username" 
-          required 
-        />
+      <div class="auto-login-info">
+        <div class="user-avatar" id="reg-user-avatar">
+          <span id="reg-user-initial">?</span>
+        </div>
+        <div class="user-info">
+          <h3 id="reg-detected-username">Creating account...</h3>
+          <p id="reg-detected-userid">ID: Loading...</p>
+        </div>
       </div>
       
       <button type="submit" class="modal-login-btn" id="register-btn">
         <span class="btn-text">Create Account</span>
         <span class="btn-loading hidden">Creating account...</span>
-      </button>
-      
-      <button type="button" class="switch-manual-btn" id="back-to-login-btn">
-        Back to login
       </button>
       
       <div id="registration-error-message" class="error-message hidden"></div>
@@ -505,26 +449,17 @@
     // Auto login elements
     const autoLoginSection = document.getElementById('auto-login-section');
     const autoLoginBtn = document.getElementById('auto-login-btn');
-    const switchManualBtn = document.getElementById('switch-manual-btn');
     const userInitial = document.getElementById('user-initial');
     const detectedUsername = document.getElementById('detected-username');
     const detectedUserid = document.getElementById('detected-userid');
     const errorMessage = document.getElementById('modal-error-message');
     
-    // Manual login elements
-    const manualLoginForm = document.getElementById('manual-login-form') as HTMLFormElement;
-    const manualLoginBtn = document.getElementById('manual-login-btn');
-    const switchAutoBtn = document.getElementById('switch-auto-btn');
-    const useridInput = document.getElementById('modal-userid') as HTMLInputElement;
-    const usernameInput = document.getElementById('modal-username') as HTMLInputElement;
-    const manualErrorMessage = document.getElementById('manual-error-message');
-    
     // Registration elements
     const registrationForm = document.getElementById('registration-form') as HTMLFormElement;
     const registerBtn = document.getElementById('register-btn');
-    const backToLoginBtn = document.getElementById('back-to-login-btn');
-    const regUseridInput = document.getElementById('reg-userid') as HTMLInputElement;
-    const regUsernameInput = document.getElementById('reg-username') as HTMLInputElement;
+    const regUserInitial = document.getElementById('reg-user-initial');
+    const regDetectedUsername = document.getElementById('reg-detected-username');
+    const regDetectedUserid = document.getElementById('reg-detected-userid');
     const registrationErrorMessage = document.getElementById('registration-error-message');
     
     let detectedUser: any = null;
@@ -563,11 +498,14 @@
         const user = initDataUnsafe.user;
         console.log('Extracted Telegram user data:', user);
         
+        // Use username if available, otherwise use first_name
+        const displayUsername = user.username || user.first_name;
+        
         return {
           id: user.id.toString(),
           first_name: user.first_name,
           last_name: user.last_name || '',
-          username: user.username || user.first_name
+          username: displayUsername
         };
       } catch (error) {
         console.error('Error extracting Telegram user data:', error);
@@ -588,18 +526,6 @@
       }
     }
 
-    function showManualError(message: string) {
-      if (manualErrorMessage) {
-        manualErrorMessage.textContent = message;
-        manualErrorMessage.classList.remove('hidden');
-      }
-    }
-
-    function hideManualError() {
-      if (manualErrorMessage) {
-        manualErrorMessage.classList.add('hidden');
-      }
-    }
 
     function showRegistrationError(message: string) {
       if (registrationErrorMessage) {
@@ -630,21 +556,6 @@
       }
     }
 
-    function setManualLoading(loading: boolean) {
-      if (manualLoginBtn) {
-        const btnText = manualLoginBtn.querySelector('.btn-text');
-        const btnLoading = manualLoginBtn.querySelector('.btn-loading');
-        
-        (manualLoginBtn as HTMLButtonElement).disabled = loading;
-        if (loading) {
-          btnText?.classList.add('hidden');
-          btnLoading?.classList.remove('hidden');
-        } else {
-          btnText?.classList.remove('hidden');
-          btnLoading?.classList.add('hidden');
-        }
-      }
-    }
 
     function setRegistrationLoading(loading: boolean) {
       if (registerBtn) {
@@ -662,34 +573,19 @@
       }
     }
 
-    function switchToManualLogin() {
+    function switchToRegistration(userid?: string, username?: string, firstName?: string) {
       autoLoginSection?.classList.add('hidden');
-      registrationForm?.classList.add('hidden');
-      manualLoginForm?.classList.remove('hidden');
-      if (loginStatus) {
-        loginStatus.textContent = 'Please enter your credentials';
-      }
-    }
-
-    function switchToAutoLogin() {
-      manualLoginForm?.classList.add('hidden');
-      registrationForm?.classList.add('hidden');
-      autoLoginSection?.classList.remove('hidden');
-      if (loginStatus) {
-        loginStatus.textContent = 'Continue with detected account';
-      }
-    }
-
-    function switchToRegistration(userid?: string, username?: string) {
-      autoLoginSection?.classList.add('hidden');
-      manualLoginForm?.classList.add('hidden');
       registrationForm?.classList.remove('hidden');
       
-      if (userid && regUseridInput) {
-        regUseridInput.value = userid;
+      // Update registration UI with detected user info
+      if (regUserInitial && firstName) {
+        regUserInitial.textContent = firstName.charAt(0).toUpperCase();
       }
-      if (username && regUsernameInput) {
-        regUsernameInput.value = username;
+      if (regDetectedUsername && username) {
+        regDetectedUsername.textContent = username;
+      }
+      if (regDetectedUserid && userid) {
+        regDetectedUserid.textContent = `ID: ${userid}`;
       }
       
       if (loginStatus) {
@@ -718,10 +614,7 @@
 
         const userData: UserData = await response.json();
         
-        // Verify username matches
-        if (userData.username.toLowerCase() !== username.toLowerCase()) {
-          throw new Error('Username does not match the provided User ID');
-        }
+        // Note: We don't verify username match since we auto-generate it from Telegram data
 
         return userData;
       } catch (error) {
@@ -797,80 +690,19 @@
     //   }
     // });
 
-    // Manual login form handler
-    manualLoginForm?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      hideManualError();
-
-      const userid = useridInput?.value.trim();
-      const username = usernameInput?.value.trim();
-
-      if (!userid || !username) {
-        showManualError('Please fill in all fields');
-        return;
-      }
-
-      setManualLoading(true);
-
-      try {
-        const userData = await loginUser(userid, username);
-        
-        if (userData) {
-          localStorage.setItem('medoracle_user', JSON.stringify(userData));
-          hideModal();
-          
-          if ((window as any).authManager) {
-            (window as any).authManager.onLogin();
-          }
-          
-          const notification = document.createElement('div');
-          notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 500;
-            z-index: 10000;
-            box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
-            animation: slideIn 0.3s ease;
-          `;
-          notification.textContent = `Welcome, ${userData.username}!`;
-          document.body.appendChild(notification);
-          
-          setTimeout(() => {
-            notification.remove();
-          }, 3000);
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          if (error.message === 'USER_NOT_FOUND') {
-            // Switch to registration form
-            switchToRegistration(userid, username);
-          } else {
-            showManualError(error.message);
-          }
-        } else {
-          showManualError('Login failed. Please check your credentials and try again.');
-        }
-      } finally {
-        setManualLoading(false);
-      }
-    });
-
-    // Clear error messages when user starts typing
-    [useridInput, usernameInput].forEach(input => {
-      input?.addEventListener('input', hideManualError);
-    });
 
     // Auto login functionality
     async function attemptAutoLogin() {
       const telegramUser = extractTelegramUserData();
       if (!telegramUser) {
-        console.log('No Telegram user data found, switching to manual login');
-        switchToManualLogin();
+        console.log('No Telegram user data found');
+        if (loginStatus) {
+          loginStatus.textContent = 'Unable to detect Telegram user data';
+        }
+        if (errorMessage) {
+          errorMessage.textContent = 'Please open this app through Telegram';
+          errorMessage.classList.remove('hidden');
+        }
         return;
       }
 
@@ -902,18 +734,15 @@
       e.preventDefault();
       hideRegistrationError();
 
-      const userid = regUseridInput?.value.trim();
-      const username = regUsernameInput?.value.trim();
-
-      if (!userid || !username) {
-        showRegistrationError('Please fill in all fields');
+      if (!detectedUser) {
+        showRegistrationError('No user data detected');
         return;
       }
 
       setRegistrationLoading(true);
 
       try {
-        const userData = await registerUser(userid, username);
+        const userData = await registerUser(detectedUser.id, detectedUser.username);
         
         if (userData) {
           localStorage.setItem('medoracle_user', JSON.stringify(userData));
@@ -955,16 +784,6 @@
       }
     });
 
-    // Clear error messages when user starts typing in registration
-    [regUseridInput, regUsernameInput].forEach(input => {
-      input?.addEventListener('input', hideRegistrationError);
-    });
-
-    // Event listeners
-    switchManualBtn?.addEventListener('click', switchToManualLogin);
-    switchAutoBtn?.addEventListener('click', switchToAutoLogin);
-    backToLoginBtn?.addEventListener('click', switchToManualLogin);
-
     // Auto login button handler
     autoLoginBtn?.addEventListener('click', async () => {
       if (!detectedUser) {
@@ -992,12 +811,12 @@
         if (error instanceof Error) {
           if (error.message === 'USER_NOT_FOUND') {
             // Switch to registration form with detected user data
-            switchToRegistration(detectedUser.id, detectedUser.username);
+            switchToRegistration(detectedUser.id, detectedUser.username, detectedUser.first_name);
           } else {
             showAutoError(error.message);
           }
         } else {
-          showAutoError('Login failed. Please try manual login.');
+          showAutoError('Login failed. Please try again.');
         }
       } finally {
         setAutoLoading(false);
