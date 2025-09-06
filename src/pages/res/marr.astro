@@ -1482,16 +1482,16 @@ import DropdownManager from '../../components/DropdownManager.astro';
       }
     }
 
-    // Single delegated event listener for all data-id buttons
+    // Single delegated event listener for all video buttons (data-class="video")
     document.addEventListener('click', async (e) => {
       if (e.target && (e.target as Element).closest) {
-        const button = (e.target as Element).closest('button[data-id]') as HTMLButtonElement;
+        const button = (e.target as Element).closest('button[data-class="video"]') as HTMLButtonElement;
         if (button) {
           e.preventDefault();
           const dataId = button.getAttribute('data-id');
           const title = button.textContent?.trim();
           
-          console.log('Data-id button clicked:', dataId, title);
+          console.log('Video button clicked:', dataId, title);
           
           if (dataId && title) {
             // Get user data from localStorage
@@ -1535,18 +1535,18 @@ import DropdownManager from '../../components/DropdownManager.astro';
       }
     });
 
-    // Single delegated event listener for all data-nid buttons
+    // Single delegated event listener for all PDF buttons (data-class="pdf")
     document.addEventListener('click', async (e) => {
       if (e.target && (e.target as Element).closest) {
-        const button = (e.target as Element).closest('button[data-nid]') as HTMLButtonElement;
+        const button = (e.target as Element).closest('button[data-class="pdf"]') as HTMLButtonElement;
         if (button) {
           e.preventDefault();
-          const dataNid = button.getAttribute('data-nid');
+          const dataId = button.getAttribute('data-id');
           const title = button.textContent?.trim();
           
-          console.log('Data-nid button clicked:', dataNid, title);
+          console.log('PDF button clicked:', dataId, title);
           
-          if (dataNid && title) {
+          if (dataId && title) {
             // Get user data from localStorage
             const storedUser = localStorage.getItem('medoracle_user');
             if (!storedUser) {
@@ -1571,7 +1571,7 @@ import DropdownManager from '../../components/DropdownManager.astro';
               }
 
               // Navigate to note page without decrementing quota
-              const encodedId = btoa(dataNid);
+              const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
               const encodedUserId = btoa(userid);
               window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}`;
@@ -1579,7 +1579,7 @@ import DropdownManager from '../../components/DropdownManager.astro';
             } catch (error) {
               console.error('Error processing note request:', error);
               // On error, still allow access but log the issue
-              const encodedId = btoa(dataNid);
+              const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
               window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}`;
             }
