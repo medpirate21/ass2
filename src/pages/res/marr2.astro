@@ -256,7 +256,12 @@ import TgCheckModal from '../../components/TgCheckModal.astro';
     font-size: 2.5rem;
     text-align: center;
     margin-bottom: 2rem;
-    color: var(--text-color);
+    background: var(--glass-gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
   }
 
   .sections-list {
@@ -271,12 +276,28 @@ import TgCheckModal from '../../components/TgCheckModal.astro';
 
   .section-wrapper {
     position: relative;
-    border-radius: 12px;
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    z-index: 2;
+    border-radius: var(--glass-border-radius);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+  }
+
+  .section-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow-hover);
+  }
+
+  .section-wrapper.active {
+    margin: 1rem 0;
+    background: var(--glass-bg-active);
+    box-shadow: var(--glass-shadow-active);
   }
 
   .section-button {
@@ -286,23 +307,79 @@ import TgCheckModal from '../../components/TgCheckModal.astro';
     align-items: center;
     gap: 1rem;
     padding: 1.25rem;
-    background: var(--card-bg);
-    color: var(--text-color);
+    background: transparent;
+    color: var(--glass-text);
     cursor: pointer;
     border: none;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    border-radius: var(--glass-border-radius);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .section-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  .section-button:hover::before {
+    left: 100%;
+  }
+
+  .section-button > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-wrapper.active .section-button {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: 1px solid var(--glass-border-color);
+  }
+
+  .section-button .number {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--glass-accent);
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-shadow: 0 0 10px var(--glass-accent-glow);
+  }
+
+  .section-button .text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--glass-text);
+  }
+
+  .chevron {
+    margin-left: auto;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--glass-accent);
+    filter: drop-shadow(0 0 5px var(--glass-accent-glow));
+  }
+
+  .section-wrapper.active .chevron {
+    transform: rotate(180deg);
   }
 
   .section-content {
     position: relative;
+    z-index: 1;
     height: 0;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
-    background: var(--card-bg);
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--glass-bg-secondary);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border-bottom-left-radius: var(--glass-border-radius);
+    border-bottom-right-radius: var(--glass-border-radius);
     overflow: hidden;
   }
 
@@ -318,21 +395,72 @@ import TgCheckModal from '../../components/TgCheckModal.astro';
     flex-direction: column;
     gap: 0.75rem;
     padding: 1.25rem;
-    max-height: 70vh;
+    max-height: calc(70vh - 2rem);
     overflow-y: auto;
+    overflow-x: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .button-list::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .button-list::-webkit-scrollbar-track {
+    background: var(--glass-bg-secondary);
+    border-radius: 4px;
+    margin: 4px;
+  }
+
+  .button-list::-webkit-scrollbar-thumb {
+    background: var(--glass-accent);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .button-list::-webkit-scrollbar-thumb:hover {
+    background: var(--glass-accent-hover);
+    background-clip: padding-box;
   }
 
   .btn {
     text-align: left;
     padding: 1rem 1.25rem;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: var(--text-color);
+    font-size: 1rem;
+    background: var(--glass-bg-tertiary);
+    backdrop-filter: var(--glass-backdrop-filter-light);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter-light);
+    border: var(--glass-border-light);
+    border-radius: var(--glass-border-radius-small);
+    color: var(--glass-text);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 0;
     transform: translateY(-10px);
+    position: relative;
+    overflow: hidden;
+    font-weight: 500;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer-subtle);
+    transition: left 0.4s ease;
+    z-index: 0;
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn > * {
+    position: relative;
+    z-index: 1;
   }
 
   .section-wrapper.active .btn {
@@ -340,13 +468,55 @@ import TgCheckModal from '../../components/TgCheckModal.astro';
     transform: translateY(0);
   }
 
-  .chevron {
-    margin-left: auto;
-    transition: transform 0.3s ease;
+  .btn:hover {
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow-button);
   }
 
-  .section-wrapper.active .chevron {
-    transform: rotate(180deg);
+  .btn.highlight {
+    background: var(--glass-bg-active);
+    border-color: var(--glass-accent);
+    transform: scale(1.02);
+    box-shadow: var(--glass-shadow-button-active);
+  }
+
+  .section-heading {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--glass-accent);
+    text-align: center;
+    margin: 1rem 0 0.5rem 0;
+    padding: 0.5rem;
+    background: var(--glass-bg-accent);
+    border-radius: var(--glass-border-radius-small);
+    border: var(--glass-border-light);
+    text-shadow: 0 0 10px var(--glass-accent-glow);
+  }
+
+  @media (max-width: 768px) {
+    .content-wrapper {
+      padding: 1rem 0.5rem;
+    }
+    
+    .main-title {
+      font-size: 2rem;
+    }
+    
+    .section-button {
+      padding: 1rem;
+    }
+    
+    .btn {
+      padding: 0.875rem 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .button-list {
+      padding: 1rem;
+      max-height: calc(60vh - 2rem);
+    }
   }
 
 </style>
@@ -482,14 +652,18 @@ import TgCheckModal from '../../components/TgCheckModal.astro';
               const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
               const encodedUserId = btoa(userid);
-              window.location.href = `/video?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}`;
+              const expiryTime = Date.now() + (6 * 60 * 60 * 1000); // 6 hours from now
+              const encodedExpiry = btoa(expiryTime.toString());
+              window.location.href = `/video?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}&expiry=${encodedExpiry}`;
               
             } catch (error) {
               console.error('Error processing video request:', error);
               // On error, still allow access but log the issue
               const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
-              window.location.href = `/video?id=${encodedId}&title=${encodedTitle}`;
+              const expiryTime = Date.now() + (6 * 60 * 60 * 1000); // 6 hours from now
+              const encodedExpiry = btoa(expiryTime.toString());
+              window.location.href = `/video?id=${encodedId}&title=${encodedTitle}&expiry=${encodedExpiry}`;
             }
           }
         }
@@ -535,14 +709,18 @@ import TgCheckModal from '../../components/TgCheckModal.astro';
               const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
               const encodedUserId = btoa(userid);
-              window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}`;
+              const expiryTime = Date.now() + (6 * 60 * 60 * 1000); // 6 hours from now
+              const encodedExpiry = btoa(expiryTime.toString());
+              window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}&expiry=${encodedExpiry}`;
               
             } catch (error) {
               console.error('Error processing note request:', error);
               // On error, still allow access but log the issue
               const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
-              window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}`;
+              const expiryTime = Date.now() + (6 * 60 * 60 * 1000); // 6 hours from now
+              const encodedExpiry = btoa(expiryTime.toString());
+              window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}&expiry=${encodedExpiry}`;
             }
           }
         }

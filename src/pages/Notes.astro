@@ -118,14 +118,18 @@ const lectures = [
   .page-header h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--text-color);
+    background: var(--glass-gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 0.5rem;
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
   }
 
   .page-header p {
     font-size: 1.1rem;
-    color: var(--text-color);
-    opacity: 0.7;
+    color: var(--glass-text-muted);
+    opacity: 0.8;
   }
 
   .lectures-grid {
@@ -141,12 +145,15 @@ const lectures = [
     align-items: center;
     justify-content: flex-start;
     padding: 1.25rem 1.5rem;
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
+    border-radius: var(--glass-border-radius);
+    box-shadow: var(--glass-shadow);
     text-decoration: none;
-    color: var(--text-color);
-    transition: all 0.3s ease;
+    color: var(--glass-text);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
   }
@@ -158,27 +165,25 @@ const lectures = [
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(var(--purple-primary), 0.1),
-      transparent
-    );
+    background: var(--glass-shimmer);
     transition: left 0.5s ease;
+    z-index: 0;
   }
 
   .btn-title {
     font-size: 1.25rem;
     font-weight: 600;
     margin: 0;
-    color: var(--text-color);
+    color: var(--glass-text);
     text-align: left;
+    position: relative;
+    z-index: 1;
   }
 
   .lecturenbtn:hover {
     transform: translateY(-2px);
-    border-color: var(--purple-primary);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--glass-accent);
+    box-shadow: var(--glass-shadow-hover);
   }
 
   .lecturenbtn:hover::before {
@@ -186,7 +191,7 @@ const lectures = [
   }
 
   .lecturenbtn:hover .btn-title {
-    color: var(--purple-primary);
+    color: var(--glass-accent);
   }
 
   .lecturenbtn:active {
@@ -205,36 +210,63 @@ const lectures = [
     align-items: center;
     justify-content: space-between;
     padding: 1.25rem 1.5rem;
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: var(--text-color);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
+    border-radius: var(--glass-border-radius);
+    box-shadow: var(--glass-shadow);
+    color: var(--glass-text);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 1.25rem;
     font-weight: 600;
+    overflow: hidden;
+  }
+
+  .section-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  .section-button:hover::before {
+    left: 100%;
+  }
+
+  .section-button > * {
+    position: relative;
+    z-index: 1;
   }
 
   .section-button:hover {
     transform: translateY(-2px);
-    border-color: var(--purple-primary);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--glass-accent);
+    box-shadow: var(--glass-shadow-hover);
   }
 
   .section-wrapper.active .section-button {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--glass-border-color);
   }
 
   .section-button .text {
     font-size: 1.25rem;
     font-weight: 600;
+    color: var(--glass-text);
   }
 
   .chevron {
-    transition: transform 0.3s ease;
-    color: var(--purple-primary);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--glass-accent);
+    filter: drop-shadow(0 0 5px var(--glass-accent-glow));
   }
 
   .section-wrapper.active .chevron {
@@ -244,12 +276,14 @@ const lectures = [
   .section-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--glass-bg-secondary);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
     border-top: none;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: var(--glass-border-radius);
+    border-bottom-right-radius: var(--glass-border-radius);
   }
 
   .section-wrapper.active .section-content {
@@ -266,19 +300,46 @@ const lectures = [
   .btn {
     display: block;
     padding: 1.25rem 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: var(--text-color);
+    background: var(--glass-bg-tertiary);
+    backdrop-filter: var(--glass-backdrop-filter-light);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter-light);
+    border: var(--glass-border-light);
+    border-radius: var(--glass-border-radius-small);
+    color: var(--glass-text);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 0.95rem;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer-subtle);
+    transition: left 0.4s ease;
+    z-index: 0;
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn > * {
+    position: relative;
+    z-index: 1;
   }
 
   .btn:hover {
-    background: rgba(var(--purple-primary), 0.1);
-    border-color: var(--purple-primary);
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-accent);
     transform: translateX(4px);
+    box-shadow: var(--glass-shadow-button);
   }
 
   @media (max-width: 768px) {

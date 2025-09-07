@@ -343,17 +343,62 @@ const { title } = Astro.props;
 
 <style is:global>
   :root {
+    /* Comprehensive Liquid Glass Design Variables */
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-bg-secondary: rgba(255, 255, 255, 0.05);
+    --glass-bg-tertiary: rgba(255, 255, 255, 0.03);
+    --glass-bg-hover: rgba(255, 255, 255, 0.12);
+    --glass-bg-active: rgba(255, 255, 255, 0.15);
+    --glass-bg-accent: rgba(139, 92, 246, 0.1);
+    
+    --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+    --glass-border-light: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-border-color: rgba(255, 255, 255, 0.18);
+    
+    --glass-backdrop-filter: blur(16px);
+    --glass-backdrop-filter-light: blur(8px);
+    
+    --glass-border-radius: 16px;
+    --glass-border-radius-small: 12px;
+    
+    --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    --glass-shadow-hover: 0 12px 40px rgba(31, 38, 135, 0.5);
+    --glass-shadow-active: 0 16px 48px rgba(31, 38, 135, 0.6);
+    --glass-shadow-elevated: 0 25px 50px rgba(0, 0, 0, 0.3);
+    --glass-shadow-button: 0 8px 25px rgba(139, 92, 246, 0.3);
+    --glass-shadow-button-active: 0 12px 35px rgba(139, 92, 246, 0.4);
+    --glass-shadow-accent: 0 4px 16px rgba(139, 92, 246, 0.3);
+    --glass-shadow-accent-hover: 0 8px 24px rgba(139, 92, 246, 0.4);
+    
+    --glass-text: #ffffff;
+    --glass-text-muted: rgba(255, 255, 255, 0.8);
+    
+    --glass-accent: #8b5cf6;
+    --glass-accent-secondary: #a855f7;
+    --glass-accent-hover: #9333ea;
+    --glass-accent-glow: rgba(139, 92, 246, 0.5);
+    
+    --glass-gradient-text: linear-gradient(135deg, #ffffff 0%, #e0e0e0 50%, #8b5cf6 100%);
+    
+    --glass-shimmer: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    --glass-shimmer-subtle: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    --glass-shimmer-bright: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    
     /* Base colors */
     --purple-primary: #4f3bc4;
     --purple-secondary: #7e2fa4;
     --dark-primary: #13151a;
     --dark-secondary: #1f2937;
 
-    /* Default theme values */
-    --bg-gradient: linear-gradient(45deg, var(--purple-primary), var(--purple-secondary));
+    /* Updated theme values for liquid glass */
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     --text-color: #ffffff;
-    --card-bg: rgba(255, 255, 255, 0.15);
-    --nav-bg: rgba(255, 255, 255, 0.12);
+    --card-bg: var(--glass-bg);
+    --nav-bg: var(--glass-bg);
 
     --header-height: 60px;
     --navbar-z-index: 100;

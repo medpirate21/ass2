@@ -17,24 +17,30 @@ import Layout from '../layouts/Layout.astro';
 <style>
   .container {
     text-align: center;
-    color: white;
+    color: var(--glass-text);
     padding: 2rem 0;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   h1 {
     font-size: 4rem;
     font-weight: 800;
     margin: 0;
-    background: linear-gradient(to right, #ffffff, #e0e0e0);
+    background: var(--glass-gradient-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
   }
 
   .subtitle {
     font-size: 1.5rem;
     margin-top: 0.5rem;
     opacity: 0.9;
+    color: var(--glass-text-muted);
   }
 
   .content {
@@ -42,25 +48,81 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .card {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
     padding: 2rem;
-    border-radius: 1rem;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: transform 0.3s ease;
+    border-radius: var(--glass-border-radius);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  .card:hover::before {
+    left: 100%;
   }
 
   .card:hover {
     transform: translateY(-5px);
+    box-shadow: var(--glass-shadow-hover);
+  }
+
+  .card > * {
+    position: relative;
+    z-index: 1;
   }
 
   .card h2 {
     margin-top: 0;
     font-size: 2rem;
+    font-weight: 700;
+    background: var(--glass-gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
   }
 
   .card p {
     line-height: 1.6;
+    color: var(--glass-text);
     opacity: 0.9;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+    }
+    
+    .card {
+      padding: 1.5rem;
+    }
+    
+    .card h2 {
+      font-size: 1.5rem;
+    }
+    
+    .card p {
+      font-size: 1rem;
+    }
   }
 </style>

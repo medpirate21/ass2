@@ -50,14 +50,18 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .limit-container {
-    background: var(--card-bg);
-    border-radius: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border-radius: var(--glass-border-radius);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow-active);
     padding: 3rem 2rem;
     max-width: 500px;
     width: 100%;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
   }
 
   .limit-icon {
@@ -68,15 +72,20 @@ import Layout from '../layouts/Layout.astro';
   .limit-title {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--text-color);
+    background: var(--glass-gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 1rem;
+    text-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
   }
 
   .limit-message {
     font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--glass-text);
     line-height: 1.6;
     margin-bottom: 2.5rem;
+    opacity: 0.9;
   }
 
   .limit-actions {
@@ -91,34 +100,61 @@ import Layout from '../layouts/Layout.astro';
     gap: 0.5rem;
     padding: 1rem 1.5rem;
     border: none;
-    border-radius: 12px;
+    border-radius: var(--glass-border-radius-small);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  .action-btn:hover::before {
+    left: 100%;
+  }
+
+  .action-btn > * {
+    position: relative;
+    z-index: 1;
   }
 
   .action-btn.primary {
-    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    background: var(--glass-gradient-primary);
     color: white;
-    box-shadow: 0 4px 15px rgba(79, 59, 196, 0.3);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow-button-active);
   }
 
   .action-btn.primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(79, 59, 196, 0.4);
+    box-shadow: var(--glass-shadow-hover);
   }
 
   .action-btn.secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-color);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--glass-bg-secondary);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    color: var(--glass-text);
+    border: var(--glass-border);
   }
 
   .action-btn.secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--glass-bg-hover);
     transform: translateY(-2px);
+    box-shadow: var(--glass-shadow-button);
   }
 
   @media (max-width: 768px) {

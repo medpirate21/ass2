@@ -97,16 +97,16 @@
 
   .modal-content {
     position: relative;
-    background: var(--card-bg);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
     border-radius: 24px;
     width: 100%;
     max-width: 450px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--glass-shadow-elevated);
     transform: scale(0.9) translateY(20px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -126,9 +126,11 @@
     font-size: 1.75rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
-    background: linear-gradient(135deg, #ffffff, #e0e0e0);
+    background: var(--glass-gradient-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
   }
 
   .modal-header p {
@@ -205,22 +207,47 @@
   }
 
   .modal-login-btn {
-    background: linear-gradient(135deg, var(--purple-primary), var(--purple-secondary));
+    background: linear-gradient(135deg, var(--glass-accent), var(--glass-accent-secondary));
     color: white;
-    border: none;
+    border: var(--glass-border-light);
     padding: 1rem 2rem;
-    border-radius: 12px;
+    border-radius: var(--glass-border-radius);
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    backdrop-filter: var(--glass-backdrop-filter-light);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter-light);
+    box-shadow: var(--glass-shadow-button);
+  }
+
+  .modal-login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer-bright);
+    transition: left 0.6s ease;
+    z-index: 0;
+  }
+
+  .modal-login-btn:hover:not(:disabled)::before {
+    left: 100%;
+  }
+
+  .modal-login-btn > * {
+    position: relative;
+    z-index: 1;
   }
 
   .modal-login-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(79, 59, 196, 0.3);
+    box-shadow: var(--glass-shadow-accent-hover);
+    filter: brightness(1.1);
   }
 
   .modal-login-btn:disabled {

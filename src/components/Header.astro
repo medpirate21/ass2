@@ -69,24 +69,50 @@ const icons = {
   }
 
   .theme-toggle {
-    color: var(--text-color);
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--glass-text);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
     cursor: pointer;
     padding: 0.5rem;
-    border-radius: 12px;
+    border-radius: var(--glass-border-radius-small);
     position: relative;
     width: 40px;
     height: 40px;
     display: grid;
     place-items: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  .theme-toggle:hover::before {
+    left: 100%;
+  }
+
+  .theme-toggle > * {
+    position: relative;
+    z-index: 1;
   }
 
   .theme-toggle:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--glass-bg-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--glass-shadow-button);
+    border-color: var(--glass-accent);
   }
 
   .toggle-wrapper {
@@ -143,19 +169,46 @@ const icons = {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    background: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
+    border-radius: var(--glass-border-radius-small);
+    box-shadow: var(--glass-shadow);
     padding: 0.5rem 0.75rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .search-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  .search-box:hover::before,
+  .search-box:focus-within::before {
+    left: 100%;
+  }
+
+  .search-box > * {
+    position: relative;
+    z-index: 1;
   }
 
   .search-box:hover,
   .search-box:focus-within {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-accent);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--glass-shadow-button);
   }
 
   .search-box input {
