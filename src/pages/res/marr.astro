@@ -1197,6 +1197,14 @@ import DropdownManager from '../../components/DropdownManager.astro';
       </div>
       
     </nav>
+    
+    <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; text-align: center;">
+      <h3 style="color: #f0f6fc; margin-bottom: 1rem; font-size: 1.1rem;">📋 Download Instructions</h3>
+      <p style="color: #8b949e; font-size: 0.9rem; line-height: 1.5;">
+        When you click on video or PDF buttons, the link is automatically copied to your clipboard.<br>
+        <strong style="color: #58a6ff;">If download doesn't start automatically, paste the copied link manually in Safari or Chrome browser.</strong>
+      </p>
+    </div>
   </div>
   
   <DropdownManager />
@@ -1521,14 +1529,38 @@ import DropdownManager from '../../components/DropdownManager.astro';
               const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
               const encodedUserId = btoa(userid);
-              window.location.href = `/video?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}`;
+              const expiryTime = Date.now() + (6 * 60 * 60 * 1000); // 6 hours from now
+              const encodedExpiry = btoa(expiryTime.toString());
+              const videoUrl = `/video?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}&expiry=${encodedExpiry}`;
+              
+              // Copy to clipboard
+              try {
+                await navigator.clipboard.writeText(window.location.origin + videoUrl);
+                console.log('Video URL copied to clipboard');
+              } catch (err) {
+                console.error('Failed to copy to clipboard:', err);
+              }
+              
+              window.location.href = videoUrl;
               
             } catch (error) {
               console.error('Error processing video request:', error);
               // On error, still allow access but log the issue
               const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
-              window.location.href = `/video?id=${encodedId}&title=${encodedTitle}`;
+              const expiryTime = Date.now() + (6 * 60 * 60 * 1000); // 6 hours from now
+              const encodedExpiry = btoa(expiryTime.toString());
+              const videoUrl = `/video?id=${encodedId}&title=${encodedTitle}&expiry=${encodedExpiry}`;
+              
+              // Copy to clipboard
+              try {
+                await navigator.clipboard.writeText(window.location.origin + videoUrl);
+                console.log('Video URL copied to clipboard');
+              } catch (err) {
+                console.error('Failed to copy to clipboard:', err);
+              }
+              
+              window.location.href = videoUrl;
             }
           }
         }
@@ -1574,14 +1606,38 @@ import DropdownManager from '../../components/DropdownManager.astro';
               const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
               const encodedUserId = btoa(userid);
-              window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}`;
+              const expiryTime = Date.now() + (6 * 60 * 60 * 1000); // 6 hours from now
+              const encodedExpiry = btoa(expiryTime.toString());
+              const noteUrl = `/notepage?id=${encodedId}&title=${encodedTitle}&userid=${encodedUserId}&expiry=${encodedExpiry}`;
+              
+              // Copy to clipboard
+              try {
+                await navigator.clipboard.writeText(window.location.origin + noteUrl);
+                console.log('Note URL copied to clipboard');
+              } catch (err) {
+                console.error('Failed to copy to clipboard:', err);
+              }
+              
+              window.location.href = noteUrl;
               
             } catch (error) {
               console.error('Error processing note request:', error);
               // On error, still allow access but log the issue
               const encodedId = btoa(dataId);
               const encodedTitle = encodeURIComponent(title);
-              window.location.href = `/notepage?id=${encodedId}&title=${encodedTitle}`;
+              const expiryTime = Date.now() + (6 * 60 * 60 * 1000); // 6 hours from now
+              const encodedExpiry = btoa(expiryTime.toString());
+              const noteUrl = `/notepage?id=${encodedId}&title=${encodedTitle}&expiry=${encodedExpiry}`;
+              
+              // Copy to clipboard
+              try {
+                await navigator.clipboard.writeText(window.location.origin + noteUrl);
+                console.log('Note URL copied to clipboard');
+              } catch (err) {
+                console.error('Failed to copy to clipboard:', err);
+              }
+              
+              window.location.href = noteUrl;
             }
           }
         }
