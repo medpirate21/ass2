@@ -417,6 +417,15 @@ const { title } = Astro.props;
     background: var(--bg-gradient);
     color: var(--text-color);
     transition: background 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: var(--bg-gradient);
+    background-attachment: fixed;
   }
 
   html.light {
