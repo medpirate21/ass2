@@ -365,27 +365,27 @@ const { title } = Astro.props;
     --glass-shadow-hover: 0 12px 40px rgba(31, 38, 135, 0.5);
     --glass-shadow-active: 0 16px 48px rgba(31, 38, 135, 0.6);
     --glass-shadow-elevated: 0 25px 50px rgba(0, 0, 0, 0.3);
-    --glass-shadow-button: 0 8px 25px rgba(139, 92, 246, 0.3);
-    --glass-shadow-button-active: 0 12px 35px rgba(139, 92, 246, 0.4);
-    --glass-shadow-accent: 0 4px 16px rgba(139, 92, 246, 0.3);
-    --glass-shadow-accent-hover: 0 8px 24px rgba(139, 92, 246, 0.4);
+    --glass-shadow-button: 0 8px 25px rgba(0, 212, 255, 0.3);
+    --glass-shadow-button-active: 0 12px 35px rgba(0, 212, 255, 0.4);
+    --glass-shadow-accent: 0 4px 16px rgba(0, 212, 255, 0.3);
+    --glass-shadow-accent-hover: 0 8px 24px rgba(0, 212, 255, 0.4);
     
     --glass-text: #ffffff;
     --glass-text-muted: rgba(255, 255, 255, 0.8);
     
-    --glass-accent: #8b5cf6;
-    --glass-accent-secondary: #a855f7;
-    --glass-accent-hover: #9333ea;
-    --glass-accent-glow: rgba(139, 92, 246, 0.5);
+    --glass-accent: #00d4ff;
+    --glass-accent-secondary: #0099cc;
+    --glass-accent-hover: #33ddff;
+    --glass-accent-glow: rgba(0, 212, 255, 0.5);
     
-    --glass-gradient-text: linear-gradient(135deg, #ffffff 0%, #e0e0e0 50%, #8b5cf6 100%);
+    --glass-gradient-text: linear-gradient(135deg, #ffffff 0%, #e0e0e0 50%, #00d4ff 100%);
     
     --glass-shimmer: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     --glass-shimmer-subtle: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     --glass-shimmer-bright: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --primary-gradient: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+    --secondary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     
     /* Base colors */
@@ -395,7 +395,7 @@ const { title } = Astro.props;
     --dark-secondary: #1f2937;
 
     /* Updated theme values for liquid glass */
-    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    --bg-gradient: linear-gradient(135deg, #0099cc 0%, #00d4ff 50%, #667eea 100%);
     --text-color: #ffffff;
     --card-bg: var(--glass-bg);
     --nav-bg: var(--glass-bg);
@@ -424,10 +424,21 @@ const { title } = Astro.props;
   }
 
   html.dark {
-    --bg-gradient: linear-gradient(45deg, var(--dark-primary), var(--dark-secondary));
-    --text-color: #e1e1e1;
-    --card-bg: rgba(0, 0, 0, 0.3);
-    --nav-bg: rgba(0, 0, 0, 0.25);
+    --bg-gradient: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+    --text-color: #ffffff;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --nav-bg: rgba(255, 255, 255, 0.05);
+    
+    /* Dark theme glass variables */
+    --glass-bg: rgba(0, 0, 0, 0.3);
+    --glass-bg-secondary: rgba(0, 0, 0, 0.2);
+    --glass-bg-tertiary: rgba(0, 0, 0, 0.1);
+    --glass-bg-hover: rgba(255, 255, 255, 0.1);
+    --glass-bg-active: rgba(255, 255, 255, 0.15);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --glass-border-light: 1px solid rgba(255, 255, 255, 0.05);
+    --glass-text: #ffffff;
+    --glass-text-muted: rgba(255, 255, 255, 0.7);
   }
 
   /* Prevent white flash during transitions */
