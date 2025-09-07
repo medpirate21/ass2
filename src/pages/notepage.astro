@@ -122,14 +122,14 @@ console.log('Decoded userId:', decodedUserId);
 
   .note-container {
     background: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border-radius: 24px;
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border-radius: var(--glass-border-radius);
     padding: 2.5rem;
     max-width: 600px;
     width: 100%;
     box-shadow: var(--glass-shadow);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border);
     position: relative;
     z-index: 1;
   }
@@ -156,13 +156,13 @@ console.log('Decoded userId:', decodedUserId);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-backdrop);
-    -webkit-backdrop-filter: var(--glass-backdrop);
-    border: 1px solid var(--glass-border);
-    color: white;
+    background: var(--glass-bg-secondary);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
+    color: var(--glass-text);
     padding: 0.875rem 1.25rem;
-    border-radius: 16px;
+    border-radius: var(--glass-border-radius);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 0.9rem;
@@ -170,9 +170,9 @@ console.log('Decoded userId:', decodedUserId);
   }
 
   .back-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--glass-bg-hover);
     transform: translateX(-4px) translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--glass-shadow-hover);
   }
 
   .note-content {

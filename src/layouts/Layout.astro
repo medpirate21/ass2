@@ -424,21 +424,24 @@ const { title } = Astro.props;
   }
 
   html.dark {
-    --bg-gradient: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+    --bg-gradient: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #1a1a1a 75%, #000000 100%);
     --text-color: #ffffff;
     --card-bg: rgba(255, 255, 255, 0.05);
     --nav-bg: rgba(255, 255, 255, 0.05);
     
     /* Dark theme glass variables */
-    --glass-bg: rgba(0, 0, 0, 0.3);
-    --glass-bg-secondary: rgba(0, 0, 0, 0.2);
-    --glass-bg-tertiary: rgba(0, 0, 0, 0.1);
+    --glass-bg: rgba(0, 0, 0, 0.4);
+    --glass-bg-secondary: rgba(0, 0, 0, 0.3);
+    --glass-bg-tertiary: rgba(0, 0, 0, 0.2);
+    --glass-bg-accent: rgba(0, 153, 204, 0.1);
     --glass-bg-hover: rgba(255, 255, 255, 0.1);
     --glass-bg-active: rgba(255, 255, 255, 0.15);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-    --glass-border-light: 1px solid rgba(255, 255, 255, 0.05);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.15);
+    --glass-border-light: 1px solid rgba(255, 255, 255, 0.08);
     --glass-text: #ffffff;
     --glass-text-muted: rgba(255, 255, 255, 0.7);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --glass-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.8);
   }
 
   /* Prevent white flash during transitions */
