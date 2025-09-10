@@ -63,31 +63,22 @@ console.log('Decoded userId:', decodedUserId);
             </svg>
             Get File on Telegram
           </button>
+
+          <div class="watch-link-container">
+            <label class="link-label">Watch Link:</label>
+            <div class="link-display">
+              <input type="text" id="watch-link-text" class="link-input" readonly placeholder="Click 'Watch/Download Video' to generate link">
+              <button id="copy-link-btn" class="copy-btn" title="Copy Link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
           
           <div class="instruction-text">
             <p>💡 Link copied to clipboard! If the page doesn't open automatically, paste the link manually in Safari or Chrome.</p>
-          </div>
-          
-          <div class="download-links">
-            <h3>Direct Download Links:</h3>
-            <div class="links-container">
-              <a id="direct-video-link" href="#" class="download-link" target="_blank">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7,10 12,15 17,10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                Download Video File
-              </a>
-              <a id="telegram-link" href="#" class="download-link telegram" target="_blank">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 2l-2 20-7-4-4-4z"/>
-                  <path d="M21 2l-10 10"/>
-                  <path d="M11 12l-2-2"/>
-                </svg>
-                Open in Telegram
-              </a>
-            </div>
           </div>
         </div>
       </div>
@@ -318,9 +309,9 @@ console.log('Decoded userId:', decodedUserId);
     }
   }
 
-  .download-links {
-    margin-top: 2rem;
-    padding: 1.5rem;
+  .watch-link-container {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
     background: var(--glass-bg-secondary);
     backdrop-filter: var(--glass-backdrop-filter);
     -webkit-backdrop-filter: var(--glass-backdrop-filter);
@@ -329,73 +320,76 @@ console.log('Decoded userId:', decodedUserId);
     box-shadow: var(--glass-shadow);
   }
 
-  .download-links h3 {
-    margin: 0 0 1rem 0;
-    color: var(--glass-text);
-    font-size: 1.1rem;
+  .link-label {
+    display: block;
+    font-size: 0.9rem;
     font-weight: 600;
-    text-align: center;
+    color: var(--glass-text);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-  .links-container {
+  .link-display {
     display: flex;
-    flex-direction: column;
     gap: 0.75rem;
+    align-items: center;
   }
 
-  .download-link {
+  .link-input {
+    flex: 1;
+    padding: 0.875rem 1rem;
+    background: var(--glass-bg-tertiary);
+    border: var(--glass-border-light);
+    border-radius: 8px;
+    color: var(--glass-text);
+    font-size: 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .link-input:focus {
+    border-color: var(--glass-accent);
+    box-shadow: 0 0 0 2px rgba(0, 153, 204, 0.2);
+  }
+
+  .link-input::placeholder {
+    color: var(--glass-text-muted);
+    font-style: italic;
+  }
+
+  .copy-btn {
+    padding: 0.875rem;
+    background: var(--glass-bg-tertiary);
+    border: var(--glass-border-light);
+    border-radius: 8px;
+    color: var(--glass-accent);
+    cursor: pointer;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.25rem;
-    background: var(--glass-bg-tertiary);
-    backdrop-filter: var(--glass-backdrop-filter);
-    -webkit-backdrop-filter: var(--glass-backdrop-filter);
-    border: var(--glass-border-light);
-    border-radius: var(--glass-border-radius);
-    color: var(--glass-text);
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    justify-content: center;
+    min-width: 44px;
   }
 
-  .download-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--glass-shimmer);
-    transition: left 0.5s ease;
-    z-index: 0;
-  }
-
-  .download-link:hover::before {
-    left: 100%;
-  }
-
-  .download-link > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .download-link:hover {
+  .copy-btn:hover {
     background: var(--glass-bg-hover);
     border-color: var(--glass-accent);
     transform: translateY(-2px);
-    box-shadow: var(--glass-shadow-hover);
+    box-shadow: 0 4px 12px rgba(0, 153, 204, 0.3);
   }
 
-  .download-link.telegram {
-    border-color: var(--glass-accent);
-    background: var(--glass-bg-accent);
+  .copy-btn:active {
+    transform: translateY(0);
   }
 
-  .download-link svg {
-    flex-shrink: 0;
+  .copy-btn svg {
+    transition: transform 0.2s ease;
+  }
+
+  .copy-btn:hover svg {
+    transform: scale(1.1);
   }
 
   @media (max-width: 768px) {
@@ -417,13 +411,14 @@ console.log('Decoded userId:', decodedUserId);
       font-size: 1rem;
     }
 
-    .links-container {
+    .link-display {
+      flex-direction: column;
       gap: 0.5rem;
     }
 
-    .download-link {
-      padding: 0.875rem 1rem;
-      font-size: 0.9rem;
+    .copy-btn {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>
@@ -465,6 +460,8 @@ console.log('Decoded userId:', decodedUserId);
     const backBtn = document.getElementById('back-btn');
     const watchDownloadBtn = document.getElementById('watch-download-btn');
     const telegramBtn = document.getElementById('telegram-btn');
+    const copyLinkBtn = document.getElementById('copy-link-btn');
+    const watchLinkInput = document.getElementById('watch-link-text') as HTMLInputElement;
 
     // Back button functionality
     backBtn?.addEventListener('click', () => {
@@ -521,6 +518,12 @@ console.log('Decoded userId:', decodedUserId);
           const videoUrl = window.APP_CONFIG.VIDEO_PLAYER_URL(encodedId);
           console.log('Opening video URL:', videoUrl);
           
+          // Update the watch link input field
+          const watchLinkInput = document.getElementById('watch-link-text') as HTMLInputElement;
+          if (watchLinkInput) {
+            watchLinkInput.value = videoUrl;
+          }
+
           // Copy to clipboard
           try {
             await navigator.clipboard.writeText(videoUrl);
@@ -540,6 +543,12 @@ console.log('Decoded userId:', decodedUserId);
             const encodedId = btoa(finalDataId);
             const videoUrl = window.APP_CONFIG.VIDEO_PLAYER_URL(encodedId);
             
+            // Update the watch link input field even on error
+            const watchLinkInput = document.getElementById('watch-link-text') as HTMLInputElement;
+            if (watchLinkInput) {
+              watchLinkInput.value = videoUrl;
+            }
+
             // Copy to clipboard even on error
             try {
               await navigator.clipboard.writeText(videoUrl);
@@ -604,47 +613,35 @@ console.log('Decoded userId:', decodedUserId);
       }
     });
 
-    // Populate download links on page load
-    function populateDownloadLinks() {
-      const urlParams = new URLSearchParams(window.location.search);
-      let dataId = urlParams.get('id');
-      let userId = urlParams.get('userid');
-      
-      // Decode if needed
-      if (dataId) {
+    // Copy link button functionality
+    copyLinkBtn?.addEventListener('click', async () => {
+      if (watchLinkInput && watchLinkInput.value) {
         try {
-          dataId = atob(dataId);
-        } catch (e) {
-          // Use original if decoding fails
+          await navigator.clipboard.writeText(watchLinkInput.value);
+          
+          // Visual feedback
+          const originalText = copyLinkBtn.innerHTML;
+          copyLinkBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20,6 9,17 4,12"></polyline>
+            </svg>
+          `;
+          copyLinkBtn.style.color = '#10b981';
+          
+          setTimeout(() => {
+            copyLinkBtn.innerHTML = originalText;
+            copyLinkBtn.style.color = '';
+          }, 2000);
+          
+          // Show instruction text
+          document.querySelector('.instruction-text')?.classList.add('show');
+          setTimeout(() => {
+            document.querySelector('.instruction-text')?.classList.remove('show');
+          }, 3000);
+        } catch (err) {
+          console.error('Failed to copy link:', err);
         }
       }
-      
-      if (userId) {
-        try {
-          userId = atob(userId);
-        } catch (e) {
-          // Use original if decoding fails
-        }
-      }
-
-      if (dataId) {
-        // Set up direct video link
-        const encodedId = btoa(dataId);
-        const videoUrl = window.APP_CONFIG.VIDEO_PLAYER_URL(encodedId);
-        const directVideoLink = document.getElementById('direct-video-link') as HTMLAnchorElement;
-        if (directVideoLink) {
-          directVideoLink.href = videoUrl;
-        }
-      }
-
-      // Set up telegram link
-      const telegramLink = document.getElementById('telegram-link') as HTMLAnchorElement;
-      if (telegramLink) {
-        telegramLink.href = window.APP_CONFIG.TELEGRAM_URL;
-      }
-    }
-
-    // Call populate function after DOM is ready
-    populateDownloadLinks();
+    });
   });
 </script>
