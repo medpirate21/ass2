@@ -71,6 +71,28 @@ console.log('Decoded userId:', decodedUserId);
           <div class="instruction-text">
             <p>💡 Link copied to clipboard! If the page doesn't open automatically, paste the link manually in Safari or Chrome.</p>
           </div>
+          
+          <div class="download-links">
+            <h3>Direct Download Links:</h3>
+            <div class="links-container">
+              <a id="direct-note-link" href="#" class="download-link" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7,10 12,15 17,10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download Note File
+              </a>
+              <a id="telegram-link" href="#" class="download-link telegram" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 2l-2 20-7-4-4-4z"/>
+                  <path d="M21 2l-10 10"/>
+                  <path d="M11 12l-2-2"/>
+                </svg>
+                Open in Telegram
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -300,6 +322,86 @@ console.log('Decoded userId:', decodedUserId);
     }
   }
 
+  .download-links {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--glass-bg-secondary);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border);
+    border-radius: var(--glass-border-radius);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .download-links h3 {
+    margin: 0 0 1rem 0;
+    color: var(--glass-text);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .links-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .download-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: var(--glass-bg-tertiary);
+    backdrop-filter: var(--glass-backdrop-filter);
+    -webkit-backdrop-filter: var(--glass-backdrop-filter);
+    border: var(--glass-border-light);
+    border-radius: var(--glass-border-radius);
+    color: var(--glass-text);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .download-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--glass-shimmer);
+    transition: left 0.5s ease;
+    z-index: 0;
+  }
+
+  .download-link:hover::before {
+    left: 100%;
+  }
+
+  .download-link > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .download-link:hover {
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow-hover);
+  }
+
+  .download-link.telegram {
+    border-color: var(--glass-accent);
+    background: var(--glass-bg-accent);
+  }
+
+  .download-link svg {
+    flex-shrink: 0;
+  }
+
   @media (max-width: 768px) {
     .note-page {
       padding: 1rem;
@@ -317,6 +419,15 @@ console.log('Decoded userId:', decodedUserId);
     .action-btn {
       padding: 1rem 1.5rem;
       font-size: 1rem;
+    }
+
+    .links-container {
+      gap: 0.5rem;
+    }
+
+    .download-link {
+      padding: 0.875rem 1rem;
+      font-size: 0.9rem;
     }
   }
 </style>
@@ -499,5 +610,48 @@ console.log('Decoded userId:', decodedUserId);
         window.open(telegramUrl, '_blank');
       }
     });
+
+    // Populate download links on page load
+    function populateDownloadLinks() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let dataId = urlParams.get('id');
+      let userId = urlParams.get('userid');
+      
+      // Decode if needed
+      if (dataId) {
+        try {
+          dataId = atob(dataId);
+        } catch (e) {
+          // Use original if decoding fails
+        }
+      }
+      
+      if (userId) {
+        try {
+          userId = atob(userId);
+        } catch (e) {
+          // Use original if decoding fails
+        }
+      }
+
+      if (dataId) {
+        // Set up direct note link
+        const encodedId = btoa(dataId);
+        const noteUrl = window.APP_CONFIG.NOTE_VIEWER_URL(encodedId);
+        const directNoteLink = document.getElementById('direct-note-link') as HTMLAnchorElement;
+        if (directNoteLink) {
+          directNoteLink.href = noteUrl;
+        }
+      }
+
+      // Set up telegram link
+      const telegramLink = document.getElementById('telegram-link') as HTMLAnchorElement;
+      if (telegramLink) {
+        telegramLink.href = window.APP_CONFIG.TELEGRAM_URL;
+      }
+    }
+
+    // Call populate function after DOM is ready
+    populateDownloadLinks();
   });
 </script>
