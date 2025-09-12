@@ -61,6 +61,15 @@ console.log('Decoded userId:', decodedUserId);
             </div>
           </div>
           
+          <button id="telegram-btn" class="action-btn secondary" data-id={decodedId} data-userid={decodedUserId}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 2l-2 20-7-4-4-4z"/>
+              <path d="M21 2l-10 10"/>
+              <path d="M11 12l-2-2"/>
+            </svg>
+            Get File on Telegram
+          </button>
+          
           <div class="instruction-text">
             <p>💡 Link copied to clipboard! If the page doesn't open automatically, paste the link manually in Safari or Chrome.</p>
           </div>
@@ -444,6 +453,7 @@ console.log('Decoded userId:', decodedUserId);
   document.addEventListener('DOMContentLoaded', () => {
     const backBtn = document.getElementById('back-btn');
     const copyLinkBtn = document.getElementById('copy-link-btn');
+    const telegramBtn = document.getElementById('telegram-btn');
     const watchLinkInput = document.getElementById('watch-link-text') as HTMLInputElement;
 
     // Generate and display watch link on page load
@@ -494,6 +504,52 @@ console.log('Decoded userId:', decodedUserId);
         } catch (err) {
           console.error('Failed to copy link:', err);
         }
+      }
+    });
+
+    // Telegram button functionality
+    telegramBtn?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const dataId = telegramBtn.getAttribute('data-id');
+      const userId = telegramBtn.getAttribute('data-userid');
+      console.log('Telegram clicked, dataId:', dataId, 'userId:', userId);
+      
+      // Get userId from URL params if not in button attributes
+      let finalUserId = userId;
+      if (!finalUserId) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlUserId = urlParams.get('userid');
+        if (urlUserId) {
+          try {
+            finalUserId = atob(urlUserId);
+            console.log('Got userId from URL params for telegram:', finalUserId);
+          } catch (e) {
+            finalUserId = urlUserId;
+          }
+        }
+      }
+      
+      if (finalUserId) {
+        try {
+          console.log('Calling decrementVideoQuota for telegram with userId:', finalUserId);
+          // Decrement quota first
+          await decrementVideoQuota(finalUserId);
+          
+          // Then open Telegram
+          const telegramUrl = window.APP_CONFIG.TELEGRAM_URL;
+          console.log('Opening Telegram:', telegramUrl);
+          window.open(telegramUrl, '_blank');
+        } catch (error) {
+          console.error('Error processing telegram access:', error);
+          // Still allow access on error
+          const telegramUrl = window.APP_CONFIG.TELEGRAM_URL;
+          window.open(telegramUrl, '_blank');
+        }
+      } else {
+        console.error('Missing userid for telegram button. finalUserId:', finalUserId);
+        // Fallback without quota decrement
+        const telegramUrl = window.APP_CONFIG.TELEGRAM_URL;
+        window.open(telegramUrl, '_blank');
       }
     });
   });
