@@ -48,30 +48,14 @@ console.log('Decoded userId:', decodedUserId);
         <h1 class="video-title">{title || 'Video Content'}</h1>
         
         <div class="video-actions">
-          <button id="watch-download-btn" class="action-btn primary" data-id={decodedId} data-userid={decodedUserId}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="5,3 19,12 5,21"/>
-            </svg>
-            Watch/Download Video
-          </button>
-          
-          <button id="telegram-btn" class="action-btn secondary" data-id={decodedId} data-userid={decodedUserId}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 2l-2 20-7-4-4-4z"/>
-              <path d="M21 2l-10 10"/>
-              <path d="M11 12l-2-2"/>
-            </svg>
-            Get File on Telegram
-          </button>
-
           <div class="watch-link-container">
             <label class="link-label">Watch Link:</label>
             <div class="link-display">
-              <input type="text" id="watch-link-text" class="link-input" readonly placeholder="Click 'Watch/Download Video' to generate link">
+              <input type="text" id="watch-link-text" class="link-input" readonly>
               <button id="copy-link-btn" class="copy-btn" title="Copy Link">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2 2v1"></path>
                 </svg>
               </button>
             </div>
@@ -310,7 +294,8 @@ console.log('Decoded userId:', decodedUserId);
   }
 
   .watch-link-container {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
     padding: 1.25rem;
     background: var(--glass-bg-secondary);
     backdrop-filter: var(--glass-backdrop-filter);
@@ -458,159 +443,27 @@ console.log('Decoded userId:', decodedUserId);
 
   document.addEventListener('DOMContentLoaded', () => {
     const backBtn = document.getElementById('back-btn');
-    const watchDownloadBtn = document.getElementById('watch-download-btn');
-    const telegramBtn = document.getElementById('telegram-btn');
     const copyLinkBtn = document.getElementById('copy-link-btn');
     const watchLinkInput = document.getElementById('watch-link-text') as HTMLInputElement;
+
+    // Generate and display watch link on page load
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlDataId = urlParams.get('id');
+    if (urlDataId && watchLinkInput) {
+      try {
+        const decodedId = atob(urlDataId);
+        const encodedId = btoa(decodedId);
+        const videoUrl = window.APP_CONFIG.VIDEO_PLAYER_URL(encodedId);
+        watchLinkInput.value = videoUrl;
+      } catch (e) {
+        const videoUrl = window.APP_CONFIG.VIDEO_PLAYER_URL(urlDataId);
+        watchLinkInput.value = videoUrl;
+      }
+    }
 
     // Back button functionality
     backBtn?.addEventListener('click', () => {
       window.history.back();
-    });
-
-    // Watch/Download button functionality
-    watchDownloadBtn?.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const dataId = watchDownloadBtn.getAttribute('data-id');
-      const userId = watchDownloadBtn.getAttribute('data-userid');
-      console.log('Watch/Download clicked, dataId:', dataId, 'userId:', userId);
-      console.log('Button element:', watchDownloadBtn);
-      console.log('All button attributes:', watchDownloadBtn.getAttributeNames());
-      
-      // Get dataId from URL params if not in button attributes
-      let finalDataId = dataId;
-      if (!finalDataId) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlDataId = urlParams.get('id');
-        if (urlDataId) {
-          try {
-            finalDataId = atob(urlDataId);
-            console.log('Got dataId from URL params:', finalDataId);
-          } catch (e) {
-            finalDataId = urlDataId;
-          }
-        }
-      }
-
-      // Get userId from URL params if not in button attributes
-      let finalUserId = userId;
-      if (!finalUserId) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlUserId = urlParams.get('userid');
-        if (urlUserId) {
-          try {
-            finalUserId = atob(urlUserId);
-            console.log('Got userId from URL params:', finalUserId);
-          } catch (e) {
-            finalUserId = urlUserId;
-          }
-        }
-      }
-      
-      if (finalDataId && finalUserId) {
-        try {
-          console.log('Calling decrementVideoQuota with userId:', finalUserId);
-          // Decrement quota first
-          await decrementVideoQuota(finalUserId);
-          
-          // Then open video URL with medapi.pages.dev format
-          const encodedId = btoa(finalDataId!);
-          const videoUrl = window.APP_CONFIG.VIDEO_PLAYER_URL(encodedId);
-          console.log('Opening video URL:', videoUrl);
-          
-          // Update the watch link input field
-          const watchLinkInput = document.getElementById('watch-link-text') as HTMLInputElement;
-          if (watchLinkInput) {
-            watchLinkInput.value = videoUrl;
-          }
-
-          // Copy to clipboard
-          try {
-            await navigator.clipboard.writeText(videoUrl);
-            document.querySelector('.instruction-text')?.classList.add('show');
-            setTimeout(() => {
-              document.querySelector('.instruction-text')?.classList.remove('show');
-            }, 5000);
-          } catch (err) {
-            console.error('Failed to copy to clipboard:', err);
-          }
-          
-          window.open(videoUrl, '_blank');
-        } catch (error) {
-          console.error('Error processing watch/download:', error);
-          // Still allow access on error with fallback data
-          if (finalDataId) {
-            const encodedId = btoa(finalDataId);
-            const videoUrl = window.APP_CONFIG.VIDEO_PLAYER_URL(encodedId);
-            
-            // Update the watch link input field even on error
-            const watchLinkInput = document.getElementById('watch-link-text') as HTMLInputElement;
-            if (watchLinkInput) {
-              watchLinkInput.value = videoUrl;
-            }
-
-            // Copy to clipboard even on error
-            try {
-              await navigator.clipboard.writeText(videoUrl);
-              document.querySelector('.instruction-text')?.classList.add('show');
-              setTimeout(() => {
-                document.querySelector('.instruction-text')?.classList.remove('show');
-              }, 5000);
-            } catch (err) {
-              console.error('Failed to copy to clipboard:', err);
-            }
-            
-            window.open(videoUrl, '_blank');
-          }
-        }
-      } else {
-        console.error('Missing data-id or userid. finalDataId:', finalDataId, 'finalUserId:', finalUserId);
-      }
-    });
-
-    // Telegram button functionality
-    telegramBtn?.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const dataId = telegramBtn.getAttribute('data-id');
-      const userId = telegramBtn.getAttribute('data-userid');
-      console.log('Telegram clicked, dataId:', dataId, 'userId:', userId);
-      console.log('Telegram button element:', telegramBtn);
-      console.log('All telegram button attributes:', telegramBtn.getAttributeNames());
-      
-      // Get userId from URL params if not in button attributes
-      let finalUserId = userId;
-      if (!finalUserId) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlUserId = urlParams.get('userid');
-        if (urlUserId) {
-          try {
-            finalUserId = atob(urlUserId);
-            console.log('Got userId from URL params for telegram:', finalUserId);
-          } catch (e) {
-            finalUserId = urlUserId;
-          }
-        }
-      }
-      
-      if (finalUserId) {
-        try {
-          console.log('Calling decrementVideoQuota for telegram with userId:', finalUserId);
-          // Decrement quota first
-          await decrementVideoQuota(finalUserId);
-          
-          // Then open Telegram
-          const telegramUrl = window.APP_CONFIG.TELEGRAM_URL;
-          console.log('Opening Telegram:', telegramUrl);
-          window.open(telegramUrl, '_blank');
-        } catch (error) {
-          console.error('Error processing telegram access:', error);
-        }
-      } else {
-        console.error('Missing userid for telegram button. finalUserId:', finalUserId);
-        // Fallback without quota decrement
-        const telegramUrl = window.APP_CONFIG.TELEGRAM_URL;
-        window.open(telegramUrl, '_blank');
-      }
     });
 
     // Copy link button functionality
