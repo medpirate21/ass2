@@ -8,7 +8,7 @@ export async function onRequest(context) {
     const referer = context.request.headers.get("Referer");
 
     const allowedOrigins = [
-      "https://medac.pages.dev",   // your Pages domain
+      "https://uiass.pages.dev",   // your Pages domain
       "https://quiz.onlymed.fun",  // your custom domain if used
       "https://t.me"               // allow Telegram WebView
     ];
