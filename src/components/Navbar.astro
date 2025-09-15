@@ -31,7 +31,7 @@ const icons = {
         <Fragment set:html={icons.notes} />
         <span>Notes</span>
       </a>
-      <a href="https://medoracle-quiz.pages.dev" class="nav-item quiz-link" target="_blank" rel="noopener noreferrer">
+      <a href="/quiz" class="nav-item">
         <Fragment set:html={icons.quiz} />
         <span>Quiz</span>
       </a>
@@ -224,21 +224,4 @@ const icons = {
     }
   }
   
-  /* Prevent Astro client-side routing for external quiz link */
-  .quiz-link {
-    data-astro-reload: true;
-  }
 </style>
-
-<script>
-  // Force external navigation for quiz link
-  document.addEventListener('astro:page-load', () => {
-    const quizLink = document.querySelector('.quiz-link');
-    if (quizLink) {
-      quizLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.open('https://medoracle-quiz.pages.dev', '_blank', 'noopener,noreferrer');
-      });
-    }
-  });
-</script>

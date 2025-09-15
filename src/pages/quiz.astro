@@ -1,0 +1,652 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="MedOracle - Quiz Arena">
+    <!-- Running Text Banner -->
+    <div class="running-text-banner">
+        <div class="running-text">
+            <span>MCQ content sourced from leaked PDFs and authentic medical resources - Not AI generated content • Authentic medical questions for serious preparation</span>
+        </div>
+    </div>
+
+    <main class="main">
+        <div class="container quiz-container">
+            <!-- Loading State -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading quiz subjects...</p>
+            </div>
+
+            <!-- Subject Selection -->
+            <div id="subjectSection" class="hidden subject-section">
+                <div class="card">
+                    <h2 class="card-title">
+                        <i class="fas fa-book-open"></i>
+                        Select Subject
+                    </h2>
+                    <div id="subjectsGrid" class="subjects-grid">
+                        <!-- Auto-populated from JSON files -->
+                    </div>
+                </div>
+
+                <div id="overallStatsCard" class="modern-stats-container">
+                    <div class="stats-header">
+                        <span>Quick Stats</span>
+                    </div>
+                    <div id="overallStats" class="modern-stats-grid">
+                        <!-- Stats populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Modal -->
+            <div id="navigationModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-compass"></i>
+                            Navigate Topics
+                        </h3>
+                        <button class="modal-close" onclick="closeNavigationModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Mode Selection -->
+                    <div class="mode-selection">
+                        <label class="form-label">Quiz Mode</label>
+                        <div class="mode-buttons">
+                            <button id="normalModeBtn" class="mode-btn active" onclick="selectMode('normal')">
+                                <i class="fas fa-book-open"></i>
+                                Normal Mode
+                            </button>
+                            <button id="examModeBtn" class="mode-btn" onclick="selectMode('exam')">
+                                <i class="fas fa-clock"></i>
+                                Exam Mode
+                            </button>
+                        </div>
+                        <div id="modeDescription" class="mode-description">
+                            Practice mode with instant feedback and explanations
+                        </div>
+                    </div>
+                    
+                    <div class="nav-grid">
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <select id="subjectSelect" class="form-select" onchange="populateTopics()">
+                                <option value="">Select Subject</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Topic</label>
+                            <select id="topicSelect" class="form-select" onchange="updateCurrentStats()">
+                                <option value="">Select Topic</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="startQuizBtn" class="btn" onclick="startQuiz()">
+                        <i class="fas fa-play"></i>
+                        Start Quiz
+                    </button>
+
+                    <div id="currentStats" class="stats-grid mt-2">
+                        <!-- Current selection stats -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Section -->
+            <div id="quizSection" class="hidden">
+                <div class="card question-card">
+                    <div class="question-header">
+                        <div class="question-info">
+                            <div class="question-info-wrapper">
+                                <h3 id="questionNumber" class="question-number"></h3>
+                                <div class="question-meta">
+                                    <span class="question-type">MCQ</span>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div id="progress" class="progress-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div id="examTimer" class="exam-timer hidden">
+                            <div class="timer-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="timer-content">
+                                <span class="timer-label">Time Remaining</span>
+                                <span id="timerDisplay" class="timer-display">01:03</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-text" id="questionText"></div>
+                    <div id="questionImages" class="question-images"></div>
+                    
+                    <div id="optionsGrid" class="options-grid">
+                        <!-- Options populated dynamically -->
+                    </div>
+                    
+                    <div class="quiz-nav sticky-mobile">
+                        <button id="prevBtn" class="btn btn-secondary" onclick="previousQuestion()" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                            <span class="btn-text">Prev</span>
+                        </button>
+                        <div class="nav-center">
+                            <button id="submitExamBtn" class="btn btn-warning hidden" onclick="confirmSubmitExam()">
+                                <i class="fas fa-paper-plane"></i>
+                                <span class="btn-text">Submit</span>
+                            </button>
+                        </div>
+                        <div class="nav-right">
+                            <button id="nextBtn" class="btn">
+                                <span id="nextBtnText">Next</span>
+                                <i class="fas fa-chevron-right" id="nextBtnIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="explanation" class="explanation hidden">
+                    <h4><i class="fas fa-lightbulb"></i> Explanation</h4>
+                    <div id="answerSummary" class="answer-summary"></div>
+                    <div id="explanationText"></div>
+                    <div id="explanationImages" class="explanation-images"></div>
+                    <div id="explanationAudio" class="question-audio"></div>
+                </div>
+                
+                <!-- Submit Confirmation Modal -->
+                <div id="submitConfirmModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Confirm Submission
+                            </h3>
+                        </div>
+                        
+                        <div class="modal-body">
+                            <p>Are you sure you want to submit your exam? You have <span id="remainingQuestions"></span> questions remaining.</p>
+                            <div class="modal-actions">
+                                <button class="btn btn-lg" onclick="closeSubmitConfirm()">
+                                    <i class="fas fa-times"></i>
+                                    Cancel
+                                </button>
+                                <button class="btn btn-lg btn-warning" onclick="submitExam()">
+                                    <i class="fas fa-check"></i>
+                                    Submit Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Exam Results Modal -->
+                <div id="examResultsModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-line"></i>
+                                Exam Results
+                            </h3>
+                            <button class="modal-close" onclick="closeExamResults()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div id="examResultsContent">
+                            <!-- Results populated dynamically -->
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="btn" onclick="restartQuiz()">
+                                <i class="fas fa-redo"></i>
+                                Retake Quiz
+                            </button>
+                            <button class="btn btn-secondary" onclick="closeExamResults()">
+                                <i class="fas fa-home"></i>
+                                Back to Home
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Quiz-specific styles */
+    .quiz-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+    }
+
+    .subject-section {
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .running-text-banner {
+        background: linear-gradient(135deg, var(--glass-accent) 0%, #16a085 100%);
+        color: white;
+        padding: 0.5rem 0;
+        overflow: hidden;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .running-text {
+        display: inline-block;
+        animation: scroll-text 35s linear infinite;
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        padding-right: 50vw;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    @keyframes scroll-text {
+        0% { transform: translateX(100vw); }
+        100% { transform: translateX(-100%); }
+    }
+
+    /* Loading */
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        color: var(--glass-text-muted);
+    }
+
+    .spinner {
+        width: 3rem;
+        height: 3rem;
+        border: 3px solid var(--glass-border-color);
+        border-top: 3px solid var(--glass-accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Cards */
+    .card {
+        background: var(--glass-bg);
+        border-radius: 16px;
+        padding: 2rem;
+        border: var(--glass-border);
+        box-shadow: var(--glass-shadow);
+        backdrop-filter: var(--glass-backdrop-filter);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        width: 100%;
+    }
+    
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, var(--glass-accent) 0%, #16a085 100%);
+    }
+    
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--glass-shadow-hover);
+        border-color: var(--glass-accent);
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        color: var(--glass-text);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        line-height: 1.2;
+    }
+
+    .card-title i {
+        color: var(--glass-accent);
+        font-size: 1.5rem;
+        filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.3));
+    }
+
+    /* Subjects Grid */
+    .subjects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+    }
+    
+    .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .modal-content {
+        background: var(--glass-bg);
+        border: var(--glass-border);
+        border-radius: 16px;
+        padding: 2rem;
+        width: 95%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        animation: slideIn 0.3s cubic-bezier(0.2, 0, 0, 1);
+        box-shadow: var(--glass-shadow-elevated);
+        backdrop-filter: var(--glass-backdrop-filter);
+    }
+
+    /* Form elements */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--glass-accent);
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: var(--glass-border);
+        border-radius: 8px;
+        background: var(--glass-bg-secondary);
+        color: var(--glass-text);
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        backdrop-filter: var(--glass-backdrop-filter-light);
+    }
+
+    .form-select:focus {
+        outline: none;
+        border-color: var(--glass-accent);
+        box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3);
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: var(--glass-border);
+        min-height: 40px;
+        background: var(--glass-accent);
+        color: white;
+        box-shadow: var(--glass-shadow-button);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--glass-shadow-button-active);
+    }
+
+    .btn-secondary {
+        background: var(--glass-bg);
+        color: var(--glass-accent);
+        border-color: var(--glass-accent);
+    }
+
+    .btn-warning {
+        background: #f39c12;
+        border-color: #f39c12;
+    }
+
+    /* Quiz specific styles */
+    .question-card {
+        margin-bottom: 2rem;
+    }
+
+    .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: var(--glass-border);
+    }
+
+    .question-text {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        color: var(--glass-text);
+        padding: 1rem;
+        background: rgba(0, 212, 255, 0.05);
+        border-radius: 8px;
+        border-left: 4px solid var(--glass-accent);
+    }
+
+    .options-grid {
+        display: grid;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .option {
+        background: var(--glass-bg);
+        border: var(--glass-border);
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-height: 60px;
+        backdrop-filter: var(--glass-backdrop-filter-light);
+    }
+
+    .option:hover {
+        border-color: var(--glass-accent);
+        background: var(--glass-bg-hover);
+        transform: translateY(-2px);
+    }
+
+    .option.selected {
+        border-color: var(--glass-accent);
+        background: var(--glass-accent);
+        color: white;
+    }
+
+    .option-letter {
+        background: var(--glass-accent);
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+    }
+
+    .quiz-nav {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        margin-top: 2rem;
+        gap: 1rem;
+        background: var(--glass-bg);
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        backdrop-filter: var(--glass-backdrop-filter);
+    }
+
+    .nav-right {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .nav-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Progress bar */
+    .progress-container {
+        width: 100%;
+        max-width: 400px;
+        height: 8px;
+        background: var(--glass-bg-tertiary);
+        border-radius: 4px;
+        overflow: hidden;
+        border: var(--glass-border-light);
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(135deg, var(--glass-accent) 0%, #16a085 100%);
+        border-radius: 4px;
+        transition: width 0.8s ease;
+        position: relative;
+    }
+
+    /* Utilities */
+    .hidden { display: none !important; }
+    .mt-2 { margin-top: 0.5rem; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .quiz-container {
+            padding: 1rem;
+        }
+        
+        .card {
+            padding: 1rem;
+            margin: 0.5rem;
+        }
+        
+        .subjects-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .nav-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .quiz-nav {
+            position: sticky;
+            bottom: 0;
+            margin: 0 -1rem;
+            z-index: 10;
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
+
+<script is:inline>
+    // Load external script and initialize when ready
+    function loadQuizScript() {
+        const script = document.createElement('script');
+        script.src = '/quiz-functionality.js';
+        script.onload = function() {
+            // Initialize quiz functions after script loads
+            if (window.initTheme) {
+                window.initTheme();
+            }
+            if (window.loadAvailableSubjects) {
+                window.loadAvailableSubjects();
+            }
+        };
+        script.onerror = function() {
+            console.error('Failed to load quiz functionality script');
+            const loadingEl = document.getElementById('loading');
+            if (loadingEl) {
+                loadingEl.innerHTML = '<p>Error loading quiz functionality. Please refresh the page.</p>';
+            }
+        };
+        document.head.appendChild(script);
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', loadQuizScript);
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('navigationModal');
+        if (event.target === modal && window.closeNavigationModal) {
+            window.closeNavigationModal();
+        }
+        
+        const submitModal = document.getElementById('submitConfirmModal');
+        if (event.target === submitModal && window.closeSubmitConfirm) {
+            window.closeSubmitConfirm();
+        }
+        
+        const resultsModal = document.getElementById('examResultsModal');
+        if (event.target === resultsModal && window.closeExamResults) {
+            window.closeExamResults();
+        }
+    };
+</script>

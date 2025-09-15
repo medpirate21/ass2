@@ -239,18 +239,18 @@ const { title } = Astro.props;
       const checkTelegramPlatform = async () => {
         // Wait for Telegram WebApp to load
         let attempts = 0;
-        while (!(window as any).Telegram?.WebApp && attempts < 50) {
+        while (!window.Telegram?.WebApp && attempts < 50) {
           await new Promise(resolve => setTimeout(resolve, 100));
           attempts++;
         }
 
         // Check if Telegram WebApp is available
-        if (!(window as any).Telegram?.WebApp) {
+        if (!window.Telegram?.WebApp) {
           console.log('Not in Telegram WebApp environment');
           return true; // Allow access if not in Telegram
         }
 
-        const webApp = (window as any).Telegram.WebApp;
+        const webApp = window.Telegram.WebApp;
         webApp.ready();
 
         console.log('Telegram WebApp detected, platform:', webApp.platform);

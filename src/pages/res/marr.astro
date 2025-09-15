@@ -1542,7 +1542,7 @@ import DropdownManager from '../../components/DropdownManager.astro';
         if (!wasActive && wrapper) {
           wrapper.classList.add('active');
           wrapper.querySelectorAll('.btn').forEach((btn, index) => {
-            (btn as HTMLElement).style.transitionDelay = `${index * 0.02}s`;
+            btn.style.transitionDelay = `${index * 0.02}s`;
           });
         }
       });
@@ -1555,9 +1555,9 @@ import DropdownManager from '../../components/DropdownManager.astro';
   }
 
   // Function to check video quota
-  async function checkVideoQuota(userid: string): Promise<number> {
+  async function checkVideoQuota(userid) {
       try {
-        const response = await fetch((window as any).APP_CONFIG.QUOTA_CHECK(userid), {
+        const response = await fetch(window.APP_CONFIG.QUOTA_CHECK(userid), {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -1577,9 +1577,9 @@ import DropdownManager from '../../components/DropdownManager.astro';
     }
 
     // Function to check note quota
-    async function checkNoteQuota(userid: string): Promise<number> {
+    async function checkNoteQuota(userid) {
       try {
-        const response = await fetch((window as any).APP_CONFIG.QUOTA_CHECK(userid), {
+        const response = await fetch(window.APP_CONFIG.QUOTA_CHECK(userid), {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
