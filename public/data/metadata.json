@@ -1,0 +1,405 @@
+{
+  "CerebellumBTR.json": {
+    "filename": "CerebellumBTR.json",
+    "name": "Cerebellum BTR MCQ Database",
+    "description": "MCQ collection from Cerebellum BTR directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 2,
+      "total_topics": 63,
+      "total_questions": 7650,
+      "processed_files": [
+        "CEREB BTR's.html",
+        "CEREB BTR.html"
+      ]
+    },
+    "file_size": 11539844,
+    "subjects_count": 2
+  },
+  "CerebellumCombined.json": {
+    "filename": "CerebellumCombined.json",
+    "name": "Cerebellum Combined MCQ Database",
+    "description": "MCQ collection from Cerebellum Combined directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 1,
+      "total_topics": 65,
+      "total_questions": 9760,
+      "processed_files": [
+        "cereb g t.html"
+      ]
+    },
+    "file_size": 20159148,
+    "subjects_count": 1
+  },
+  "CerebellumPYQ.json": {
+    "filename": "CerebellumPYQ.json",
+    "name": "Cerebellum PYQ MCQ Database",
+    "description": "MCQ collection from Cerebellum PYQ directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 1,
+      "total_topics": 37,
+      "total_questions": 8379,
+      "processed_files": [
+        "CEREB previous_year_tests.html"
+      ]
+    },
+    "file_size": 17876796,
+    "subjects_count": 1
+  },
+  "CerebellumQB.json": {
+    "filename": "CerebellumQB.json",
+    "name": "Cerebellum QB MCQ Database",
+    "description": "MCQ collection from Cerebellum QB directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 19,
+      "total_topics": 258,
+      "total_questions": 14584,
+      "processed_files": [
+        "CEREB_Anatomy.html",
+        "CEREB_Anesthesia.html",
+        "CEREB_Biochemistry.html",
+        "CEREB_Dermatology.html",
+        "CEREB_ENT.html",
+        "CEREB_Forensic_Medicine.html",
+        "CEREB_Medicine.html",
+        "CEREB_Microbiology.html",
+        "CEREB_Obstetrics_&_Gynecology.html",
+        "CEREB_Ophthalmology.html",
+        "CEREB_Orthopedics.html",
+        "CEREB_Pathology.html",
+        "CEREB_Pediatrics.html",
+        "CEREB_Pharmacology.html",
+        "CEREB_Physiology.html",
+        "CEREB_Preventive_&_Social_Medicine.html",
+        "CEREB_Psychiatry.html",
+        "CEREB_Radiology.html",
+        "CEREB_Surgery.html"
+      ]
+    },
+    "file_size": 48455770,
+    "subjects_count": 19
+  },
+  "DamsCombined.json": {
+    "filename": "DamsCombined.json",
+    "name": "Dams Combined MCQ Database",
+    "description": "MCQ collection from Dams Combined directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 13,
+      "total_topics": 385,
+      "total_questions": 28629,
+      "processed_files": [
+        "DAMS_CBT_1-4_combined.html",
+        "DAMS_CT_FMGE.html",
+        "DAMS_CT_MBBS.html",
+        "DAMS_CT_NEETPG.html",
+        "DAMS_DVT_Test.html",
+        "DAMS_FMGE_Mock.html",
+        "DAMS_INICET_Mock.html",
+        "DAMS_MIQ.html",
+        "DAMS_Mock_Test.html",
+        "DAMS_NEETPG_Mock.html",
+        "DAMS_Subject_Test.html",
+        "DAMS_SWT_Revision.html",
+        "DAMS_Transform_10X.html"
+      ]
+    },
+    "file_size": 81905537,
+    "subjects_count": 13
+  },
+  "DamsGT.json": {
+    "filename": "DamsGT.json",
+    "name": "Dams GT MCQ Database",
+    "description": "MCQ collection from Dams GT directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 3,
+      "total_topics": 81,
+      "total_questions": 19198,
+      "processed_files": [
+        "DAMS_Grand_Test_1-30.html",
+        "DAMS_Grand_Test_30+.html",
+        "DAMS_Grand_Test_old.html"
+      ]
+    },
+    "file_size": 24724504,
+    "subjects_count": 3
+  },
+  "DamsPYQ.json": {
+    "filename": "DamsPYQ.json",
+    "name": "Dams PYQ MCQ Database",
+    "description": "MCQ collection from Dams PYQ directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 6,
+      "total_topics": 92,
+      "total_questions": 11547,
+      "processed_files": [
+        "DAMS_Previous_Year_Paper.html",
+        "DQB AIIMS_2014-2018.html",
+        "DQB FMGE_PYQ.html",
+        "DQB INICET_PYQ.html",
+        "DQB NEETPG_PYQ.html",
+        "DQB UPSC_CMS_PYQs.html"
+      ]
+    },
+    "file_size": 15564392,
+    "subjects_count": 6
+  },
+  "DamsQB.json": {
+    "filename": "DamsQB.json",
+    "name": "Dams QB MCQ Database",
+    "description": "MCQ collection from Dams QB directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 20,
+      "total_topics": 398,
+      "total_questions": 15895,
+      "processed_files": [
+        "DQB Anatomy.html",
+        "DQB Anesthesia.html",
+        "DQB Biochemistry.html",
+        "DQB Dermatology.html",
+        "DQB ENT.html",
+        "DQB FMT.html",
+        "DQB Gynaecology.html",
+        "DQB Medicine.html",
+        "DQB Microbiology.html",
+        "DQB Obstetrics.html",
+        "DQB Ophthalmology.html",
+        "DQB Orthopaedics.html",
+        "DQB Pathology.html",
+        "DQB Pediatrics.html",
+        "DQB Pharmacology.html",
+        "DQB Physiology.html",
+        "DQB PSM.html",
+        "DQB Psychiatry.html",
+        "DQB Radiology.html",
+        "DQB Surgery.html"
+      ]
+    },
+    "file_size": 21352992,
+    "subjects_count": 20
+  },
+  "EgurukulPYQ.json": {
+    "filename": "EgurukulPYQ.json",
+    "name": "Egurukul PYQ MCQ Database",
+    "description": "MCQ collection from Egurukul PYQ directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 19,
+      "total_topics": 413,
+      "total_questions": 4752,
+      "processed_files": [
+        "anant_pyq.html",
+        "anesthesia_pyq.html",
+        "biochem_pyq.html",
+        "derma_pyq.html",
+        "ent_pyq.html",
+        "fmt_pyq.html",
+        "medicine_pyq.html",
+        "micro_pyq.html",
+        "obg_pqy.html",
+        "ophth_pyq.html",
+        "ortho_pyq.html",
+        "patho_pyq.html",
+        "pedia_pyq.html",
+        "pharma_pyq.html",
+        "physio_pyq.html",
+        "psm_pyq.html",
+        "psyc_pyq.html",
+        "radio_pyq.html",
+        "surgery_pyq.html"
+      ]
+    },
+    "file_size": 13962115,
+    "subjects_count": 19
+  },
+  "EgurukulQB.json": {
+    "filename": "EgurukulQB.json",
+    "name": "Egurukul QB MCQ Database",
+    "description": "MCQ collection from Egurukul QB directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 20,
+      "total_topics": 1259,
+      "total_questions": 16016,
+      "processed_files": [
+        "anaesthesia_e_qb.html",
+        "anant_e_qb.html",
+        "biochem_e_qb.html",
+        "derma_e_qb.html",
+        "ent_e_qb.html",
+        "fmt_e_qb.html",
+        "gyne__e_qb.html",
+        "medicine_e_qb.html",
+        "micro_e_qb.html",
+        "obs_e_qbank.html",
+        "ophth_e_qb.html",
+        "ortho_e_qb.html",
+        "patho_e_qbank.html",
+        "pedia_e_q_bank.html",
+        "pharma_eqb.html",
+        "physio__e_q_bank.html",
+        "psm_e_qbank.html",
+        "psyc_e_qb.html",
+        "radio__e_qb.html",
+        "surgery_e_qb.html"
+      ]
+    },
+    "file_size": 42288764,
+    "subjects_count": 20
+  },
+  "MarrowEd8.json": {
+    "filename": "MarrowEd8.json",
+    "name": "Marrow Ed8",
+    "description": "MCQ collection extracted from Anki deck: deck.json",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 18,
+      "total_topics": 804,
+      "total_questions": 15601,
+      "processed_files": [
+        "deck.json"
+      ]
+    },
+    "file_size": 31434679,
+    "subjects_count": 18
+  },
+  "MarrowPYQ.json": {
+    "filename": "MarrowPYQ.json",
+    "name": "Marrow PYQ",
+    "description": "MCQ collection extracted from Anki deck: deck.json",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 20,
+      "total_topics": 570,
+      "total_questions": 9974,
+      "processed_files": [
+        "deck.json"
+      ]
+    },
+    "file_size": 26427080,
+    "subjects_count": 20
+  },
+  "PrepCombined.json": {
+    "filename": "PrepCombined.json",
+    "name": "Prep Combined MCQ Database",
+    "description": "MCQ collection from Prep Combined directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 1,
+      "total_topics": 86,
+      "total_questions": 17096,
+      "processed_files": [
+        "prep_tests_combined.html"
+      ]
+    },
+    "file_size": 45009768,
+    "subjects_count": 1
+  },
+  "PrepPYQ.json": {
+    "filename": "PrepPYQ.json",
+    "name": "Prep PYQ MCQ Database",
+    "description": "MCQ collection from Prep PYQ directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 2,
+      "total_topics": 26,
+      "total_questions": 5688,
+      "processed_files": [
+        "previous papers inicet-aiims.html",
+        "previous papers _fmge_papers.html"
+      ]
+    },
+    "file_size": 22252872,
+    "subjects_count": 2
+  },
+  "PrepXQB.json": {
+    "filename": "PrepXQB.json",
+    "name": "PrepX QB MCQ Database",
+    "description": "MCQ collection from PrepX QB directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 19,
+      "total_topics": 971,
+      "total_questions": 18248,
+      "processed_files": [
+        "prepx_Anaesthesia.html",
+        "prepx_Anatomy.html",
+        "prepx_Biochemistry.html",
+        "prepx_Dermatology.html",
+        "prepx_ENT.html",
+        "prepx_Forensic_Medicine.html",
+        "prepx_Gynaecology___Obstetrics.html",
+        "prepx_Medicine.html",
+        "prepx_Microbiology.html",
+        "prepx_Ophthalmology.html",
+        "prepx_Orthopaedics.html",
+        "prepx_Pathology.html",
+        "prepx_Pediatrics.html",
+        "prepx_Pharmacology.html",
+        "prepx_Physiology.html",
+        "prepx_PSM.html",
+        "prepx_Psychiatry.html",
+        "prepx_Radiology.html",
+        "prepx_Surgery.html"
+      ]
+    },
+    "file_size": 75857491,
+    "subjects_count": 19
+  },
+  "PrepXRRQB.json": {
+    "filename": "PrepXRRQB.json",
+    "name": "PrepX RR QB MCQ Database",
+    "description": "MCQ collection from PrepX RR QB directory",
+    "stats": {
+      "extraction_date": "2025-09-13",
+      "total_main_subjects": 1,
+      "total_subjects": 19,
+      "total_topics": 265,
+      "total_questions": 2641,
+      "processed_files": [
+        "Prep_RR_Qb_Anaesthesia.html",
+        "Prep_RR_Qb_Anatomy.html",
+        "Prep_RR_Qb_Biochemistry.html",
+        "Prep_RR_Qb_Dermatology.html",
+        "Prep_RR_Qb_ENT.html",
+        "Prep_RR_Qb_Forensic_Medicine.html",
+        "Prep_RR_Qb_Gynaecology___Obstetrics.html",
+        "Prep_RR_Qb_Medicine.html",
+        "Prep_RR_Qb_Microbiology.html",
+        "Prep_RR_Qb_Ophthalmology.html",
+        "Prep_RR_Qb_Orthopaedics.html",
+        "Prep_RR_Qb_Pathology.html",
+        "Prep_RR_Qb_Pediatrics.html",
+        "Prep_RR_Qb_Pharmacology.html",
+        "Prep_RR_Qb_Physiology.html",
+        "Prep_RR_Qb_PSM.html",
+        "Prep_RR_Qb_Psychiatry.html",
+        "Prep_RR_Qb_Radiology.html",
+        "Prep_RR_Qb_Surgery.html"
+      ]
+    },
+    "file_size": 12672858,
+    "subjects_count": 19
+  }
+}
